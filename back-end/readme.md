@@ -20,7 +20,7 @@ Siga a ordem abaixo para evitar erros de dependências ou conexão.
 
 #### 1. Clonar o Repositório Baixe o código para a sua máquina.
 
-- Comandos: git clone <URL_DO_REPOSITORIO> cd nova-pasta
+- Comandos: git clone <URL_DO_REPOSITORIO>
 
 #### 2. Instalar Dependências Instale as bibliotecas do projeto. Isso é necessário para que os comandos do Prisma funcionem nos próximos passos.
 
