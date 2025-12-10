@@ -119,16 +119,47 @@ Abaixo estão listados os requisitos funcionais e não funcionais que descrevem 
 
 ### 2. MODELAGEM DE DADOS
 
-O sistema utiliza um banco de dados relacional (PostgreSQL) com as seguintes entidades principais:
+O sistema utiliza um banco de dados relacional (PostgreSQL). Abaixo estão descritas as entidades principais e suas responsabilidades:
 
-- **Usuário:** Gerente, Recepcionista, Profissional, Cliente.
-- **Paciente:** Dados pessoais, Telefone, Tags, Débitos.
-- **Profissional:** Vínculo com Especialidades, Serviços e Horários de Trabalho.
-- **Agendamento:** Relaciona Paciente, Profissional, Sala e Serviço.
-- **Prontuarios:** Anamnese, Histórico, Arquivos/Mídias.
-- **Financeiro:** Movimentações e Débitos.
-- **Auditoria:** Logs de Acesso e Logs de Ação.
-- **Estrutura Física:** Salas e Horários de Sala.
+#### Atores e Pessoas
+
+- **Usuario:** Apresenta dados dos indivíduos que acessam o sistema (clientes, profissionais, recepcionistas). Controla login e autenticação.
+- **Paciente:** Armazena dados e informações dos pacientes atendidos, como contato e CPF.
+- **Paciente_telefone:** Armazena um ou mais números de contato dos pacientes.
+- **Profissional:** Reúne informações profissionais e cadastrais dos prestadores de serviço.
+- **Profissional_telefone:** Armazena os vários possíveis números dos profissionais.
+- **Profissional_especialidade:** Relacionamento que liga profissionais às especialidades que exercem.
+
+#### Clínico e Operacional
+
+- **Especialidade:** Representa as áreas médicas ou de atuação dentro da clínica.
+- **Serviço:** Representa os procedimentos e consultas, descrevendo valor, duração e especialidade vinculada.
+- **Agendamento:** Registra os agendamentos com data, hora, serviço e sala associada.
+- **Agendamento_servico:** Tabela associativa para resolver o relacionamento N:M entre Agendamentos e Serviços.
+- **Fila_espera:** Lista de pacientes aguardando atendimento, vinculada a especialidade ou profissional.
+- **Inscricao_lista_espera:** Registra as solicitações de entrada na fila de espera.
+- **Prontuarios:** Armazena informações clínicas, diagnósticos, anotações e evoluções.
+- **Prontuarios_arquivos:** Armazena arquivos complementares (exames, imagens).
+- **Tags (Paciente_tag):** Etiquetas para identificação visual de pacientes (ex: VIP, Devedor).
+
+#### Infraestrutura e Disponibilidade
+
+- **Estabelecimento:** Unidade física da clínica (única) com localização e contato.
+- **Endereço:** Dados de localização de pacientes e estabelecimentos.
+- **Sala:** Representa os espaços físicos da clínica para vincular agendamentos.
+- **Sala_horario:** Armazena os horários de disponibilidade de cada sala.
+- **Horario_trabalho:** Armazena os períodos de trabalho de cada profissional.
+
+#### Financeiro
+
+- **Movimentacoes:** Registros financeiros (receitas e despesas) vinculados aos atendimentos.
+- **Paciente_debitos:** Valores pendentes que um paciente possui por serviços não pagos.
+
+#### Sistema e Segurança
+
+- **Configuração:** Parâmetros personalizados do sistema (limites, tempos, valores).
+- **Log_Acesso:** Registra tentativas de acesso (horário, tipo, sucesso/falha, dispositivo).
+- **Log_Acao:** Histórico de inserções, atualizações e exclusões para auditoria completa.
 
 ---
 
