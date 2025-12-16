@@ -13,13 +13,14 @@ const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
 userRoutes.post("/", userController.create);
-userRoutes.put("/:id", userController.update);
+userRoutes.patch("/:id", userController.update);
 
 // Ordem importa: rotas específicas antes de :id
+userRoutes.get("/", userController.findAll);
 userRoutes.get("/search", userController.searchPaginated);
 userRoutes.get("/:id", userController.getById);
 
 userRoutes.delete("/:id", userController.delete);
-userRoutes.get("/", userController.listPaginated);
+userRoutes.get("/paginated", userController.listPaginated);
 
 export { userRoutes };

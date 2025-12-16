@@ -35,6 +35,11 @@ export class UserService {
     return this.mapToResponse(user);
   }
 
+  async findAll(): Promise<UserResponseDTO[]> {
+    const users = await this.userRepository.findMany();
+    return users.map(this.mapToResponse);
+  }
+
   async update(id: string, data: UpdateUserDTO): Promise<UserResponseDTO> {
     const user = await this.userRepository.findById(id);
 

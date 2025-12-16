@@ -21,6 +21,11 @@ export class UserRepository implements IUserRepository {
     return user as unknown as UserEntity;
   }
 
+  async findMany(): Promise<UserEntity[]> {
+    const users = await prisma.usuario.findMany();
+    return users as unknown as UserEntity[];
+  }
+
   async update(id: string, data: UpdateUserDTO): Promise<UserEntity> {
     const user = await prisma.usuario.update({
       where: { id_usuario: id },

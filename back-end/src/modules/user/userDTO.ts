@@ -43,4 +43,5 @@ export type UserResponseDTO = Omit<UserEntity, "senha_hash">;
 export interface IUserRepository
   extends IBaseRepository<UserEntity, CreateUserDTO, UpdateUserDTO> {
   findByEmail(email: string): Promise<UserEntity | null>;
+  findMany(): Promise<UserEntity[]>;
 }

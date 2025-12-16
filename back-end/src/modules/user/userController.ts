@@ -11,6 +11,11 @@ export class UserController {
     return res.status(201).json(user);
   };
 
+  findAll = async (_req: Request, res: Response): Promise<Response> => {
+    const users = await this.userService.findAll();
+    return res.json(users);
+  };
+
   update = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     const user = await this.userService.update(id, req.body);
