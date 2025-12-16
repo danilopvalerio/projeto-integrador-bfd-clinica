@@ -8,15 +8,13 @@ datasource db {
 }
 
 model Usuario {
-  id_usuario   String  @id @default(uuid())
-  email        String  @unique @db.VarChar(200)
-  senha_hash   String  @db.VarChar(200)
-  tipo_usuario String  @db.VarChar(50) // GERENTE, RECEPCIONISTA, PROFISSIONAL, CLIENTE
-  ativo        Boolean @default(true)
-
-  // Relações (O Prisma precisa disso para saber conectar as tabelas)
-  paciente      Paciente?
-  profissional  Profissional?
+  id_usuario     String         @id @default(uuid())
+  email          String         @unique @db.VarChar(200)
+  senha_hash     String         @db.VarChar(200)
+  tipo_usuario   String         @db.VarChar(50)
+  ativo          Boolean        @default(true)
+  paciente       Paciente?
+  profissional   Profissional?
   refresh_tokens RefreshToken[]
 
   @@map("usuarios")
@@ -28,38 +26,31 @@ model Paciente {
   cpf             String   @unique @db.VarChar(14)
   telefone        String   @db.VarChar(20)
   data_nascimento DateTime @db.Date
-
-  // Chaves Estrangeiras (FK)
-  id_usuario  String  @unique // @unique garante que 1 usuário só tem 1 paciente (1:1)
-  usuario     Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
-
-  id_endereco String
-  endereco    Endereco @relation(fields: [id_endereco], references: [id_endereco])
+  id_usuario      String   @unique
+  id_endereco     String
+  endereco        Endereco @relation(fields: [id_endereco], references: [id_endereco])
+  usuario         Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("pacientes")
 }
 
 model Profissional {
-  id_profissional   String @id @default(uuid())
-  nome              String @db.VarChar(200)
-  cpf               String @unique @db.VarChar(14)
-  registro_conselho String @db.VarChar(50)
-
-  // Chaves Estrangeiras (FK)
-  id_usuario String  @unique // 1:1
-  usuario    Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  id_profissional   String  @id @default(uuid())
+  nome              String  @db.VarChar(200)
+  cpf               String  @unique @db.VarChar(14)
+  registro_conselho String  @db.VarChar(50)
+  id_usuario        String  @unique
+  usuario           Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("profissionais")
 }
 
 model Endereco {
-  id_endereco String @id @default(uuid())
+  id_endereco String     @id @default(uuid())
   rua         String
   numero      String?
   cidade      String
   estado      String
-
-  // Relação inversa
   pacientes   Paciente[]
 
   @@map("enderecos")
@@ -71,10 +62,8 @@ model RefreshToken {
   expiracao        DateTime  @db.Timestamp(6)
   criado_em        DateTime? @default(now()) @db.Timestamp(6)
   ativo            Boolean?  @default(true)
-
-  // Chaves Estrangeiras (FK)
-  id_usuario String
-  usuario    Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  id_usuario       String
+  usuario          Usuario   @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }

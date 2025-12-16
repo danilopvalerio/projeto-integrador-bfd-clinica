@@ -1,5 +1,7 @@
 // src/routes/index.ts
 import { Router } from "express";
+import { userRoutes } from "@/modules/user/userRoutes";
+import { sessionRoutes } from "@/modules/session/sessionRoutes";
 
 const router = Router();
 
@@ -12,6 +14,7 @@ router.get("/health", (req, res) => {
 // router.use("/auth", sessionRoutes);
 
 // // Rotas de Negócio (Protegidas internamente)
-// router.use("/users", userRoutes);
+router.use("/users", userRoutes);
+router.use("/sessions", sessionRoutes);
 
 export default router;

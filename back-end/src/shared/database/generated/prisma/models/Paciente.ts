@@ -198,8 +198,8 @@ export type PacienteWhereInput = {
   data_nascimento?: Prisma.DateTimeFilter<"Paciente"> | Date | string
   id_usuario?: Prisma.StringFilter<"Paciente"> | string
   id_endereco?: Prisma.StringFilter<"Paciente"> | string
-  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   endereco?: Prisma.XOR<Prisma.EnderecoScalarRelationFilter, Prisma.EnderecoWhereInput>
+  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }
 
 export type PacienteOrderByWithRelationInput = {
@@ -210,8 +210,8 @@ export type PacienteOrderByWithRelationInput = {
   data_nascimento?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   id_endereco?: Prisma.SortOrder
-  usuario?: Prisma.UsuarioOrderByWithRelationInput
   endereco?: Prisma.EnderecoOrderByWithRelationInput
+  usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
 
 export type PacienteWhereUniqueInput = Prisma.AtLeast<{
@@ -225,8 +225,8 @@ export type PacienteWhereUniqueInput = Prisma.AtLeast<{
   telefone?: Prisma.StringFilter<"Paciente"> | string
   data_nascimento?: Prisma.DateTimeFilter<"Paciente"> | Date | string
   id_endereco?: Prisma.StringFilter<"Paciente"> | string
-  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   endereco?: Prisma.XOR<Prisma.EnderecoScalarRelationFilter, Prisma.EnderecoWhereInput>
+  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }, "id_paciente" | "cpf" | "id_usuario">
 
 export type PacienteOrderByWithAggregationInput = {
@@ -261,8 +261,8 @@ export type PacienteCreateInput = {
   cpf: string
   telefone: string
   data_nascimento: Date | string
-  usuario: Prisma.UsuarioCreateNestedOneWithoutPacienteInput
   endereco: Prisma.EnderecoCreateNestedOneWithoutPacientesInput
+  usuario: Prisma.UsuarioCreateNestedOneWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateInput = {
@@ -281,8 +281,8 @@ export type PacienteUpdateInput = {
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   telefone?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutPacienteNestedInput
   endereco?: Prisma.EnderecoUpdateOneRequiredWithoutPacientesNestedInput
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateInput = {
@@ -601,8 +601,8 @@ export type PacienteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   data_nascimento?: boolean
   id_usuario?: boolean
   id_endereco?: boolean
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paciente"]>
 
 export type PacienteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -613,8 +613,8 @@ export type PacienteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   data_nascimento?: boolean
   id_usuario?: boolean
   id_endereco?: boolean
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paciente"]>
 
 export type PacienteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -625,8 +625,8 @@ export type PacienteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   data_nascimento?: boolean
   id_usuario?: boolean
   id_endereco?: boolean
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paciente"]>
 
 export type PacienteSelectScalar = {
@@ -641,23 +641,23 @@ export type PacienteSelectScalar = {
 
 export type PacienteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_paciente" | "nome" | "cpf" | "telefone" | "data_nascimento" | "id_usuario" | "id_endereco", ExtArgs["result"]["paciente"]>
 export type PacienteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }
 export type PacienteIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }
 export type PacienteIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.EnderecoDefaultArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }
 
 export type $PacientePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Paciente"
   objects: {
-    usuario: Prisma.$UsuarioPayload<ExtArgs>
     endereco: Prisma.$EnderecoPayload<ExtArgs>
+    usuario: Prisma.$UsuarioPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_paciente: string
@@ -1061,8 +1061,8 @@ readonly fields: PacienteFieldRefs;
  */
 export interface Prisma__PacienteClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   endereco<T extends Prisma.EnderecoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EnderecoDefaultArgs<ExtArgs>>): Prisma.Prisma__EnderecoClient<runtime.Types.Result.GetResult<Prisma.$EnderecoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

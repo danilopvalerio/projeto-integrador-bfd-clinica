@@ -1,0 +1,46 @@
+/* InfoCard.module.css */
+
+.card {
+  /* Fundo e Borda */
+  background: linear-gradient(
+    -45deg,
+    var(--color-tertiary),
+    var(--color-secondary)
+  );
+  border-top: 4px solid #f000ff; /* Cor magenta padrão (será sobrescrita pela prop) */
+  padding: 10px;
+  /* Aparência */
+  border-radius: 8px; /* Bordas levemente arredondadas */
+
+  /* Tamanho */
+  width: 300px; /* Um tamanho máximo razoável */
+  height: 70px; /* Uma altura mínima */
+
+  /* Fonte */
+  color: #ffffff; /* Cor de fonte escura */
+  text-align: center;
+  margin: 0;
+  padding: 6px;
+}
+
+.textWrapper {
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.title {
+  font-size: 1.65rem;
+  font-weight: 600; /* Semi-bold */
+  text-transform: uppercase; /* Tudo em maiúsculo, igual à foto */
+  margin: 0;
+  padding: 0;
+}
+
+.value {
+  font-size: 1rem; /* Tamanho grande para o número */
+  font-weight: 700; /* Bold */
+}

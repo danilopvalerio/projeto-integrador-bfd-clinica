@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken } from "../utils/jwt";
+import { verifyAccessToken } from "../../utils/jwt";
 import { AppError } from "./error.middleware";
+// Agora vamos usar essa importação de fato
+import { TokenPayload } from "../../../modules/session/sessionDTO";
 
 export function authMiddleware(
   req: Request,
@@ -25,28 +27,13 @@ export function authMiddleware(
   }
 
   try {
-    const payload = verifyAccessToken(token);
+    // CORREÇÃO AQUI: Tipagem explícita resolve o aviso "unused" e garante segurança
+    const payload = verifyAccessToken(token) as TokenPayload;
 
-    // O TypeScript agora sabe que 'user' existe no Request
-    // Graças ao arquivo express.d.ts
     req.user = payload;
 
     return next();
   } catch {
     throw new AppError("Token inválido ou expirado.", 401);
   }
-}
-
-export function requireRole(allowedRoles: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user || !req.user.role) {
-      throw new AppError("Acesso proibido.", 403);
-    }
-
-    if (!allowedRoles.includes(req.user.role)) {
-      throw new AppError(`Requer permissão: ${allowedRoles.join(" ou ")}`, 403);
-    }
-
-    return next();
-  };
 }
