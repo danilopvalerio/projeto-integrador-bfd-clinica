@@ -389,7 +389,8 @@ export const ModelName = {
   Profissional: 'Profissional',
   Endereco: 'Endereco',
   Servico: 'Servico',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Especialidade: 'Especialidade'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "profissional" | "endereco" | "servico" | "refreshToken"
+    modelProps: "usuario" | "paciente" | "profissional" | "endereco" | "servico" | "refreshToken" | "especialidade"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -853,6 +854,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Especialidade: {
+      payload: Prisma.$EspecialidadePayload<ExtArgs>
+      fields: Prisma.EspecialidadeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EspecialidadeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EspecialidadeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        findFirst: {
+          args: Prisma.EspecialidadeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EspecialidadeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        findMany: {
+          args: Prisma.EspecialidadeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>[]
+        }
+        create: {
+          args: Prisma.EspecialidadeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        createMany: {
+          args: Prisma.EspecialidadeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EspecialidadeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>[]
+        }
+        delete: {
+          args: Prisma.EspecialidadeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        update: {
+          args: Prisma.EspecialidadeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        deleteMany: {
+          args: Prisma.EspecialidadeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EspecialidadeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EspecialidadeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>[]
+        }
+        upsert: {
+          args: Prisma.EspecialidadeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EspecialidadePayload>
+        }
+        aggregate: {
+          args: Prisma.EspecialidadeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEspecialidade>
+        }
+        groupBy: {
+          args: Prisma.EspecialidadeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EspecialidadeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EspecialidadeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EspecialidadeCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -962,6 +1037,15 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const EspecialidadeScalarFieldEnum = {
+  id_especialidade: 'id_especialidade',
+  nome: 'nome',
+  descricao: 'descricao'
+} as const
+
+export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1157,6 +1241,7 @@ export type GlobalOmitConfig = {
   endereco?: Prisma.EnderecoOmit
   servico?: Prisma.ServicoOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  especialidade?: Prisma.EspecialidadeOmit
 }
 
 /* Types for Logging */
