@@ -4,6 +4,8 @@ import {
   ProfissionalEntity,
   CreateProfissionalDTO,
   UpdateProfissionalDTO,
+  UpdateHorarioDTO,
+  UpdateTelefoneDTO,
 } from "./profissionalDTO";
 import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 
@@ -107,5 +109,35 @@ export class ProfissionalRepository implements IProfissionalRepository {
     ]);
 
     return { data: data as unknown as ProfissionalEntity[], total };
+  }
+
+// --- MÉTODOS DE TELEFONE ---
+  async addTelefone(id_profissional: string, data: { telefone: string; principal: boolean }) {
+    return await prisma.profissional_telefone.create({ data: { ...data, id_profissional } });
+  }
+  async updateTelefone(id_telefone: string, data: UpdateTelefoneDTO) {
+    return await prisma.profissional_telefone.update({ where: { id_telefone }, data });
+  }
+  async deleteTelefone(id_telefone: string) {
+    await prisma.profissional_telefone.delete({ where: { id_telefone } });
+  }
+  async listTelefones(id_profissional: string) {
+    return await prisma.profissional_telefone.findMany({ where: { id_profissional } });
+  }
+
+
+  // --- MÉTODOS DE HORÁRIO ---
+  async addHorario(id_profissional: string, data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }
+) {
+    return await prisma.horario_Trabalho.create({ data: { ...data, id_profissional } });
+  }
+  async updateHorario(id_horario: string, data: UpdateHorarioDTO) {
+    return await prisma.horario_Trabalho.update({ where: { id_horario }, data });
+  }
+  async deleteHorario(id_horario: string) {
+    await prisma.horario_Trabalho.delete({ where: { id_horario } });
+  }
+  async listHorarios(id_profissional: string) {
+    return await prisma.horario_Trabalho.findMany({ where: { id_profissional }, orderBy: { dia_semana: 'asc' } });
   }
 }

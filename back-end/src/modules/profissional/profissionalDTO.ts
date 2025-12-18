@@ -23,11 +23,30 @@ export interface UpdateProfissionalDTO {
   registro_conselho: string;
 }
 
+export interface UpdateTelefoneDTO {
+  telefone?: string;
+  principal?: boolean;
+}
+
+export interface UpdateHorarioDTO {
+  dia_semana?: number;
+  hora_inicio?: Date;
+  hora_fim?: Date;
+}
+
 export interface IProfissionalRepository
-  extends IBaseRepository<
-    ProfissionalEntity,
-    CreateProfissionalDTO,
-    UpdateProfissionalDTO
-  > {
+  extends IBaseRepository<ProfissionalEntity, CreateProfissionalDTO, UpdateProfissionalDTO> {
   findByCpf(cpf: string): Promise<ProfissionalEntity | null>;
+  
+  // Métodos de Telefone - Use nomes claros para os IDs
+  addTelefone(id_profissional: string, data: { telefone: string; principal: boolean }): Promise<any>;
+  updateTelefone(id_telefone: string, data: UpdateTelefoneDTO): Promise<any>;
+  deleteTelefone(id_telefone: string): Promise<void>;
+  listTelefones(id_profissional: string): Promise<any[]>;
+
+  // Métodos de Horário
+  addHorario(id_profissional: string, data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }): Promise<any>;
+  updateHorario(id_horario: string, data: UpdateHorarioDTO): Promise<any>;
+  deleteHorario(id_horario: string): Promise<void>;
+  listHorarios(id_profissional: string): Promise<any[]>;
 }
