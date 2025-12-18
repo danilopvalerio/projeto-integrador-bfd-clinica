@@ -35,14 +35,43 @@ model Paciente {
 }
 
 model Profissional {
-  id_profissional   String  @id @default(uuid())
-  nome              String  @db.VarChar(200)
-  cpf               String  @unique @db.VarChar(14)
-  registro_conselho String  @db.VarChar(50)
-  id_usuario        String  @unique
-  usuario           Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  id_profissional   String               @id @default(uuid())
+  nome              String               @db.VarChar(200)
+  cpf               String               @unique @db.VarChar(11)
+  registro_conselho String               @db.VarChar
+  id_usuario        String               @unique  // Removido @db.Uuid
+  
+  // Relações
+  usuario           Usuario              @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  horarios          Horario_Trabalho[]
+  telefones         Profissional_telefone[]
 
   @@map("profissionais")
+}
+
+model Horario_Trabalho {
+  id_horario      String       @id @default(uuid())
+  dia_semana      Int          // Representando o dia da semana como número (0-6 ou 1-7)
+  hora_inicio     DateTime     @db.Time
+  hora_fim        DateTime     @db.Time
+  id_profissional String       // Removido @db.Uuid
+  
+  // Relação
+  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+
+  @@map("horarios_trabalho")
+}
+
+model Profissional_telefone {
+  id_telefone     String       @id @default(uuid())
+  telefone        String       @db.VarChar(11)
+  principal       Boolean      @default(false)
+  id_profissional String       // Removido @db.Uuid
+  
+  // Relação
+  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+
+  @@map("profissional_telefones")
 }
 
 model Endereco {

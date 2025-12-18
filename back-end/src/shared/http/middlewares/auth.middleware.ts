@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../../utils/jwt";
 import { AppError } from "./error.middleware";
+
 // Agora vamos usar essa importação de fato
 import { TokenPayload } from "../../../modules/session/sessionDTO";
 

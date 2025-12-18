@@ -387,6 +387,8 @@ export const ModelName = {
   Usuario: 'Usuario',
   Paciente: 'Paciente',
   Profissional: 'Profissional',
+  Horario_Trabalho: 'Horario_Trabalho',
+  Profissional_telefone: 'Profissional_telefone',
   Endereco: 'Endereco',
   Servico: 'Servico',
   RefreshToken: 'RefreshToken'
@@ -405,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "profissional" | "endereco" | "servico" | "refreshToken"
+    modelProps: "usuario" | "paciente" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "endereco" | "servico" | "refreshToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +630,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProfissionalCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProfissionalCountAggregateOutputType> | number
+        }
+      }
+    }
+    Horario_Trabalho: {
+      payload: Prisma.$Horario_TrabalhoPayload<ExtArgs>
+      fields: Prisma.Horario_TrabalhoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.Horario_TrabalhoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.Horario_TrabalhoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        findFirst: {
+          args: Prisma.Horario_TrabalhoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.Horario_TrabalhoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        findMany: {
+          args: Prisma.Horario_TrabalhoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>[]
+        }
+        create: {
+          args: Prisma.Horario_TrabalhoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        createMany: {
+          args: Prisma.Horario_TrabalhoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.Horario_TrabalhoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>[]
+        }
+        delete: {
+          args: Prisma.Horario_TrabalhoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        update: {
+          args: Prisma.Horario_TrabalhoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        deleteMany: {
+          args: Prisma.Horario_TrabalhoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.Horario_TrabalhoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.Horario_TrabalhoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>[]
+        }
+        upsert: {
+          args: Prisma.Horario_TrabalhoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Horario_TrabalhoPayload>
+        }
+        aggregate: {
+          args: Prisma.Horario_TrabalhoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHorario_Trabalho>
+        }
+        groupBy: {
+          args: Prisma.Horario_TrabalhoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Horario_TrabalhoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.Horario_TrabalhoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Horario_TrabalhoCountAggregateOutputType> | number
+        }
+      }
+    }
+    Profissional_telefone: {
+      payload: Prisma.$Profissional_telefonePayload<ExtArgs>
+      fields: Prisma.Profissional_telefoneFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.Profissional_telefoneFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.Profissional_telefoneFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        findFirst: {
+          args: Prisma.Profissional_telefoneFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.Profissional_telefoneFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        findMany: {
+          args: Prisma.Profissional_telefoneFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>[]
+        }
+        create: {
+          args: Prisma.Profissional_telefoneCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        createMany: {
+          args: Prisma.Profissional_telefoneCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.Profissional_telefoneCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>[]
+        }
+        delete: {
+          args: Prisma.Profissional_telefoneDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        update: {
+          args: Prisma.Profissional_telefoneUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        deleteMany: {
+          args: Prisma.Profissional_telefoneDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.Profissional_telefoneUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.Profissional_telefoneUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>[]
+        }
+        upsert: {
+          args: Prisma.Profissional_telefoneUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_telefonePayload>
+        }
+        aggregate: {
+          args: Prisma.Profissional_telefoneAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProfissional_telefone>
+        }
+        groupBy: {
+          args: Prisma.Profissional_telefoneGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Profissional_telefoneGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.Profissional_telefoneCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Profissional_telefoneCountAggregateOutputType> | number
         }
       }
     }
@@ -927,6 +1077,27 @@ export const ProfissionalScalarFieldEnum = {
 export type ProfissionalScalarFieldEnum = (typeof ProfissionalScalarFieldEnum)[keyof typeof ProfissionalScalarFieldEnum]
 
 
+export const Horario_TrabalhoScalarFieldEnum = {
+  id_horario: 'id_horario',
+  dia_semana: 'dia_semana',
+  hora_inicio: 'hora_inicio',
+  hora_fim: 'hora_fim',
+  id_profissional: 'id_profissional'
+} as const
+
+export type Horario_TrabalhoScalarFieldEnum = (typeof Horario_TrabalhoScalarFieldEnum)[keyof typeof Horario_TrabalhoScalarFieldEnum]
+
+
+export const Profissional_telefoneScalarFieldEnum = {
+  id_telefone: 'id_telefone',
+  telefone: 'telefone',
+  principal: 'principal',
+  id_profissional: 'id_profissional'
+} as const
+
+export type Profissional_telefoneScalarFieldEnum = (typeof Profissional_telefoneScalarFieldEnum)[keyof typeof Profissional_telefoneScalarFieldEnum]
+
+
 export const EnderecoScalarFieldEnum = {
   id_endereco: 'id_endereco',
   rua: 'rua',
@@ -1154,6 +1325,8 @@ export type GlobalOmitConfig = {
   usuario?: Prisma.UsuarioOmit
   paciente?: Prisma.PacienteOmit
   profissional?: Prisma.ProfissionalOmit
+  horario_Trabalho?: Prisma.Horario_TrabalhoOmit
+  profissional_telefone?: Prisma.Profissional_telefoneOmit
   endereco?: Prisma.EnderecoOmit
   servico?: Prisma.ServicoOmit
   refreshToken?: Prisma.RefreshTokenOmit

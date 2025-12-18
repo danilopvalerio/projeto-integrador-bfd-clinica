@@ -33,6 +33,16 @@ export type Paciente = Prisma.PacienteModel
  */
 export type Profissional = Prisma.ProfissionalModel
 /**
+ * Model Horario_Trabalho
+ * 
+ */
+export type Horario_Trabalho = Prisma.Horario_TrabalhoModel
+/**
+ * Model Profissional_telefone
+ * 
+ */
+export type Profissional_telefone = Prisma.Profissional_telefoneModel
+/**
  * Model Endereco
  * 
  */

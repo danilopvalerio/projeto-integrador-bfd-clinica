@@ -11,6 +11,8 @@
 export type * from './models/Usuario.js'
 export type * from './models/Paciente.js'
 export type * from './models/Profissional.js'
+export type * from './models/Horario_Trabalho.js'
+export type * from './models/Profissional_telefone.js'
 export type * from './models/Endereco.js'
 export type * from './models/Servico.js'
 export type * from './models/RefreshToken.js'

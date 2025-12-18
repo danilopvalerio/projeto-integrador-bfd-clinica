@@ -8,7 +8,6 @@ import {
   UpdateUserDTO,
 } from "./userDTO";
 import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
-
 export class UserRepository implements IUserRepository {
   async create(data: CreateUserDTO): Promise<UserEntity> {
     const user = await prisma.usuario.create({
