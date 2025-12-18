@@ -74,6 +74,27 @@ model Profissional_telefone {
   @@map("profissional_telefones")
 }
 
+model Profissional_Especialidade {
+  id_profissional  String
+  id_especialidade String
+
+  profissional Profissional @relation(
+    fields: [id_profissional],
+    references: [id_profissional],
+    onDelete: Cascade
+  )
+
+  especialidade Especialidade @relation(
+    fields: [id_especialidade],
+    references: [id_especialidade],
+    onDelete: Cascade
+  )
+
+  @@id([id_profissional, id_especialidade])
+  @@map("profissionais_especialidades")
+}
+
+
 model Endereco {
   id_endereco String     @id @default(uuid())
   rua         String
