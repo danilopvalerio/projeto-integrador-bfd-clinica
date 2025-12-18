@@ -108,3 +108,10 @@ model RefreshToken {
 
   @@map("refresh_tokens")
 }
+model Especialidade {
+  id_especialidade String   @id @default(uuid())
+  nome             String   @unique @db.VarChar(200)
+  descricao        String?  @db.Text
+
+  @@map("especialidades")
+}

@@ -58,7 +58,8 @@ export const ModelName = {
   Profissional_telefone: 'Profissional_telefone',
   Endereco: 'Endereco',
   Servico: 'Servico',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Especialidade: 'Especialidade'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -168,6 +169,15 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const EspecialidadeScalarFieldEnum = {
+  id_especialidade: 'id_especialidade',
+  nome: 'nome',
+  descricao: 'descricao'
+} as const
+
+export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
 
 
 export const SortOrder = {
