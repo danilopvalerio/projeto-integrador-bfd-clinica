@@ -388,6 +388,7 @@ export const ModelName = {
   Paciente: 'Paciente',
   Profissional: 'Profissional',
   Endereco: 'Endereco',
+  Servico: 'Servico',
   RefreshToken: 'RefreshToken'
 } as const
 
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "profissional" | "endereco" | "refreshToken"
+    modelProps: "usuario" | "paciente" | "profissional" | "endereco" | "servico" | "refreshToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,6 +705,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Servico: {
+      payload: Prisma.$ServicoPayload<ExtArgs>
+      fields: Prisma.ServicoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ServicoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ServicoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        findFirst: {
+          args: Prisma.ServicoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ServicoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        findMany: {
+          args: Prisma.ServicoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>[]
+        }
+        create: {
+          args: Prisma.ServicoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        createMany: {
+          args: Prisma.ServicoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ServicoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>[]
+        }
+        delete: {
+          args: Prisma.ServicoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        update: {
+          args: Prisma.ServicoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        deleteMany: {
+          args: Prisma.ServicoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ServicoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ServicoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>[]
+        }
+        upsert: {
+          args: Prisma.ServicoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServicoPayload>
+        }
+        aggregate: {
+          args: Prisma.ServicoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateServico>
+        }
+        groupBy: {
+          args: Prisma.ServicoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServicoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ServicoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServicoCountAggregateOutputType> | number
+        }
+      }
+    }
     RefreshToken: {
       payload: Prisma.$RefreshTokenPayload<ExtArgs>
       fields: Prisma.RefreshTokenFieldRefs
@@ -863,6 +938,20 @@ export const EnderecoScalarFieldEnum = {
 export type EnderecoScalarFieldEnum = (typeof EnderecoScalarFieldEnum)[keyof typeof EnderecoScalarFieldEnum]
 
 
+export const ServicoScalarFieldEnum = {
+  id_servico: 'id_servico',
+  id_especialidade: 'id_especialidade',
+  nome: 'nome',
+  duracao_estimada: 'duracao_estimada',
+  descricao: 'descricao',
+  preco: 'preco',
+  ativo: 'ativo',
+  preco_visivel_paciente: 'preco_visivel_paciente'
+} as const
+
+export type ServicoScalarFieldEnum = (typeof ServicoScalarFieldEnum)[keyof typeof ServicoScalarFieldEnum]
+
+
 export const RefreshTokenScalarFieldEnum = {
   id_refresh_token: 'id_refresh_token',
   token: 'token',
@@ -951,6 +1040,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1052,6 +1155,7 @@ export type GlobalOmitConfig = {
   paciente?: Prisma.PacienteOmit
   profissional?: Prisma.ProfissionalOmit
   endereco?: Prisma.EnderecoOmit
+  servico?: Prisma.ServicoOmit
   refreshToken?: Prisma.RefreshTokenOmit
 }
 

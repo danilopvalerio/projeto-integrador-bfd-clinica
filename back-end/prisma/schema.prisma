@@ -56,6 +56,18 @@ model Endereco {
   @@map("enderecos")
 }
 
+model Servico {
+  id_servico              String    @id @default(uuid())
+  id_especialidade        String?   @unique
+  nome                    String    @db.VarChar(200)
+  duracao_estimada        Int  
+  descricao               String    @db.Text
+  preco                   Float
+  ativo                   Boolean   @default(true)
+  preco_visivel_paciente  Boolean   @default(true)
+  @@map("servicos")
+}
+
 model RefreshToken {
   id_refresh_token String    @id @default(uuid())
   token            String    @unique @db.VarChar(255)

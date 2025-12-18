@@ -55,6 +55,7 @@ export const ModelName = {
   Paciente: 'Paciente',
   Profissional: 'Profissional',
   Endereco: 'Endereco',
+  Servico: 'Servico',
   RefreshToken: 'RefreshToken'
 } as const
 
@@ -118,6 +119,20 @@ export const EnderecoScalarFieldEnum = {
 } as const
 
 export type EnderecoScalarFieldEnum = (typeof EnderecoScalarFieldEnum)[keyof typeof EnderecoScalarFieldEnum]
+
+
+export const ServicoScalarFieldEnum = {
+  id_servico: 'id_servico',
+  id_especialidade: 'id_especialidade',
+  nome: 'nome',
+  duracao_estimada: 'duracao_estimada',
+  descricao: 'descricao',
+  preco: 'preco',
+  ativo: 'ativo',
+  preco_visivel_paciente: 'preco_visivel_paciente'
+} as const
+
+export type ServicoScalarFieldEnum = (typeof ServicoScalarFieldEnum)[keyof typeof ServicoScalarFieldEnum]
 
 
 export const RefreshTokenScalarFieldEnum = {

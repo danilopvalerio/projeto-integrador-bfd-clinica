@@ -38,6 +38,11 @@ export type Profissional = Prisma.ProfissionalModel
  */
 export type Endereco = Prisma.EnderecoModel
 /**
+ * Model Servico
+ * 
+ */
+export type Servico = Prisma.ServicoModel
+/**
  * Model RefreshToken
  * 
  */
