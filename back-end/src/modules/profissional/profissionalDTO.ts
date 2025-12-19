@@ -49,4 +49,39 @@ export interface IProfissionalRepository
   updateHorario(id_horario: string, data: UpdateHorarioDTO): Promise<any>;
   deleteHorario(id_horario: string): Promise<void>;
   listHorarios(id_profissional: string): Promise<any[]>;
+
+
+  // Especialidades 
+  linkSpecialtyToProfessional(
+    profissionalId: string,
+    especialidadeId: string
+  ): Promise<void>;
+
+  unlinkSpecialtyFromProfessional(
+    profissionalId: string,
+    especialidadeId: string
+  ): Promise<void>;
+
+  findSpecialtiesByProfessional(
+    profissionalId: string
+  ): Promise<any[]>;
+
+  findSpecialtiesByProfessionalPaginated(
+    profissionalId: string,
+    page: number,
+    limit: number
+  ): Promise<{ data: any[]; total: number }>;
+
+  searchSpecialtiesByProfessionalPaginated(
+    profissionalId: string,
+    query: string,
+    page: number,
+    limit: number
+  ): Promise<{ data: any[]; total: number }>;
+
+  syncProfessionalSpecialties(
+    profissionalId: string,
+    especialidadesIds: string[]
+  ): Promise<void>;
+
 }

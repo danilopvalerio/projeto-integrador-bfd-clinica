@@ -65,6 +65,11 @@ export type Horario_Trabalho = Prisma.Horario_TrabalhoModel
  */
 export type Profissional_telefone = Prisma.Profissional_telefoneModel
 /**
+ * Model Profissional_Especialidade
+ * 
+ */
+export type Profissional_Especialidade = Prisma.Profissional_EspecialidadeModel
+/**
  * Model Endereco
  * 
  */
