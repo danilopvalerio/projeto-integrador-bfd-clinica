@@ -59,7 +59,8 @@ export const ModelName = {
   Endereco: 'Endereco',
   Servico: 'Servico',
   RefreshToken: 'RefreshToken',
-  Especialidade: 'Especialidade'
+  Especialidade: 'Especialidade',
+  ProfissionalServico: 'ProfissionalServico'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -178,6 +179,15 @@ export const EspecialidadeScalarFieldEnum = {
 } as const
 
 export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
+
+
+export const ProfissionalServicoScalarFieldEnum = {
+  id_profissional_servico: 'id_profissional_servico',
+  id_profissional: 'id_profissional',
+  id_servico: 'id_servico'
+} as const
+
+export type ProfissionalServicoScalarFieldEnum = (typeof ProfissionalServicoScalarFieldEnum)[keyof typeof ProfissionalServicoScalarFieldEnum]
 
 
 export const SortOrder = {

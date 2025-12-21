@@ -84,3 +84,8 @@ export type RefreshToken = Prisma.RefreshTokenModel
  * 
  */
 export type Especialidade = Prisma.EspecialidadeModel
+/**
+ * Model ProfissionalServico
+ * 
+ */
+export type ProfissionalServico = Prisma.ProfissionalServicoModel

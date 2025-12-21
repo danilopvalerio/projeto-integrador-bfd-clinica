@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.1.0
- * Query Engine version: ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba
+ * Prisma Client JS version: 7.2.0
+ * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.1.0",
-  engine: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
+  client: "7.2.0",
+  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
 }
 
 /**
@@ -392,7 +392,8 @@ export const ModelName = {
   Endereco: 'Endereco',
   Servico: 'Servico',
   RefreshToken: 'RefreshToken',
-  Especialidade: 'Especialidade'
+  Especialidade: 'Especialidade',
+  ProfissionalServico: 'ProfissionalServico'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "endereco" | "servico" | "refreshToken" | "especialidade"
+    modelProps: "usuario" | "paciente" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "endereco" | "servico" | "refreshToken" | "especialidade" | "profissionalServico"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1078,6 +1079,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProfissionalServico: {
+      payload: Prisma.$ProfissionalServicoPayload<ExtArgs>
+      fields: Prisma.ProfissionalServicoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProfissionalServicoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProfissionalServicoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        findFirst: {
+          args: Prisma.ProfissionalServicoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProfissionalServicoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        findMany: {
+          args: Prisma.ProfissionalServicoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>[]
+        }
+        create: {
+          args: Prisma.ProfissionalServicoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        createMany: {
+          args: Prisma.ProfissionalServicoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProfissionalServicoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>[]
+        }
+        delete: {
+          args: Prisma.ProfissionalServicoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        update: {
+          args: Prisma.ProfissionalServicoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProfissionalServicoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProfissionalServicoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProfissionalServicoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProfissionalServicoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProfissionalServicoPayload>
+        }
+        aggregate: {
+          args: Prisma.ProfissionalServicoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProfissionalServico>
+        }
+        groupBy: {
+          args: Prisma.ProfissionalServicoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProfissionalServicoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProfissionalServicoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProfissionalServicoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1217,6 +1292,15 @@ export const EspecialidadeScalarFieldEnum = {
 } as const
 
 export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
+
+
+export const ProfissionalServicoScalarFieldEnum = {
+  id_profissional_servico: 'id_profissional_servico',
+  id_profissional: 'id_profissional',
+  id_servico: 'id_servico'
+} as const
+
+export type ProfissionalServicoScalarFieldEnum = (typeof ProfissionalServicoScalarFieldEnum)[keyof typeof ProfissionalServicoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1415,6 +1499,7 @@ export type GlobalOmitConfig = {
   servico?: Prisma.ServicoOmit
   refreshToken?: Prisma.RefreshTokenOmit
   especialidade?: Prisma.EspecialidadeOmit
+  profissionalServico?: Prisma.ProfissionalServicoOmit
 }
 
 /* Types for Logging */

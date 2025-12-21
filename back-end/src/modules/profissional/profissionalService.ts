@@ -8,6 +8,7 @@ import {
 } from "./profissionalDTO";
 import { AppError } from "../../shared/http/middlewares/error.middleware";
 import { prisma } from "../../shared/database/prisma";
+import { ServicoEntity } from "../servico/servicoDTO";
 
 export class ProfissionalService {
   constructor(private profissionalRepository: IProfissionalRepository) {}
@@ -62,4 +63,51 @@ async update(id: string, data: UpdateProfissionalDTO) {
   async updateHorario(id_horario: string, data: UpdateHorarioDTO) { return await this.profissionalRepository.updateHorario(id_horario, data); }
   async listHorarios(id: string) { return await this.profissionalRepository.listHorarios(id); }
   async deleteHorario(id_horario: string) { await this.profissionalRepository.deleteHorario(id_horario); }
+
+  // Serviços 
+  async addServico(id_profissional: string, id_servico: string) {
+    await this.getById(id_profissional);
+    const servico = await prisma.servico.findUnique({ where: { id_servico } });
+    if (!servico) throw new AppError("Serviço não encontrado", 404);
+
+    return await this.profissionalRepository.addServico(id_profissional, id_servico);
+  }
+
+  async removeServico(id_profissional: string, id_servico: string) {
+    await this.getById(id_profissional);
+    await this.profissionalRepository.removeServico(id_profissional, id_servico);
+  }
+
+  async listServicos(id_profissional: string): Promise<ServicoEntity[]> {
+    await this.getById(id_profissional);
+    return await this.profissionalRepository.listServicos(id_profissional);
+  }
+
+  async listServicosPaginated(id_profissional: string, page: number, limit: number) {
+    await this.getById(id_profissional);
+    const { data, total } = await this.profissionalRepository.findServicosPaginated(id_profissional, page, limit);
+    return { data, total, page, lastPage: Math.ceil(total / limit) };
+  }
+
+  async searchServicosPaginated(id_profissional: string, query: string, page: number, limit: number) {
+    await this.getById(id_profissional);
+    const { data, total } = await this.profissionalRepository.searchServicosPaginated(id_profissional, query, page, limit);
+    return { data, total, page, lastPage: Math.ceil(total / limit) };
+  }
+
+  async syncServicos(id_profissional: string, servicoIds: string[]) {
+    await this.getById(id_profissional);
+    if (servicoIds && servicoIds.length > 0) {
+      const encontrados = await prisma.servico.findMany({
+        where: { id_servico: { in: servicoIds } },
+        select: { id_servico: true },
+      });
+      const encontradosIds = new Set(encontrados.map(s => s.id_servico));
+      const invalid = servicoIds.filter(id => !encontradosIds.has(id));
+      if (invalid.length > 0) {
+        throw new AppError(`Serviços não encontrados: ${invalid.join(", ")}`, 404);
+      }
+    }
+    return await this.profissionalRepository.syncServicos(id_profissional, servicoIds || []);
+  }
 }

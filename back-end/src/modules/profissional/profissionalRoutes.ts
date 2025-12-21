@@ -26,4 +26,12 @@ profissionalRoutes.get("/:id_profissional/horarios", controller.listHorarios);
 profissionalRoutes.patch("/horarios/:id_horario", controller.updateHorario);
 profissionalRoutes.delete("/horarios/:id_horario", controller.deleteHorario);
 
+// Rotas Serviço (Profissional × Serviço)
+profissionalRoutes.post("/:id_profissional/servicos", controller.addServico); 
+profissionalRoutes.get("/:id_profissional/servicos", controller.listServicos);
+profissionalRoutes.get("/:id_profissional/servicos/paginated", controller.listServicosPaginated);
+profissionalRoutes.get("/:id_profissional/servicos/search", controller.searchServicosPaginated);
+profissionalRoutes.put("/:id_profissional/servicos", controller.syncServicos); 
+profissionalRoutes.delete("/:id_profissional/servicos", controller.removeServico); 
+
 export { profissionalRoutes };

@@ -185,6 +185,7 @@ export type ProfissionalWhereInput = {
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   horarios?: Prisma.Horario_TrabalhoListRelationFilter
   telefones?: Prisma.Profissional_telefoneListRelationFilter
+  servicos?: Prisma.ProfissionalServicoListRelationFilter
 }
 
 export type ProfissionalOrderByWithRelationInput = {
@@ -196,6 +197,7 @@ export type ProfissionalOrderByWithRelationInput = {
   usuario?: Prisma.UsuarioOrderByWithRelationInput
   horarios?: Prisma.Horario_TrabalhoOrderByRelationAggregateInput
   telefones?: Prisma.Profissional_telefoneOrderByRelationAggregateInput
+  servicos?: Prisma.ProfissionalServicoOrderByRelationAggregateInput
 }
 
 export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
@@ -210,6 +212,7 @@ export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   horarios?: Prisma.Horario_TrabalhoListRelationFilter
   telefones?: Prisma.Profissional_telefoneListRelationFilter
+  servicos?: Prisma.ProfissionalServicoListRelationFilter
 }, "id_profissional" | "cpf" | "id_usuario">
 
 export type ProfissionalOrderByWithAggregationInput = {
@@ -242,6 +245,7 @@ export type ProfissionalCreateInput = {
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
   horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateInput = {
@@ -252,6 +256,7 @@ export type ProfissionalUncheckedCreateInput = {
   id_usuario: string
   horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUpdateInput = {
@@ -262,6 +267,7 @@ export type ProfissionalUpdateInput = {
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
   horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateInput = {
@@ -272,6 +278,7 @@ export type ProfissionalUncheckedUpdateInput = {
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateManyInput = {
@@ -391,6 +398,20 @@ export type ProfissionalUpdateOneRequiredWithoutTelefonesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfissionalUpdateToOneWithWhereWithoutTelefonesInput, Prisma.ProfissionalUpdateWithoutTelefonesInput>, Prisma.ProfissionalUncheckedUpdateWithoutTelefonesInput>
 }
 
+export type ProfissionalCreateNestedOneWithoutServicosInput = {
+  create?: Prisma.XOR<Prisma.ProfissionalCreateWithoutServicosInput, Prisma.ProfissionalUncheckedCreateWithoutServicosInput>
+  connectOrCreate?: Prisma.ProfissionalCreateOrConnectWithoutServicosInput
+  connect?: Prisma.ProfissionalWhereUniqueInput
+}
+
+export type ProfissionalUpdateOneRequiredWithoutServicosNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfissionalCreateWithoutServicosInput, Prisma.ProfissionalUncheckedCreateWithoutServicosInput>
+  connectOrCreate?: Prisma.ProfissionalCreateOrConnectWithoutServicosInput
+  upsert?: Prisma.ProfissionalUpsertWithoutServicosInput
+  connect?: Prisma.ProfissionalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfissionalUpdateToOneWithWhereWithoutServicosInput, Prisma.ProfissionalUpdateWithoutServicosInput>, Prisma.ProfissionalUncheckedUpdateWithoutServicosInput>
+}
+
 export type ProfissionalCreateWithoutUsuarioInput = {
   id_profissional?: string
   nome: string
@@ -398,6 +419,7 @@ export type ProfissionalCreateWithoutUsuarioInput = {
   registro_conselho: string
   horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutUsuarioInput = {
@@ -407,6 +429,7 @@ export type ProfissionalUncheckedCreateWithoutUsuarioInput = {
   registro_conselho: string
   horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutUsuarioInput = {
@@ -432,6 +455,7 @@ export type ProfissionalUpdateWithoutUsuarioInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
@@ -441,6 +465,7 @@ export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutHorariosInput = {
@@ -450,6 +475,7 @@ export type ProfissionalCreateWithoutHorariosInput = {
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutHorariosInput = {
@@ -459,6 +485,7 @@ export type ProfissionalUncheckedCreateWithoutHorariosInput = {
   registro_conselho: string
   id_usuario: string
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutHorariosInput = {
@@ -484,6 +511,7 @@ export type ProfissionalUpdateWithoutHorariosInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
@@ -493,6 +521,7 @@ export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutTelefonesInput = {
@@ -502,6 +531,7 @@ export type ProfissionalCreateWithoutTelefonesInput = {
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
   horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutTelefonesInput = {
@@ -511,6 +541,7 @@ export type ProfissionalUncheckedCreateWithoutTelefonesInput = {
   registro_conselho: string
   id_usuario: string
   horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutTelefonesInput = {
@@ -536,6 +567,7 @@ export type ProfissionalUpdateWithoutTelefonesInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
   horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
@@ -545,6 +577,63 @@ export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
+}
+
+export type ProfissionalCreateWithoutServicosInput = {
+  id_profissional?: string
+  nome: string
+  cpf: string
+  registro_conselho: string
+  usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
+  horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
+  telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
+}
+
+export type ProfissionalUncheckedCreateWithoutServicosInput = {
+  id_profissional?: string
+  nome: string
+  cpf: string
+  registro_conselho: string
+  id_usuario: string
+  horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
+  telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
+}
+
+export type ProfissionalCreateOrConnectWithoutServicosInput = {
+  where: Prisma.ProfissionalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfissionalCreateWithoutServicosInput, Prisma.ProfissionalUncheckedCreateWithoutServicosInput>
+}
+
+export type ProfissionalUpsertWithoutServicosInput = {
+  update: Prisma.XOR<Prisma.ProfissionalUpdateWithoutServicosInput, Prisma.ProfissionalUncheckedUpdateWithoutServicosInput>
+  create: Prisma.XOR<Prisma.ProfissionalCreateWithoutServicosInput, Prisma.ProfissionalUncheckedCreateWithoutServicosInput>
+  where?: Prisma.ProfissionalWhereInput
+}
+
+export type ProfissionalUpdateToOneWithWhereWithoutServicosInput = {
+  where?: Prisma.ProfissionalWhereInput
+  data: Prisma.XOR<Prisma.ProfissionalUpdateWithoutServicosInput, Prisma.ProfissionalUncheckedUpdateWithoutServicosInput>
+}
+
+export type ProfissionalUpdateWithoutServicosInput = {
+  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
+  horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
+  telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
+}
+
+export type ProfissionalUncheckedUpdateWithoutServicosInput = {
+  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
+  telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 
@@ -555,11 +644,13 @@ export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
 export type ProfissionalCountOutputType = {
   horarios: number
   telefones: number
+  servicos: number
 }
 
 export type ProfissionalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   horarios?: boolean | ProfissionalCountOutputTypeCountHorariosArgs
   telefones?: boolean | ProfissionalCountOutputTypeCountTelefonesArgs
+  servicos?: boolean | ProfissionalCountOutputTypeCountServicosArgs
 }
 
 /**
@@ -586,6 +677,13 @@ export type ProfissionalCountOutputTypeCountTelefonesArgs<ExtArgs extends runtim
   where?: Prisma.Profissional_telefoneWhereInput
 }
 
+/**
+ * ProfissionalCountOutputType without action
+ */
+export type ProfissionalCountOutputTypeCountServicosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProfissionalServicoWhereInput
+}
+
 
 export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_profissional?: boolean
@@ -596,6 +694,7 @@ export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.Internal
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   horarios?: boolean | Prisma.Profissional$horariosArgs<ExtArgs>
   telefones?: boolean | Prisma.Profissional$telefonesArgs<ExtArgs>
+  servicos?: boolean | Prisma.Profissional$servicosArgs<ExtArgs>
   _count?: boolean | Prisma.ProfissionalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profissional"]>
 
@@ -630,6 +729,7 @@ export type ProfissionalInclude<ExtArgs extends runtime.Types.Extensions.Interna
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   horarios?: boolean | Prisma.Profissional$horariosArgs<ExtArgs>
   telefones?: boolean | Prisma.Profissional$telefonesArgs<ExtArgs>
+  servicos?: boolean | Prisma.Profissional$servicosArgs<ExtArgs>
   _count?: boolean | Prisma.ProfissionalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProfissionalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -645,6 +745,7 @@ export type $ProfissionalPayload<ExtArgs extends runtime.Types.Extensions.Intern
     usuario: Prisma.$UsuarioPayload<ExtArgs>
     horarios: Prisma.$Horario_TrabalhoPayload<ExtArgs>[]
     telefones: Prisma.$Profissional_telefonePayload<ExtArgs>[]
+    servicos: Prisma.$ProfissionalServicoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_profissional: string
@@ -1049,6 +1150,7 @@ export interface Prisma__ProfissionalClient<T, Null = never, ExtArgs extends run
   usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   horarios<T extends Prisma.Profissional$horariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$horariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$Horario_TrabalhoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   telefones<T extends Prisma.Profissional$telefonesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$telefonesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$Profissional_telefonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  servicos<T extends Prisma.Profissional$servicosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$servicosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfissionalServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1524,6 +1626,30 @@ export type Profissional$telefonesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.Profissional_telefoneScalarFieldEnum | Prisma.Profissional_telefoneScalarFieldEnum[]
+}
+
+/**
+ * Profissional.servicos
+ */
+export type Profissional$servicosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProfissionalServico
+   */
+  select?: Prisma.ProfissionalServicoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProfissionalServico
+   */
+  omit?: Prisma.ProfissionalServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProfissionalServicoInclude<ExtArgs> | null
+  where?: Prisma.ProfissionalServicoWhereInput
+  orderBy?: Prisma.ProfissionalServicoOrderByWithRelationInput | Prisma.ProfissionalServicoOrderByWithRelationInput[]
+  cursor?: Prisma.ProfissionalServicoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProfissionalServicoScalarFieldEnum | Prisma.ProfissionalServicoScalarFieldEnum[]
 }
 
 /**

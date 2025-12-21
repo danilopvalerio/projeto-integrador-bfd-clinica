@@ -77,4 +77,40 @@ export class ProfissionalController {
     await this.service.deleteHorario(req.params.id_horario);
     return res.status(204).send();
   };
+
+  // Serviços 
+  addServico = async (req: Request, res: Response) => {
+    const { id_servico } = req.body;
+    const resu = await this.service.addServico(req.params.id_profissional, id_servico);
+    return res.status(201).json(resu);
+  };
+
+  listServicos = async (req: Request, res: Response) => {
+    const resu = await this.service.listServicos(req.params.id_profissional);
+    return res.json(resu);
+  };
+
+  listServicosPaginated = async (req: Request, res: Response) => {
+    const { page = 1, limit = 10 } = req.query;
+    const resu = await this.service.listServicosPaginated(req.params.id_profissional, Number(page), Number(limit));
+    return res.json(resu);
+  };
+
+  searchServicosPaginated = async (req: Request, res: Response) => {
+    const { q = "", page = 1, limit = 10 } = req.query;
+    const resu = await this.service.searchServicosPaginated(req.params.id_profissional, String(q), Number(page), Number(limit));
+    return res.json(resu);
+  };
+
+  removeServico = async (req: Request, res: Response) => {
+    const id_servico = req.body.id_servico ?? req.query.id_servico;
+    await this.service.removeServico(req.params.id_profissional, String(id_servico));
+    return res.status(204).send();
+  };
+
+  syncServicos = async (req: Request, res: Response) => {
+    const { servicoIds } = req.body;
+    const resu = await this.service.syncServicos(req.params.id_profissional, servicoIds || []);
+    return res.json(resu);
+  };
 }
