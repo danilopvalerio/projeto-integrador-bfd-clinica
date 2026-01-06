@@ -45,6 +45,7 @@ model Profissional {
   usuario           Usuario              @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
   horarios          Horario_Trabalho[]
   telefones         Profissional_telefone[]
+  servicos       ProfissionalServico[]
 
   @@map("profissionais")
 }
@@ -95,6 +96,9 @@ model Servico {
   ativo                   Boolean   @default(true)
   preco_visivel_paciente  Boolean   @default(true)
   @@map("servicos")
+
+  // Relações
+  profissionais ProfissionalServico[]
 }
 
 model RefreshToken {
@@ -115,3 +119,18 @@ model Especialidade {
 
   @@map("especialidades")
 }
+
+model ProfissionalServico {
+  id_profissional String // FK
+  id_servico      String // FK
+
+  // Relacionamentos
+  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  servico         Servico      @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade)
+
+  // Chave composta
+  @@id([id_profissional, id_servico])
+  @@map("profissional_servicos")
+}
+
+
