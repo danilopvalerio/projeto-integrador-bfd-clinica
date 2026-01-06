@@ -38,7 +38,6 @@ export type ServicoSumAggregateOutputType = {
 
 export type ServicoMinAggregateOutputType = {
   id_servico: string | null
-  id_especialidade: string | null
   nome: string | null
   duracao_estimada: number | null
   descricao: string | null
@@ -49,7 +48,6 @@ export type ServicoMinAggregateOutputType = {
 
 export type ServicoMaxAggregateOutputType = {
   id_servico: string | null
-  id_especialidade: string | null
   nome: string | null
   duracao_estimada: number | null
   descricao: string | null
@@ -60,7 +58,6 @@ export type ServicoMaxAggregateOutputType = {
 
 export type ServicoCountAggregateOutputType = {
   id_servico: number
-  id_especialidade: number
   nome: number
   duracao_estimada: number
   descricao: number
@@ -83,7 +80,6 @@ export type ServicoSumAggregateInputType = {
 
 export type ServicoMinAggregateInputType = {
   id_servico?: true
-  id_especialidade?: true
   nome?: true
   duracao_estimada?: true
   descricao?: true
@@ -94,7 +90,6 @@ export type ServicoMinAggregateInputType = {
 
 export type ServicoMaxAggregateInputType = {
   id_servico?: true
-  id_especialidade?: true
   nome?: true
   duracao_estimada?: true
   descricao?: true
@@ -105,7 +100,6 @@ export type ServicoMaxAggregateInputType = {
 
 export type ServicoCountAggregateInputType = {
   id_servico?: true
-  id_especialidade?: true
   nome?: true
   duracao_estimada?: true
   descricao?: true
@@ -203,7 +197,6 @@ export type ServicoGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ServicoGroupByOutputType = {
   id_servico: string
-  id_especialidade: string | null
   nome: string
   duracao_estimada: number
   descricao: string
@@ -237,29 +230,28 @@ export type ServicoWhereInput = {
   OR?: Prisma.ServicoWhereInput[]
   NOT?: Prisma.ServicoWhereInput | Prisma.ServicoWhereInput[]
   id_servico?: Prisma.StringFilter<"Servico"> | string
-  id_especialidade?: Prisma.StringNullableFilter<"Servico"> | string | null
   nome?: Prisma.StringFilter<"Servico"> | string
   duracao_estimada?: Prisma.IntFilter<"Servico"> | number
   descricao?: Prisma.StringFilter<"Servico"> | string
   preco?: Prisma.FloatFilter<"Servico"> | number
   ativo?: Prisma.BoolFilter<"Servico"> | boolean
   preco_visivel_paciente?: Prisma.BoolFilter<"Servico"> | boolean
+  profissionais?: Prisma.ProfissionalServicoListRelationFilter
 }
 
 export type ServicoOrderByWithRelationInput = {
   id_servico?: Prisma.SortOrder
-  id_especialidade?: Prisma.SortOrderInput | Prisma.SortOrder
   nome?: Prisma.SortOrder
   duracao_estimada?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
   preco?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   preco_visivel_paciente?: Prisma.SortOrder
+  profissionais?: Prisma.ProfissionalServicoOrderByRelationAggregateInput
 }
 
 export type ServicoWhereUniqueInput = Prisma.AtLeast<{
   id_servico?: string
-  id_especialidade?: string
   AND?: Prisma.ServicoWhereInput | Prisma.ServicoWhereInput[]
   OR?: Prisma.ServicoWhereInput[]
   NOT?: Prisma.ServicoWhereInput | Prisma.ServicoWhereInput[]
@@ -269,11 +261,11 @@ export type ServicoWhereUniqueInput = Prisma.AtLeast<{
   preco?: Prisma.FloatFilter<"Servico"> | number
   ativo?: Prisma.BoolFilter<"Servico"> | boolean
   preco_visivel_paciente?: Prisma.BoolFilter<"Servico"> | boolean
-}, "id_servico" | "id_especialidade">
+  profissionais?: Prisma.ProfissionalServicoListRelationFilter
+}, "id_servico">
 
 export type ServicoOrderByWithAggregationInput = {
   id_servico?: Prisma.SortOrder
-  id_especialidade?: Prisma.SortOrderInput | Prisma.SortOrder
   nome?: Prisma.SortOrder
   duracao_estimada?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -292,7 +284,6 @@ export type ServicoScalarWhereWithAggregatesInput = {
   OR?: Prisma.ServicoScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ServicoScalarWhereWithAggregatesInput | Prisma.ServicoScalarWhereWithAggregatesInput[]
   id_servico?: Prisma.StringWithAggregatesFilter<"Servico"> | string
-  id_especialidade?: Prisma.StringNullableWithAggregatesFilter<"Servico"> | string | null
   nome?: Prisma.StringWithAggregatesFilter<"Servico"> | string
   duracao_estimada?: Prisma.IntWithAggregatesFilter<"Servico"> | number
   descricao?: Prisma.StringWithAggregatesFilter<"Servico"> | string
@@ -303,51 +294,50 @@ export type ServicoScalarWhereWithAggregatesInput = {
 
 export type ServicoCreateInput = {
   id_servico?: string
-  id_especialidade?: string | null
   nome: string
   duracao_estimada: number
   descricao: string
   preco: number
   ativo?: boolean
   preco_visivel_paciente?: boolean
+  profissionais?: Prisma.ProfissionalServicoCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoUncheckedCreateInput = {
   id_servico?: string
-  id_especialidade?: string | null
   nome: string
   duracao_estimada: number
   descricao: string
   preco: number
   ativo?: boolean
   preco_visivel_paciente?: boolean
+  profissionais?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoUpdateInput = {
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
-  id_especialidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
   preco?: Prisma.FloatFieldUpdateOperationsInput | number
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profissionais?: Prisma.ProfissionalServicoUpdateManyWithoutServicoNestedInput
 }
 
 export type ServicoUncheckedUpdateInput = {
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
-  id_especialidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
   preco?: Prisma.FloatFieldUpdateOperationsInput | number
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profissionais?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutServicoNestedInput
 }
 
 export type ServicoCreateManyInput = {
   id_servico?: string
-  id_especialidade?: string | null
   nome: string
   duracao_estimada: number
   descricao: string
@@ -358,7 +348,6 @@ export type ServicoCreateManyInput = {
 
 export type ServicoUpdateManyMutationInput = {
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
-  id_especialidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -369,7 +358,6 @@ export type ServicoUpdateManyMutationInput = {
 
 export type ServicoUncheckedUpdateManyInput = {
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
-  id_especialidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -380,7 +368,6 @@ export type ServicoUncheckedUpdateManyInput = {
 
 export type ServicoCountOrderByAggregateInput = {
   id_servico?: Prisma.SortOrder
-  id_especialidade?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   duracao_estimada?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -396,7 +383,6 @@ export type ServicoAvgOrderByAggregateInput = {
 
 export type ServicoMaxOrderByAggregateInput = {
   id_servico?: Prisma.SortOrder
-  id_especialidade?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   duracao_estimada?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -407,7 +393,6 @@ export type ServicoMaxOrderByAggregateInput = {
 
 export type ServicoMinOrderByAggregateInput = {
   id_servico?: Prisma.SortOrder
-  id_especialidade?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   duracao_estimada?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -421,6 +406,11 @@ export type ServicoSumOrderByAggregateInput = {
   preco?: Prisma.SortOrder
 }
 
+export type ServicoScalarRelationFilter = {
+  is?: Prisma.ServicoWhereInput
+  isNot?: Prisma.ServicoWhereInput
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -429,22 +419,121 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type ServicoCreateNestedOneWithoutProfissionaisInput = {
+  create?: Prisma.XOR<Prisma.ServicoCreateWithoutProfissionaisInput, Prisma.ServicoUncheckedCreateWithoutProfissionaisInput>
+  connectOrCreate?: Prisma.ServicoCreateOrConnectWithoutProfissionaisInput
+  connect?: Prisma.ServicoWhereUniqueInput
+}
+
+export type ServicoUpdateOneRequiredWithoutProfissionaisNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicoCreateWithoutProfissionaisInput, Prisma.ServicoUncheckedCreateWithoutProfissionaisInput>
+  connectOrCreate?: Prisma.ServicoCreateOrConnectWithoutProfissionaisInput
+  upsert?: Prisma.ServicoUpsertWithoutProfissionaisInput
+  connect?: Prisma.ServicoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServicoUpdateToOneWithWhereWithoutProfissionaisInput, Prisma.ServicoUpdateWithoutProfissionaisInput>, Prisma.ServicoUncheckedUpdateWithoutProfissionaisInput>
+}
+
+export type ServicoCreateWithoutProfissionaisInput = {
+  id_servico?: string
+  nome: string
+  duracao_estimada: number
+  descricao: string
+  preco: number
+  ativo?: boolean
+  preco_visivel_paciente?: boolean
+}
+
+export type ServicoUncheckedCreateWithoutProfissionaisInput = {
+  id_servico?: string
+  nome: string
+  duracao_estimada: number
+  descricao: string
+  preco: number
+  ativo?: boolean
+  preco_visivel_paciente?: boolean
+}
+
+export type ServicoCreateOrConnectWithoutProfissionaisInput = {
+  where: Prisma.ServicoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicoCreateWithoutProfissionaisInput, Prisma.ServicoUncheckedCreateWithoutProfissionaisInput>
+}
+
+export type ServicoUpsertWithoutProfissionaisInput = {
+  update: Prisma.XOR<Prisma.ServicoUpdateWithoutProfissionaisInput, Prisma.ServicoUncheckedUpdateWithoutProfissionaisInput>
+  create: Prisma.XOR<Prisma.ServicoCreateWithoutProfissionaisInput, Prisma.ServicoUncheckedCreateWithoutProfissionaisInput>
+  where?: Prisma.ServicoWhereInput
+}
+
+export type ServicoUpdateToOneWithWhereWithoutProfissionaisInput = {
+  where?: Prisma.ServicoWhereInput
+  data: Prisma.XOR<Prisma.ServicoUpdateWithoutProfissionaisInput, Prisma.ServicoUncheckedUpdateWithoutProfissionaisInput>
+}
+
+export type ServicoUpdateWithoutProfissionaisInput = {
+  id_servico?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
+  descricao?: Prisma.StringFieldUpdateOperationsInput | string
+  preco?: Prisma.FloatFieldUpdateOperationsInput | number
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type ServicoUncheckedUpdateWithoutProfissionaisInput = {
+  id_servico?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
+  descricao?: Prisma.StringFieldUpdateOperationsInput | string
+  preco?: Prisma.FloatFieldUpdateOperationsInput | number
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+
+/**
+ * Count Type ServicoCountOutputType
+ */
+
+export type ServicoCountOutputType = {
+  profissionais: number
+}
+
+export type ServicoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  profissionais?: boolean | ServicoCountOutputTypeCountProfissionaisArgs
+}
+
+/**
+ * ServicoCountOutputType without action
+ */
+export type ServicoCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServicoCountOutputType
+   */
+  select?: Prisma.ServicoCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ServicoCountOutputType without action
+ */
+export type ServicoCountOutputTypeCountProfissionaisArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProfissionalServicoWhereInput
+}
 
 
 export type ServicoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_servico?: boolean
-  id_especialidade?: boolean
   nome?: boolean
   duracao_estimada?: boolean
   descricao?: boolean
   preco?: boolean
   ativo?: boolean
   preco_visivel_paciente?: boolean
+  profissionais?: boolean | Prisma.Servico$profissionaisArgs<ExtArgs>
+  _count?: boolean | Prisma.ServicoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["servico"]>
 
 export type ServicoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_servico?: boolean
-  id_especialidade?: boolean
   nome?: boolean
   duracao_estimada?: boolean
   descricao?: boolean
@@ -455,7 +544,6 @@ export type ServicoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type ServicoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_servico?: boolean
-  id_especialidade?: boolean
   nome?: boolean
   duracao_estimada?: boolean
   descricao?: boolean
@@ -466,7 +554,6 @@ export type ServicoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type ServicoSelectScalar = {
   id_servico?: boolean
-  id_especialidade?: boolean
   nome?: boolean
   duracao_estimada?: boolean
   descricao?: boolean
@@ -475,14 +562,21 @@ export type ServicoSelectScalar = {
   preco_visivel_paciente?: boolean
 }
 
-export type ServicoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_servico" | "id_especialidade" | "nome" | "duracao_estimada" | "descricao" | "preco" | "ativo" | "preco_visivel_paciente", ExtArgs["result"]["servico"]>
+export type ServicoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_servico" | "nome" | "duracao_estimada" | "descricao" | "preco" | "ativo" | "preco_visivel_paciente", ExtArgs["result"]["servico"]>
+export type ServicoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  profissionais?: boolean | Prisma.Servico$profissionaisArgs<ExtArgs>
+  _count?: boolean | Prisma.ServicoCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type ServicoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ServicoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ServicoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Servico"
-  objects: {}
+  objects: {
+    profissionais: Prisma.$ProfissionalServicoPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_servico: string
-    id_especialidade: string | null
     nome: string
     duracao_estimada: number
     descricao: string
@@ -883,6 +977,7 @@ readonly fields: ServicoFieldRefs;
  */
 export interface Prisma__ServicoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  profissionais<T extends Prisma.Servico$profissionaisArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Servico$profissionaisArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfissionalServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -913,7 +1008,6 @@ export interface Prisma__ServicoClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface ServicoFieldRefs {
   readonly id_servico: Prisma.FieldRef<"Servico", 'String'>
-  readonly id_especialidade: Prisma.FieldRef<"Servico", 'String'>
   readonly nome: Prisma.FieldRef<"Servico", 'String'>
   readonly duracao_estimada: Prisma.FieldRef<"Servico", 'Int'>
   readonly descricao: Prisma.FieldRef<"Servico", 'String'>
@@ -937,6 +1031,10 @@ export type ServicoFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * Filter, which Servico to fetch.
    */
   where: Prisma.ServicoWhereUniqueInput
@@ -955,6 +1053,10 @@ export type ServicoFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * Filter, which Servico to fetch.
    */
   where: Prisma.ServicoWhereUniqueInput
@@ -972,6 +1074,10 @@ export type ServicoFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Servico
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
   /**
    * Filter, which Servico to fetch.
    */
@@ -1021,6 +1127,10 @@ export type ServicoFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * Filter, which Servico to fetch.
    */
   where?: Prisma.ServicoWhereInput
@@ -1069,6 +1179,10 @@ export type ServicoFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * Filter, which Servicos to fetch.
    */
   where?: Prisma.ServicoWhereInput
@@ -1111,6 +1225,10 @@ export type ServicoCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Servico
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
   /**
    * The data needed to create a Servico.
    */
@@ -1159,6 +1277,10 @@ export type ServicoUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Servico
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
   /**
    * The data needed to update a Servico.
    */
@@ -1226,6 +1348,10 @@ export type ServicoUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * The filter to search for the Servico to update in case it exists.
    */
   where: Prisma.ServicoWhereUniqueInput
@@ -1252,6 +1378,10 @@ export type ServicoDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
+  /**
    * Filter which Servico to delete.
    */
   where: Prisma.ServicoWhereUniqueInput
@@ -1272,6 +1402,30 @@ export type ServicoDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Servico.profissionais
+ */
+export type Servico$profissionaisArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProfissionalServico
+   */
+  select?: Prisma.ProfissionalServicoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProfissionalServico
+   */
+  omit?: Prisma.ProfissionalServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProfissionalServicoInclude<ExtArgs> | null
+  where?: Prisma.ProfissionalServicoWhereInput
+  orderBy?: Prisma.ProfissionalServicoOrderByWithRelationInput | Prisma.ProfissionalServicoOrderByWithRelationInput[]
+  cursor?: Prisma.ProfissionalServicoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProfissionalServicoScalarFieldEnum | Prisma.ProfissionalServicoScalarFieldEnum[]
+}
+
+/**
  * Servico without action
  */
 export type ServicoDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1283,4 +1437,8 @@ export type ServicoDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Servico
    */
   omit?: Prisma.ServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServicoInclude<ExtArgs> | null
 }

@@ -80,12 +80,17 @@ export type Endereco = Prisma.EnderecoModel
  */
 export type Servico = Prisma.ServicoModel
 /**
- * Model RefreshToken
- * 
- */
-export type RefreshToken = Prisma.RefreshTokenModel
-/**
  * Model Especialidade
  * 
  */
 export type Especialidade = Prisma.EspecialidadeModel
+/**
+ * Model ProfissionalServico
+ * 
+ */
+export type ProfissionalServico = Prisma.ProfissionalServicoModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel

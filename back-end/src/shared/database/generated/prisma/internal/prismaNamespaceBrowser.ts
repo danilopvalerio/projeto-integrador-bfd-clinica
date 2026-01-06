@@ -59,8 +59,9 @@ export const ModelName = {
   Profissional_Especialidade: 'Profissional_Especialidade',
   Endereco: 'Endereco',
   Servico: 'Servico',
-  RefreshToken: 'RefreshToken',
-  Especialidade: 'Especialidade'
+  Especialidade: 'Especialidade',
+  ProfissionalServico: 'ProfissionalServico',
+  RefreshToken: 'RefreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -156,7 +157,6 @@ export type EnderecoScalarFieldEnum = (typeof EnderecoScalarFieldEnum)[keyof typ
 
 export const ServicoScalarFieldEnum = {
   id_servico: 'id_servico',
-  id_especialidade: 'id_especialidade',
   nome: 'nome',
   duracao_estimada: 'duracao_estimada',
   descricao: 'descricao',
@@ -166,6 +166,24 @@ export const ServicoScalarFieldEnum = {
 } as const
 
 export type ServicoScalarFieldEnum = (typeof ServicoScalarFieldEnum)[keyof typeof ServicoScalarFieldEnum]
+
+
+export const EspecialidadeScalarFieldEnum = {
+  id_especialidade: 'id_especialidade',
+  nome: 'nome',
+  descricao: 'descricao'
+} as const
+
+export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
+
+
+export const ProfissionalServicoScalarFieldEnum = {
+  id_profissional_servico: 'id_profissional_servico',
+  id_profissional: 'id_profissional',
+  id_servico: 'id_servico'
+} as const
+
+export type ProfissionalServicoScalarFieldEnum = (typeof ProfissionalServicoScalarFieldEnum)[keyof typeof ProfissionalServicoScalarFieldEnum]
 
 
 export const RefreshTokenScalarFieldEnum = {
@@ -178,15 +196,6 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
-
-
-export const EspecialidadeScalarFieldEnum = {
-  id_especialidade: 'id_especialidade',
-  nome: 'nome',
-  descricao: 'descricao'
-} as const
-
-export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)[keyof typeof EspecialidadeScalarFieldEnum]
 
 
 export const SortOrder = {

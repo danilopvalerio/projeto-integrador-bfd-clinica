@@ -197,8 +197,8 @@ export type Profissional_EspecialidadeScalarWhereWithAggregatesInput = {
 }
 
 export type Profissional_EspecialidadeCreateInput = {
-  profissional: Prisma.ProfissionalCreateNestedOneWithoutEspecialidadeInput
-  especialidade: Prisma.EspecialidadeCreateNestedOneWithoutProfissionalInput
+  profissional: Prisma.ProfissionalCreateNestedOneWithoutEspecialidadesInput
+  especialidade: Prisma.EspecialidadeCreateNestedOneWithoutProfissionaisInput
 }
 
 export type Profissional_EspecialidadeUncheckedCreateInput = {
@@ -207,8 +207,8 @@ export type Profissional_EspecialidadeUncheckedCreateInput = {
 }
 
 export type Profissional_EspecialidadeUpdateInput = {
-  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutEspecialidadeNestedInput
-  especialidade?: Prisma.EspecialidadeUpdateOneRequiredWithoutProfissionalNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutEspecialidadesNestedInput
+  especialidade?: Prisma.EspecialidadeUpdateOneRequiredWithoutProfissionaisNestedInput
 }
 
 export type Profissional_EspecialidadeUncheckedUpdateInput = {
@@ -345,7 +345,7 @@ export type Profissional_EspecialidadeUncheckedUpdateManyWithoutEspecialidadeNes
 }
 
 export type Profissional_EspecialidadeCreateWithoutProfissionalInput = {
-  especialidade: Prisma.EspecialidadeCreateNestedOneWithoutProfissionalInput
+  especialidade: Prisma.EspecialidadeCreateNestedOneWithoutProfissionaisInput
 }
 
 export type Profissional_EspecialidadeUncheckedCreateWithoutProfissionalInput = {
@@ -387,7 +387,7 @@ export type Profissional_EspecialidadeScalarWhereInput = {
 }
 
 export type Profissional_EspecialidadeCreateWithoutEspecialidadeInput = {
-  profissional: Prisma.ProfissionalCreateNestedOneWithoutEspecialidadeInput
+  profissional: Prisma.ProfissionalCreateNestedOneWithoutEspecialidadesInput
 }
 
 export type Profissional_EspecialidadeUncheckedCreateWithoutEspecialidadeInput = {
@@ -425,7 +425,7 @@ export type Profissional_EspecialidadeCreateManyProfissionalInput = {
 }
 
 export type Profissional_EspecialidadeUpdateWithoutProfissionalInput = {
-  especialidade?: Prisma.EspecialidadeUpdateOneRequiredWithoutProfissionalNestedInput
+  especialidade?: Prisma.EspecialidadeUpdateOneRequiredWithoutProfissionaisNestedInput
 }
 
 export type Profissional_EspecialidadeUncheckedUpdateWithoutProfissionalInput = {
@@ -441,7 +441,7 @@ export type Profissional_EspecialidadeCreateManyEspecialidadeInput = {
 }
 
 export type Profissional_EspecialidadeUpdateWithoutEspecialidadeInput = {
-  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutEspecialidadeNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutEspecialidadesNestedInput
 }
 
 export type Profissional_EspecialidadeUncheckedUpdateWithoutEspecialidadeInput = {

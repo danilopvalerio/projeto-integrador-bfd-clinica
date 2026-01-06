@@ -3,7 +3,7 @@
     "module": "ESNext",
     "baseUrl": "./src",
     "moduleResolution": "node",
-    "target": "ES2023",
+    "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
     "ignoreDeprecations": "5.0",

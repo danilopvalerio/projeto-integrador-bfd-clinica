@@ -28,50 +28,49 @@ model Paciente {
   data_nascimento DateTime @db.Date
   id_usuario      String   @unique
   id_endereco     String
-  endereco        Endereco @relation(fields: [id_endereco], references: [id_endereco])
-  usuario         Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+
+  endereco Endereco @relation(fields: [id_endereco], references: [id_endereco])
+  usuario  Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("pacientes")
 }
 
 model Profissional {
-  id_profissional   String               @id @default(uuid())
-  nome              String               @db.VarChar(200)
-  cpf               String               @unique @db.VarChar(11)
-  registro_conselho String               @db.VarChar
-  id_usuario        String               @unique  // Removido @db.Uuid
-  
+  id_profissional   String @id @default(uuid())
+  nome              String @db.VarChar(200)
+  cpf               String @unique @db.VarChar(11)
+  registro_conselho String @db.VarChar(50)
+  id_usuario        String @unique
+
   // Relações
-  usuario           Usuario              @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
-  horarios          Horario_Trabalho[]
-  telefones         Profissional_telefone[]
-  especialidade     Profissional_Especialidade[]
+  usuario        Usuario                      @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  horarios       Horario_Trabalho[]
+  telefones      Profissional_telefone[]
+  especialidades Profissional_Especialidade[]
   servicos       ProfissionalServico[]
 
   @@map("profissionais")
 }
 
 model Horario_Trabalho {
-  id_horario      String       @id @default(uuid())
-  dia_semana      Int          // Representando o dia da semana como número (0-6 ou 1-7)
-  hora_inicio     DateTime     @db.Time
-  hora_fim        DateTime     @db.Time
-  id_profissional String       // Removido @db.Uuid
-  
-  // Relação
-  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  id_horario      String   @id @default(uuid())
+  dia_semana      Int
+  hora_inicio     DateTime @db.Time
+  hora_fim        DateTime @db.Time
+  id_profissional String
+
+  profissional Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
 
   @@map("horarios_trabalho")
 }
 
 model Profissional_telefone {
-  id_telefone     String       @id @default(uuid())
-  telefone        String       @db.VarChar(11)
-  principal       Boolean      @default(false)
-  id_profissional String       // Removido @db.Uuid
-  
-  // Relação
-  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  id_telefone     String  @id @default(uuid())
+  telefone        String  @db.VarChar(11)
+  principal       Boolean @default(false)
+  id_profissional String
+
+  profissional Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
 
   @@map("profissional_telefones")
 }
@@ -80,14 +79,12 @@ model Profissional_Especialidade {
   id_profissional  String
   id_especialidade String
 
-  profissional   Profissional   @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
-  especialidade  Especialidade  @relation(fields: [id_especialidade], references: [id_especialidade], onDelete: Cascade)
+  profissional  Profissional  @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  especialidade Especialidade @relation(fields: [id_especialidade], references: [id_especialidade], onDelete: Cascade)
 
   @@id([id_profissional, id_especialidade])
   @@map("profissionais_especialidades")
 }
-
-
 
 model Endereco {
   id_endereco String     @id @default(uuid())
@@ -101,18 +98,39 @@ model Endereco {
 }
 
 model Servico {
-  id_servico              String    @id @default(uuid())
-  id_especialidade        String?   @unique
-  nome                    String    @db.VarChar(200)
-  duracao_estimada        Int  
-  descricao               String    @db.Text
-  preco                   Float
-  ativo                   Boolean   @default(true)
-  preco_visivel_paciente  Boolean   @default(true)
-  @@map("servicos")
+  id_servico             String  @id @default(uuid())
+  nome                   String  @db.VarChar(200)
+  duracao_estimada       Int
+  descricao              String  @db.Text
+  preco                  Float
+  ativo                  Boolean @default(true)
+  preco_visivel_paciente Boolean @default(true)
 
-  // Relações
   profissionais ProfissionalServico[]
+
+  @@map("servicos")
+}
+
+model Especialidade {
+  id_especialidade String  @id @default(uuid())
+  nome             String  @unique @db.VarChar(200)
+  descricao        String? @db.Text
+
+  profissionais Profissional_Especialidade[]
+
+  @@map("especialidades")
+}
+
+model ProfissionalServico {
+  id_profissional_servico String @id @default(uuid())
+  id_profissional         String
+  id_servico              String
+
+  profissional Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  servico      Servico      @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade)
+
+  @@unique([id_profissional, id_servico])
+  @@map("profissional_servico")
 }
 
 model RefreshToken {
@@ -122,30 +140,8 @@ model RefreshToken {
   criado_em        DateTime? @default(now()) @db.Timestamp(6)
   ativo            Boolean?  @default(true)
   id_usuario       String
-  usuario          Usuario   @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }
-model Especialidade {
-  id_especialidade String   @id @default(uuid())
-  nome             String   @unique @db.VarChar(200)
-  descricao        String?  @db.Text
-  profissional     Profissional_Especialidade[]
-
-  @@map("especialidades")
-}
-
-model ProfissionalServico {
-  id_profissional String // FK
-  id_servico      String // FK
-
-  // Relacionamentos
-  profissional    Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
-  servico         Servico      @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade)
-
-  // Chave composta
-  @@id([id_profissional, id_servico])
-  @@map("profissional_servicos")
-}
-
-

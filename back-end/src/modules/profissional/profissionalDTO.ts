@@ -1,4 +1,6 @@
-import { IBaseRepository } from "@/shared/dtos/index.dto";
+import { IBaseRepository, RepositoryPaginatedResult } from "@/shared/dtos/index.dto";
+import { ServicoEntity } from "../servico/servicoDTO";
+
 
 export interface ProfissionalEntity {
   id_profissional: string;
@@ -50,6 +52,7 @@ export interface IProfissionalRepository
   deleteHorario(id_horario: string): Promise<void>;
   listHorarios(id_profissional: string): Promise<any[]>;
 
+<<<<<<< HEAD
 
   // Especialidades 
   linkSpecialtyToProfessional(
@@ -84,4 +87,13 @@ export interface IProfissionalRepository
     especialidadesIds: string[]
   ): Promise<void>;
 
+=======
+  // Métodos de Serviço (Profissional x Servico)
+  addServico(id_profissional: string, id_servico: string): Promise<any>;
+  removeServico(id_profissional: string, id_servico: string): Promise<void>;
+  listServicos(id_profissional: string): Promise<ServicoEntity[]>;
+  findServicosPaginated(id_profissional: string, page: number, limit: number): Promise<RepositoryPaginatedResult<ServicoEntity>>;
+  searchServicosPaginated(id_profissional: string, query: string, page: number, limit: number): Promise<RepositoryPaginatedResult<ServicoEntity>>;
+  syncServicos(id_profissional: string, servicoIds: string[]): Promise<ServicoEntity[]>;
+>>>>>>> origin/feature/profissional-servico
 }
