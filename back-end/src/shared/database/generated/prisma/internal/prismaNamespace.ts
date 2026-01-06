@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.1.0
- * Query Engine version: ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba
+ * Prisma Client JS version: 7.2.0
+ * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.1.0",
-  engine: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
+  client: "7.2.0",
+  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
 }
 
 /**
@@ -389,6 +389,7 @@ export const ModelName = {
   Profissional: 'Profissional',
   Horario_Trabalho: 'Horario_Trabalho',
   Profissional_telefone: 'Profissional_telefone',
+  Profissional_Especialidade: 'Profissional_Especialidade',
   Endereco: 'Endereco',
   Servico: 'Servico',
   RefreshToken: 'RefreshToken',
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "endereco" | "servico" | "refreshToken" | "especialidade"
+    modelProps: "usuario" | "paciente" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "profissional_Especialidade" | "endereco" | "servico" | "refreshToken" | "especialidade"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -779,6 +780,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.Profissional_telefoneCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.Profissional_telefoneCountAggregateOutputType> | number
+        }
+      }
+    }
+    Profissional_Especialidade: {
+      payload: Prisma.$Profissional_EspecialidadePayload<ExtArgs>
+      fields: Prisma.Profissional_EspecialidadeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.Profissional_EspecialidadeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.Profissional_EspecialidadeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        findFirst: {
+          args: Prisma.Profissional_EspecialidadeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.Profissional_EspecialidadeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        findMany: {
+          args: Prisma.Profissional_EspecialidadeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>[]
+        }
+        create: {
+          args: Prisma.Profissional_EspecialidadeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        createMany: {
+          args: Prisma.Profissional_EspecialidadeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.Profissional_EspecialidadeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>[]
+        }
+        delete: {
+          args: Prisma.Profissional_EspecialidadeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        update: {
+          args: Prisma.Profissional_EspecialidadeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        deleteMany: {
+          args: Prisma.Profissional_EspecialidadeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.Profissional_EspecialidadeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.Profissional_EspecialidadeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>[]
+        }
+        upsert: {
+          args: Prisma.Profissional_EspecialidadeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$Profissional_EspecialidadePayload>
+        }
+        aggregate: {
+          args: Prisma.Profissional_EspecialidadeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProfissional_Especialidade>
+        }
+        groupBy: {
+          args: Prisma.Profissional_EspecialidadeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Profissional_EspecialidadeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.Profissional_EspecialidadeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Profissional_EspecialidadeCountAggregateOutputType> | number
         }
       }
     }
@@ -1173,6 +1248,14 @@ export const Profissional_telefoneScalarFieldEnum = {
 export type Profissional_telefoneScalarFieldEnum = (typeof Profissional_telefoneScalarFieldEnum)[keyof typeof Profissional_telefoneScalarFieldEnum]
 
 
+export const Profissional_EspecialidadeScalarFieldEnum = {
+  id_profissional: 'id_profissional',
+  id_especialidade: 'id_especialidade'
+} as const
+
+export type Profissional_EspecialidadeScalarFieldEnum = (typeof Profissional_EspecialidadeScalarFieldEnum)[keyof typeof Profissional_EspecialidadeScalarFieldEnum]
+
+
 export const EnderecoScalarFieldEnum = {
   id_endereco: 'id_endereco',
   rua: 'rua',
@@ -1411,6 +1494,7 @@ export type GlobalOmitConfig = {
   profissional?: Prisma.ProfissionalOmit
   horario_Trabalho?: Prisma.Horario_TrabalhoOmit
   profissional_telefone?: Prisma.Profissional_telefoneOmit
+  profissional_Especialidade?: Prisma.Profissional_EspecialidadeOmit
   endereco?: Prisma.EnderecoOmit
   servico?: Prisma.ServicoOmit
   refreshToken?: Prisma.RefreshTokenOmit

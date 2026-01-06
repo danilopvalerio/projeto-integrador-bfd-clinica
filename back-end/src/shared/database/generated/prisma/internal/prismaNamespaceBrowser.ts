@@ -56,6 +56,7 @@ export const ModelName = {
   Profissional: 'Profissional',
   Horario_Trabalho: 'Horario_Trabalho',
   Profissional_telefone: 'Profissional_telefone',
+  Profissional_Especialidade: 'Profissional_Especialidade',
   Endereco: 'Endereco',
   Servico: 'Servico',
   RefreshToken: 'RefreshToken',
@@ -132,6 +133,14 @@ export const Profissional_telefoneScalarFieldEnum = {
 } as const
 
 export type Profissional_telefoneScalarFieldEnum = (typeof Profissional_telefoneScalarFieldEnum)[keyof typeof Profissional_telefoneScalarFieldEnum]
+
+
+export const Profissional_EspecialidadeScalarFieldEnum = {
+  id_profissional: 'id_profissional',
+  id_especialidade: 'id_especialidade'
+} as const
+
+export type Profissional_EspecialidadeScalarFieldEnum = (typeof Profissional_EspecialidadeScalarFieldEnum)[keyof typeof Profissional_EspecialidadeScalarFieldEnum]
 
 
 export const EnderecoScalarFieldEnum = {
