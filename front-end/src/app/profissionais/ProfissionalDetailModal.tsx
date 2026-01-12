@@ -34,7 +34,7 @@ const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) 
     id_usuario: "",
   });
 
-  // Fecha no ESC (igual Services)
+  
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

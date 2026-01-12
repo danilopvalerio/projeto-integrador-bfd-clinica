@@ -38,7 +38,7 @@ export default function ProfissionaisPage() {
     const token = localStorage.getItem("accessToken");
     if (!token) router.push("/login");
     else fetchProfissionais(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [router]);
 
   const fetchProfissionais = async (page = 1, term = "") => {

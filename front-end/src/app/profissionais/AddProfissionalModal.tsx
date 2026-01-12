@@ -19,7 +19,6 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔹 AGORA usando o tipo correto do formulário
   const [formData, setFormData] = useState<ProfissionalFormData>({
     nome: "",
     cpf: "",
@@ -27,7 +26,6 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
     id_usuario: "",
   });
 
-  // Fecha no ESC (igual padrão Services)
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -41,7 +39,7 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
     setError("");
 
     try {
-      // 🔹 Monta o payload exatamente como o backend espera
+      
       await api.post("/professionals", {
         nome: formData.nome ?? "",
         cpf: formData.cpf ?? "",
