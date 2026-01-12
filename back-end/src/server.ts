@@ -43,6 +43,7 @@ async function startServer() {
     await prisma.$connect();
     console.log("✅ Banco de dados e Prisma conectados com sucesso!");
 
+    /*
     // 1. Garante que o admin existe
     await criaAdmin();
 
@@ -52,6 +53,7 @@ async function startServer() {
 
     // console.table deixa a visualização muito mais organizada no terminal
     console.table(todosUsuarios);
+    */
 
     app.listen(PORT, () => {
       console.log(
