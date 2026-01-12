@@ -4,6 +4,8 @@ import { userRoutes } from "@/modules/user/userRoutes";
 import { sessionRoutes } from "@/modules/session/sessionRoutes";
 import { servicoRoutes } from "@/modules/servico/servicoRoutes";
 import { especialidadeRoutes } from "@/modules/especialidade/especialidadeRoutes";
+import { profissionalRoutes } from "@/modules/profissional/profissionalRoutes";
+
 
 const router = Router();
 
@@ -20,5 +22,6 @@ router.use("/users", userRoutes);
 router.use("/sessions", sessionRoutes);
 router.use("/specialities", especialidadeRoutes);
 router.use("/services", servicoRoutes);
+router.use("/professionals", profissionalRoutes);
 
 export default router;
