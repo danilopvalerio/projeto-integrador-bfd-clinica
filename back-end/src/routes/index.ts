@@ -2,8 +2,8 @@
 import { Router } from "express";
 import { userRoutes } from "@/modules/user/userRoutes";
 import { sessionRoutes } from "@/modules/session/sessionRoutes";
-
-import { specialtyRoutes } from "@/modules/specialty/specialtyRoutes";
+import { servicoRoutes } from "@/modules/servico/servicoRoutes";
+import { especialidadeRoutes } from "@/modules/especialidade/especialidadeRoutes";
 
 const router = Router();
 
@@ -18,9 +18,7 @@ router.get("/health", (req, res) => {
 // // Rotas de Negócio (Protegidas internamente)
 router.use("/users", userRoutes);
 router.use("/sessions", sessionRoutes);
-
-router.use("/specialties", specialtyRoutes);
+router.use("/specialities", especialidadeRoutes);
+router.use("/services", servicoRoutes);
 
 export default router;
-
-

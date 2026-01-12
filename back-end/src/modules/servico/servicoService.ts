@@ -1,3 +1,4 @@
+//src/modules/servico/servicoService.ts
 import {
   IServicoRepository,
   CreateServicoDTO,
@@ -39,7 +40,10 @@ export class ServicoService {
     return servicos.map(this.mapToResponse);
   }
 
-  async update(id: string, data: UpdateServicoDTO): Promise<ServicoResponseDTO> {
+  async update(
+    id: string,
+    data: UpdateServicoDTO
+  ): Promise<ServicoResponseDTO> {
     const servico = await this.servicoRepository.findById(id);
 
     if (!servico) {
@@ -111,22 +115,30 @@ export class ServicoService {
     };
   }
 
-  //  Métodos  profissionais e serviço 
+  //  Métodos  profissionais e serviço
   async addProfissional(id_servico: string, id_profissional: string) {
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
-    const prof = await prisma.profissional.findUnique({ where: { id_profissional } });
+    const prof = await prisma.profissional.findUnique({
+      where: { id_profissional },
+    });
     if (!prof) throw new AppError("Profissional não encontrado", 404);
 
-    return await this.servicoRepository.addProfissional(id_servico, id_profissional);
+    return await this.servicoRepository.addProfissional(
+      id_servico,
+      id_profissional
+    );
   }
 
   async removeProfissional(id_servico: string, id_profissional: string) {
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
-    await this.servicoRepository.removeProfissional(id_servico, id_profissional);
+    await this.servicoRepository.removeProfissional(
+      id_servico,
+      id_profissional
+    );
   }
 
   async listProfissionais(id_servico: string): Promise<ProfissionalEntity[]> {
@@ -136,19 +148,39 @@ export class ServicoService {
     return await this.servicoRepository.listProfissionais(id_servico);
   }
 
-  async listProfissionaisPaginated(id_servico: string, page: number, limit: number) {
+  async listProfissionaisPaginated(
+    id_servico: string,
+    page: number,
+    limit: number
+  ) {
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
-    const { data, total } = await this.servicoRepository.findProfissionaisPaginated(id_servico, page, limit);
+    const { data, total } =
+      await this.servicoRepository.findProfissionaisPaginated(
+        id_servico,
+        page,
+        limit
+      );
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
-  async searchProfissionaisPaginated(id_servico: string, query: string, page: number, limit: number) {
+  async searchProfissionaisPaginated(
+    id_servico: string,
+    query: string,
+    page: number,
+    limit: number
+  ) {
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
-    const { data, total } = await this.servicoRepository.searchProfissionaisPaginated(id_servico, query, page, limit);
+    const { data, total } =
+      await this.servicoRepository.searchProfissionaisPaginated(
+        id_servico,
+        query,
+        page,
+        limit
+      );
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
@@ -161,13 +193,19 @@ export class ServicoService {
         where: { id_profissional: { in: profissionalIds } },
         select: { id_profissional: true },
       });
-      const encontradosIds = new Set(encontrados.map(s => s.id_profissional));
-      const invalid = profissionalIds.filter(id => !encontradosIds.has(id));
+      const encontradosIds = new Set(encontrados.map((s) => s.id_profissional));
+      const invalid = profissionalIds.filter((id) => !encontradosIds.has(id));
       if (invalid.length > 0) {
-        throw new AppError(`Profissionais não encontrados: ${invalid.join(", ")}`, 404);
+        throw new AppError(
+          `Profissionais não encontrados: ${invalid.join(", ")}`,
+          404
+        );
       }
     }
 
-    return await this.servicoRepository.syncProfissionais(id_servico, profissionalIds || []);
+    return await this.servicoRepository.syncProfissionais(
+      id_servico,
+      profissionalIds || []
+    );
   }
 }

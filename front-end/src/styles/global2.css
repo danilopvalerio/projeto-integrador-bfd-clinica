@@ -110,6 +110,10 @@ html {
   height: 2.2rem;
 }
 
+.button-dark-grey:hover {
+  background-color: var(--color-gray-dark);
+}
+
 .button-white-grey-border {
   background-color: var(--color-white);
   color: var(--color-quartenary);
@@ -313,4 +317,125 @@ footer {
   max-width: 800px;
   max-height: 500px;
   overflow-y: auto;
+}
+
+/* --- Estilos da Página de Menu --- */
+
+.menu-header {
+  height: 80px;
+  background-color: var(--color-white);
+  border-bottom: 1px solid #dee2e6; /* Bootstrap border color aproximado */
+}
+
+.menu-logo {
+  width: 45px;
+  height: 45px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--color-white);
+  /* Usa sua classe .bg-gradient-vl, mas aqui forçamos o formato */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px; /* rounded-4 */
+}
+
+.menu-container-limit {
+  max-width: 1000px;
+}
+
+/* Card Base */
+.menu-card {
+  background-color: var(--color-white);
+  border-radius: 10px;
+  border: 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+}
+
+/* Estado Inativo (bloqueado) */
+.menu-card.inactive {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Efeito Hover (Apenas se ativo) */
+.menu-card.active:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  /* Borda inferior colorida ao passar o mouse usando sua variável secundária */
+  border-bottom: 3px solid var(--color-secondary) !important;
+}
+
+/* Círculo do Ícone */
+.menu-icon-circle {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+/* Cores do ícone Ativo */
+.menu-card.active .menu-icon-circle {
+  background-color: rgba(0, 85, 255, 0.1); /* --color-secondary com opacidade */
+  color: var(--color-secondary);
+}
+
+/* Cores do ícone Inativo */
+.menu-card.inactive .menu-icon-circle {
+  background-color: #f0f0f0;
+  color: var(--color-gray-dark);
+}
+
+/* Texto de Descrição */
+.menu-card-desc {
+  line-height: 1.2;
+  color: var(--color-gray-dark);
+  display: block;
+}
+
+/* Badge "Em breve" */
+.menu-badge {
+  background-color: var(--color-gray-light);
+  color: var(--color-quartenary);
+  font-weight: normal;
+  margin-top: 0.25rem;
+}
+
+/* Divisores de Seção (Pílula colorida) */
+.section-pill {
+  width: 4px;
+  height: 24px;
+  border-radius: 50rem;
+  margin-right: 0.5rem;
+}
+
+.text-ls-1 {
+  letter-spacing: 1px;
+}
+
+/* Animação de Entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
 }

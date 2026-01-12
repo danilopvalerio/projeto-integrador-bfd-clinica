@@ -1,3 +1,4 @@
+//src/modules/servico/servicoRepository.ts
 import { prisma } from "../../shared/database/prisma";
 import {
   IServicoRepository,
@@ -9,11 +10,14 @@ import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 import type { ProfissionalEntity } from "../profissional/profissionalDTO";
 
 export class ServicoRepository implements IServicoRepository {
+  // --- CRUD BASE ---
+
   async create(data: CreateServicoDTO): Promise<ServicoEntity> {
     const servico = await prisma.servico.create({
       data: {
         ...data,
-        ativo: data.ativo ?? true, // Garante valor default se não enviado
+        ativo: data.ativo ?? true,
+        preco_visivel_paciente: data.preco_visivel_paciente ?? true,
       },
     });
     return servico as unknown as ServicoEntity;
@@ -79,7 +83,6 @@ export class ServicoRepository implements IServicoRepository {
   ): Promise<RepositoryPaginatedResult<ServicoEntity>> {
     const skip = (page - 1) * limit;
 
-    // Busca por Nome ou Descrição
     const whereCondition = {
       OR: [
         { nome: { contains: query, mode: "insensitive" as const } },
@@ -94,33 +97,42 @@ export class ServicoRepository implements IServicoRepository {
         take: limit,
         orderBy: { nome: "asc" },
       }),
-      prisma.servico.count({
-        where: whereCondition,
-      }),
+      prisma.servico.count({ where: whereCondition }),
     ]);
 
     return { data: data as unknown as ServicoEntity[], total };
   }
 
-  // Relação Serviço e Profissional
-  async addProfissional(id_servico: string, id_profissional: string) {
-    return await prisma.profissionalServico.create({
+  // --- RELAÇÃO SERVIÇO x PROFISSIONAL ---
+
+  async addProfissional(
+    id_servico: string,
+    id_profissional: string
+  ): Promise<void> {
+    await prisma.profissionalServico.create({
       data: { id_servico, id_profissional },
     });
   }
 
-  async removeProfissional(id_servico: string, id_profissional: string) {
-    await prisma.profissionalServico.deleteMany({
-      where: { id_servico, id_profissional },
+  async removeProfissional(
+    id_servico: string,
+    id_profissional: string
+  ): Promise<void> {
+    // Sintaxe para chave composta
+    await prisma.profissionalServico.delete({
+      where: {
+        id_profissional_id_servico: { id_profissional, id_servico },
+      },
     });
   }
 
   async listProfissionais(id_servico: string): Promise<ProfissionalEntity[]> {
-    const profs = await prisma.profissional.findMany({
-      where: { servicos: { some: { id_servico } } },
-      orderBy: { nome: "asc" },
+    const result = await prisma.profissionalServico.findMany({
+      where: { id_servico },
+      include: { profissional: true },
+      orderBy: { profissional: { nome: "asc" } },
     });
-    return profs as unknown as ProfissionalEntity[];
+    return result.map((r) => r.profissional) as unknown as ProfissionalEntity[];
   }
 
   async findProfissionaisPaginated(
@@ -129,19 +141,23 @@ export class ServicoRepository implements IServicoRepository {
     limit: number
   ): Promise<RepositoryPaginatedResult<ProfissionalEntity>> {
     const skip = (page - 1) * limit;
-    const where = { servicos: { some: { id_servico } } };
+    const where = { id_servico };
 
     const [data, total] = await Promise.all([
-      prisma.profissional.findMany({
+      prisma.profissionalServico.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: { profissional: true },
+        orderBy: { profissional: { nome: "asc" } },
       }),
-      prisma.profissional.count({ where }),
+      prisma.profissionalServico.count({ where }),
     ]);
 
-    return { data: data as unknown as ProfissionalEntity[], total };
+    return {
+      data: data.map((d) => d.profissional) as unknown as ProfissionalEntity[],
+      total,
+    };
   }
 
   async searchProfissionaisPaginated(
@@ -152,42 +168,50 @@ export class ServicoRepository implements IServicoRepository {
   ): Promise<RepositoryPaginatedResult<ProfissionalEntity>> {
     const skip = (page - 1) * limit;
     const where = {
-      AND: [
-        { servicos: { some: { id_servico } } },
-        {
-          OR: [
-            { nome: { contains: query, mode: "insensitive" as const } },
-            { cpf: { contains: query, mode: "insensitive" as const } },
-          ],
-        },
-      ],
+      id_servico,
+      profissional: {
+        OR: [
+          { nome: { contains: query, mode: "insensitive" as const } },
+          { cpf: { contains: query, mode: "insensitive" as const } },
+        ],
+      },
     };
 
     const [data, total] = await Promise.all([
-      prisma.profissional.findMany({
+      prisma.profissionalServico.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: { profissional: true },
+        orderBy: { profissional: { nome: "asc" } },
       }),
-      prisma.profissional.count({ where }),
+      prisma.profissionalServico.count({ where }),
     ]);
 
-    return { data: data as unknown as ProfissionalEntity[], total };
+    return {
+      data: data.map((d) => d.profissional) as unknown as ProfissionalEntity[],
+      total,
+    };
   }
 
-  async syncProfissionais(id_servico: string, profissionalIds: string[]): Promise<ProfissionalEntity[]> {
+  async syncProfissionais(
+    id_servico: string,
+    profissionalIds: string[]
+  ): Promise<ProfissionalEntity[]> {
     await prisma.$transaction(async (tx) => {
       await tx.profissionalServico.deleteMany({ where: { id_servico } });
+
       if (profissionalIds && profissionalIds.length > 0) {
         await tx.profissionalServico.createMany({
-          data: profissionalIds.map((id_profissional) => ({ id_profissional, id_servico })),
+          data: profissionalIds.map((id_profissional) => ({
+            id_profissional,
+            id_servico,
+          })),
           skipDuplicates: true,
         });
       }
     });
 
-    const profs = await this.listProfissionais(id_servico);
-    return profs;
+    return this.listProfissionais(id_servico);
   }
 }

@@ -178,7 +178,6 @@ export type EspecialidadeScalarFieldEnum = (typeof EspecialidadeScalarFieldEnum)
 
 
 export const ProfissionalServicoScalarFieldEnum = {
-  id_profissional_servico: 'id_profissional_servico',
   id_profissional: 'id_profissional',
   id_servico: 'id_servico'
 } as const

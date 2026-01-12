@@ -1,6 +1,9 @@
-import { IBaseRepository, RepositoryPaginatedResult } from "@/shared/dtos/index.dto";
+import {
+  IBaseRepository,
+  RepositoryPaginatedResult,
+} from "../../shared/dtos/index.dto";
 import { ServicoEntity } from "../servico/servicoDTO";
-
+import { EspecialidadeEntity } from "../especialidade/especialidadeDTO"; // Assumindo que você tem este DTO
 
 export interface ProfissionalEntity {
   id_profissional: string;
@@ -15,14 +18,13 @@ export interface CreateProfissionalDTO {
   cpf: string;
   registro_conselho: string;
   id_usuario: string;
-
   telefones?: { telefone: string; principal: boolean }[];
   horarios?: { dia_semana: number; hora_inicio: Date; hora_fim: Date }[];
 }
 
 export interface UpdateProfissionalDTO {
-  nome: string;
-  registro_conselho: string;
+  nome?: string;
+  registro_conselho?: string;
 }
 
 export interface UpdateTelefoneDTO {
@@ -37,63 +39,74 @@ export interface UpdateHorarioDTO {
 }
 
 export interface IProfissionalRepository
-  extends IBaseRepository<ProfissionalEntity, CreateProfissionalDTO, UpdateProfissionalDTO> {
+  extends IBaseRepository<
+    ProfissionalEntity,
+    CreateProfissionalDTO,
+    UpdateProfissionalDTO
+  > {
   findByCpf(cpf: string): Promise<ProfissionalEntity | null>;
-  
-  // Métodos de Telefone - Use nomes claros para os IDs
-  addTelefone(id_profissional: string, data: { telefone: string; principal: boolean }): Promise<any>;
+
+  // --- Telefones ---
+  addTelefone(
+    id_profissional: string,
+    data: { telefone: string; principal: boolean }
+  ): Promise<any>;
   updateTelefone(id_telefone: string, data: UpdateTelefoneDTO): Promise<any>;
   deleteTelefone(id_telefone: string): Promise<void>;
   listTelefones(id_profissional: string): Promise<any[]>;
 
-  // Métodos de Horário
-  addHorario(id_profissional: string, data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }): Promise<any>;
+  // --- Horários ---
+  addHorario(
+    id_profissional: string,
+    data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }
+  ): Promise<any>;
   updateHorario(id_horario: string, data: UpdateHorarioDTO): Promise<any>;
   deleteHorario(id_horario: string): Promise<void>;
   listHorarios(id_profissional: string): Promise<any[]>;
 
-<<<<<<< HEAD
-
-  // Especialidades 
-  linkSpecialtyToProfessional(
-    profissionalId: string,
-    especialidadeId: string
+  // --- Especialidades (Profissional x Especialidade) ---
+  addEspecialidade(
+    id_profissional: string,
+    id_especialidade: string
   ): Promise<void>;
-
-  unlinkSpecialtyFromProfessional(
-    profissionalId: string,
-    especialidadeId: string
+  removeEspecialidade(
+    id_profissional: string,
+    id_especialidade: string
   ): Promise<void>;
-
-  findSpecialtiesByProfessional(
-    profissionalId: string
-  ): Promise<any[]>;
-
-  findSpecialtiesByProfessionalPaginated(
-    profissionalId: string,
+  listEspecialidades(id_profissional: string): Promise<EspecialidadeEntity[]>;
+  findEspecialidadesPaginated(
+    id_profissional: string,
     page: number,
     limit: number
-  ): Promise<{ data: any[]; total: number }>;
-
-  searchSpecialtiesByProfessionalPaginated(
-    profissionalId: string,
+  ): Promise<RepositoryPaginatedResult<EspecialidadeEntity>>;
+  searchEspecialidadesPaginated(
+    id_profissional: string,
     query: string,
     page: number,
     limit: number
-  ): Promise<{ data: any[]; total: number }>;
-
-  syncProfessionalSpecialties(
-    profissionalId: string,
+  ): Promise<RepositoryPaginatedResult<EspecialidadeEntity>>;
+  syncEspecialidades(
+    id_profissional: string,
     especialidadesIds: string[]
-  ): Promise<void>;
+  ): Promise<EspecialidadeEntity[]>;
 
-=======
-  // Métodos de Serviço (Profissional x Servico)
+  // --- Serviços (Profissional x Servico) ---
   addServico(id_profissional: string, id_servico: string): Promise<any>;
   removeServico(id_profissional: string, id_servico: string): Promise<void>;
   listServicos(id_profissional: string): Promise<ServicoEntity[]>;
-  findServicosPaginated(id_profissional: string, page: number, limit: number): Promise<RepositoryPaginatedResult<ServicoEntity>>;
-  searchServicosPaginated(id_profissional: string, query: string, page: number, limit: number): Promise<RepositoryPaginatedResult<ServicoEntity>>;
-  syncServicos(id_profissional: string, servicoIds: string[]): Promise<ServicoEntity[]>;
->>>>>>> origin/feature/profissional-servico
+  findServicosPaginated(
+    id_profissional: string,
+    page: number,
+    limit: number
+  ): Promise<RepositoryPaginatedResult<ServicoEntity>>;
+  searchServicosPaginated(
+    id_profissional: string,
+    query: string,
+    page: number,
+    limit: number
+  ): Promise<RepositoryPaginatedResult<ServicoEntity>>;
+  syncServicos(
+    id_profissional: string,
+    servicoIds: string[]
+  ): Promise<ServicoEntity[]>;
 }

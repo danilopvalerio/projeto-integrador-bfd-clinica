@@ -96,7 +96,7 @@ export default function LoginForm() {
             type={passwordVisible ? "text" : "password"}
             id="senha"
             className="form-control form-control-underline w-100 pe-5"
-            placeholder="sua_senha"
+            placeholder="sua senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}

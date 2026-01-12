@@ -1,4 +1,3 @@
-import { SpecialtyEntity } from "../specialty/specialtyDTO";
 import { prisma } from "../../shared/database/prisma";
 import {
   IProfissionalRepository,
@@ -10,8 +9,11 @@ import {
 } from "./profissionalDTO";
 import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 import type { ServicoEntity } from "../servico/servicoDTO";
+import type { EspecialidadeEntity } from "../especialidade/especialidadeDTO";
 
 export class ProfissionalRepository implements IProfissionalRepository {
+  // --- CRUD BASE ---
+
   async create(data: CreateProfissionalDTO): Promise<ProfissionalEntity> {
     const { telefones, horarios, nome, cpf, registro_conselho, id_usuario } =
       data;
@@ -41,7 +43,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
           : undefined,
       },
     });
-
     return profissional as unknown as ProfissionalEntity;
   }
 
@@ -87,6 +88,7 @@ export class ProfissionalRepository implements IProfissionalRepository {
     ]);
     return { data: data as unknown as ProfissionalEntity[], total };
   }
+
   async searchPaginated(
     query: string,
     page: number,
@@ -109,7 +111,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
       }),
       prisma.profissional.count({ where: whereCondition }),
     ]);
-
     return { data: data as unknown as ProfissionalEntity[], total };
   }
 
@@ -162,7 +163,118 @@ export class ProfissionalRepository implements IProfissionalRepository {
     });
   }
 
-  // --- MÉTODOS DE SERVIÇO (PROFISSIONAL x SERVIÇO) ---
+  // --- MÉTODOS DE ESPECIALIDADES ---
+  async addEspecialidade(
+    id_profissional: string,
+    id_especialidade: string
+  ): Promise<void> {
+    await prisma.profissional_Especialidade.create({
+      data: { id_profissional, id_especialidade },
+    });
+  }
+
+  async removeEspecialidade(
+    id_profissional: string,
+    id_especialidade: string
+  ): Promise<void> {
+    // Sintaxe para chave composta
+    await prisma.profissional_Especialidade.delete({
+      where: {
+        id_profissional_id_especialidade: { id_profissional, id_especialidade },
+      },
+    });
+  }
+
+  async listEspecialidades(
+    id_profissional: string
+  ): Promise<EspecialidadeEntity[]> {
+    const result = await prisma.profissional_Especialidade.findMany({
+      where: { id_profissional },
+      include: { especialidade: true },
+      orderBy: { especialidade: { nome: "asc" } },
+    });
+    return result.map(
+      (r) => r.especialidade
+    ) as unknown as EspecialidadeEntity[];
+  }
+
+  async findEspecialidadesPaginated(
+    id_profissional: string,
+    page: number,
+    limit: number
+  ): Promise<RepositoryPaginatedResult<EspecialidadeEntity>> {
+    const skip = (page - 1) * limit;
+    const where = { id_profissional };
+
+    const [result, total] = await Promise.all([
+      prisma.profissional_Especialidade.findMany({
+        where,
+        skip,
+        take: limit,
+        include: { especialidade: true },
+      }),
+      prisma.profissional_Especialidade.count({ where }),
+    ]);
+    return {
+      data: result.map(
+        (r) => r.especialidade
+      ) as unknown as EspecialidadeEntity[],
+      total,
+    };
+  }
+
+  async searchEspecialidadesPaginated(
+    id_profissional: string,
+    query: string,
+    page: number,
+    limit: number
+  ): Promise<RepositoryPaginatedResult<EspecialidadeEntity>> {
+    const skip = (page - 1) * limit;
+    const where = {
+      id_profissional,
+      especialidade: {
+        nome: { contains: query, mode: "insensitive" as const },
+      },
+    };
+
+    const [result, total] = await Promise.all([
+      prisma.profissional_Especialidade.findMany({
+        where,
+        skip,
+        take: limit,
+        include: { especialidade: true },
+      }),
+      prisma.profissional_Especialidade.count({ where }),
+    ]);
+    return {
+      data: result.map(
+        (r) => r.especialidade
+      ) as unknown as EspecialidadeEntity[],
+      total,
+    };
+  }
+
+  async syncEspecialidades(
+    id_profissional: string,
+    especialidadesIds: string[]
+  ): Promise<EspecialidadeEntity[]> {
+    await prisma.$transaction(async (tx) => {
+      await tx.profissional_Especialidade.deleteMany({
+        where: { id_profissional },
+      });
+      if (especialidadesIds.length > 0) {
+        await tx.profissional_Especialidade.createMany({
+          data: especialidadesIds.map((id_especialidade) => ({
+            id_profissional,
+            id_especialidade,
+          })),
+        });
+      }
+    });
+    return this.listEspecialidades(id_profissional);
+  }
+
+  // --- MÉTODOS DE SERVIÇO ---
   async addServico(id_profissional: string, id_servico: string) {
     return await prisma.profissionalServico.create({
       data: { id_profissional, id_servico },
@@ -170,18 +282,21 @@ export class ProfissionalRepository implements IProfissionalRepository {
   }
 
   async removeServico(id_profissional: string, id_servico: string) {
-    await prisma.profissionalServico.deleteMany({
-      where: { id_profissional, id_servico },
+    // Sintaxe para chave composta
+    await prisma.profissionalServico.delete({
+      where: {
+        id_profissional_id_servico: { id_profissional, id_servico },
+      },
     });
   }
 
   async listServicos(id_profissional: string): Promise<ServicoEntity[]> {
-    // retorna os registros de Serviço vinculados ao profissional
-    const servicos = await prisma.servico.findMany({
-      where: { profissionais: { some: { id_profissional } } },
-      orderBy: { nome: "asc" },
+    const result = await prisma.profissionalServico.findMany({
+      where: { id_profissional },
+      include: { servico: true },
+      orderBy: { servico: { nome: "asc" } },
     });
-    return servicos as unknown as ServicoEntity[];
+    return result.map((r) => r.servico) as unknown as ServicoEntity[];
   }
 
   async findServicosPaginated(
@@ -190,19 +305,23 @@ export class ProfissionalRepository implements IProfissionalRepository {
     limit: number
   ): Promise<RepositoryPaginatedResult<ServicoEntity>> {
     const skip = (page - 1) * limit;
-    const where = { profissionais: { some: { id_profissional } } };
+    const where = { id_profissional };
 
     const [data, total] = await Promise.all([
-      prisma.servico.findMany({
+      prisma.profissionalServico.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: { servico: true },
+        orderBy: { servico: { nome: "asc" } },
       }),
-      prisma.servico.count({ where }),
+      prisma.profissionalServico.count({ where }),
     ]);
 
-    return { data: data as unknown as ServicoEntity[], total };
+    return {
+      data: data.map((d) => d.servico) as unknown as ServicoEntity[],
+      total,
+    };
   }
 
   async searchServicosPaginated(
@@ -213,35 +332,36 @@ export class ProfissionalRepository implements IProfissionalRepository {
   ): Promise<RepositoryPaginatedResult<ServicoEntity>> {
     const skip = (page - 1) * limit;
     const where = {
-      AND: [
-        { profissionais: { some: { id_profissional } } },
-        {
-          OR: [
-            { nome: { contains: query, mode: "insensitive" as const } },
-            { descricao: { contains: query, mode: "insensitive" as const } },
-          ],
-        },
-      ],
+      id_profissional,
+      servico: {
+        OR: [
+          { nome: { contains: query, mode: "insensitive" as const } },
+          { descricao: { contains: query, mode: "insensitive" as const } },
+        ],
+      },
     };
 
     const [data, total] = await Promise.all([
-      prisma.servico.findMany({
+      prisma.profissionalServico.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: { servico: true },
+        orderBy: { servico: { nome: "asc" } },
       }),
-      prisma.servico.count({ where }),
+      prisma.profissionalServico.count({ where }),
     ]);
 
-    return { data: data as unknown as ServicoEntity[], total };
+    return {
+      data: data.map((d) => d.servico) as unknown as ServicoEntity[],
+      total,
+    };
   }
 
   async syncServicos(
     id_profissional: string,
     servicoIds: string[]
   ): Promise<ServicoEntity[]> {
-    // Transação: remove todos os vínculos e recria os novos
     await prisma.$transaction(async (tx) => {
       await tx.profissionalServico.deleteMany({ where: { id_profissional } });
       if (servicoIds && servicoIds.length > 0) {
@@ -250,131 +370,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
             id_profissional,
             id_servico,
           })),
-          skipDuplicates: true,
         });
       }
     });
-
-    // retornar lista atualizada de serviços vinculados
-    const servicos = await this.listServicos(id_profissional);
-    return servicos;
-  }
-
-  // Especialidades
-  async linkSpecialtyToProfessional(
-    profissionalId: string,
-    especialidadeId: string
-  ): Promise<void> {
-    await prisma.profissional_Especialidade.create({
-      data: {
-        id_profissional: profissionalId,
-        id_especialidade: especialidadeId,
-      },
-    });
-  }
-  async unlinkSpecialtyFromProfessional(
-    profissionalId: string,
-    especialidadeId: string
-  ): Promise<void> {
-    await prisma.profissional_Especialidade.delete({
-      where: {
-        id_profissional_id_especialidade: {
-          id_profissional: profissionalId,
-          id_especialidade: especialidadeId,
-        },
-      },
-    });
-  }
-  async findSpecialtiesByProfessional(
-    profissionalId: string
-  ): Promise<SpecialtyEntity[]> {
-    const result = await prisma.profissional_Especialidade.findMany({
-      where: {
-        id_profissional: profissionalId,
-      },
-      include: {
-        especialidade: true,
-      },
-    });
-
-    return result.map((item) => item.especialidade);
-  }
-  async findSpecialtiesByProfessionalPaginated(
-    profissionalId: string,
-    page: number,
-    limit: number
-  ): Promise<RepositoryPaginatedResult<SpecialtyEntity>> {
-    const skip = (page - 1) * limit;
-
-    const [result, total] = await Promise.all([
-      prisma.profissional_Especialidade.findMany({
-        where: { id_profissional: profissionalId },
-        skip,
-        take: limit,
-        include: { especialidade: true },
-      }),
-      prisma.profissional_Especialidade.count({
-        where: { id_profissional: profissionalId },
-      }),
-    ]);
-
-    return {
-      data: result.map((item) => item.especialidade as SpecialtyEntity),
-      total,
-    };
-  }
-
-  async searchSpecialtiesByProfessionalPaginated(
-    profissionalId: string,
-    query: string,
-    page: number,
-    limit: number
-  ): Promise<RepositoryPaginatedResult<SpecialtyEntity>> {
-    const skip = (page - 1) * limit;
-
-    const result = await prisma.profissional_Especialidade.findMany({
-      where: {
-        id_profissional: profissionalId,
-        especialidade: {
-          nome: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-      },
-      skip,
-      take: limit,
-      include: {
-        especialidade: true,
-      },
-    });
-
-    return {
-      data: result.map((item) => item.especialidade as SpecialtyEntity),
-      total: await prisma.profissional_Especialidade.count({
-        where: { id_profissional: profissionalId },
-      }),
-    };
-  }
-  async syncProfessionalSpecialties(
-    profissionalId: string,
-    especialidadesIds: string[]
-  ): Promise<void> {
-    await prisma.$transaction(async (tx) => {
-      await tx.profissional_Especialidade.deleteMany({
-        where: {
-          id_profissional: profissionalId,
-        },
-      });
-
-      if (especialidadesIds.length > 0) {
-        await tx.profissional_Especialidade.createMany({
-          data: especialidadesIds.map((id_especialidade) => ({
-            id_profissional: profissionalId,
-            id_especialidade,
-          })),
-        });
-      }
-    });
+    return this.listServicos(id_profissional);
   }
 }

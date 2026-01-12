@@ -21,13 +21,20 @@ export class ProfissionalController {
 
   listPaginated = async (req: Request, res: Response) => {
     const { page = 1, limit = 10 } = req.query;
-    const result = await this.service.listPaginated({ page: Number(page), limit: Number(limit) });
+    const result = await this.service.listPaginated({
+      page: Number(page),
+      limit: Number(limit),
+    });
     return res.json(result);
   };
 
   searchPaginated = async (req: Request, res: Response) => {
     const { q = "", page = 1, limit = 10 } = req.query;
-    const result = await this.service.searchPaginated({ query: String(q), page: Number(page), limit: Number(limit) });
+    const result = await this.service.searchPaginated({
+      query: String(q),
+      page: Number(page),
+      limit: Number(limit),
+    });
     return res.json(result);
   };
 
@@ -36,14 +43,20 @@ export class ProfissionalController {
     return res.status(204).send();
   };
 
-  // Telefones
+  // --- Telefones ---
   addTelefone = async (req: Request, res: Response) => {
-    const resu = await this.service.addTelefone(req.params.id_profissional, req.body);
+    const resu = await this.service.addTelefone(
+      req.params.id_profissional,
+      req.body
+    );
     return res.status(201).json(resu);
   };
 
   updateTelefone = async (req: Request, res: Response) => {
-    const resu = await this.service.updateTelefone(req.params.id_telefone, req.body);
+    const resu = await this.service.updateTelefone(
+      req.params.id_telefone,
+      req.body
+    );
     return res.json(resu);
   };
 
@@ -57,14 +70,20 @@ export class ProfissionalController {
     return res.status(204).send();
   };
 
-  // Horários
+  // --- Horários ---
   addHorario = async (req: Request, res: Response) => {
-    const resu = await this.service.addHorario(req.params.id_profissional, req.body);
+    const resu = await this.service.addHorario(
+      req.params.id_profissional,
+      req.body
+    );
     return res.status(201).json(resu);
   };
 
   updateHorario = async (req: Request, res: Response) => {
-    const resu = await this.service.updateHorario(req.params.id_horario, req.body);
+    const resu = await this.service.updateHorario(
+      req.params.id_horario,
+      req.body
+    );
     return res.json(resu);
   };
 
@@ -78,10 +97,70 @@ export class ProfissionalController {
     return res.status(204).send();
   };
 
-  // Serviços 
+  // --- Especialidades ---
+  addEspecialidade = async (req: Request, res: Response) => {
+    const { id_especialidade } = req.body;
+    await this.service.addEspecialidade(
+      req.params.id_profissional,
+      id_especialidade
+    );
+    return res.status(201).send();
+  };
+
+  removeEspecialidade = async (req: Request, res: Response) => {
+    const id_especialidade =
+      req.body.id_especialidade ?? req.query.id_especialidade;
+    await this.service.removeEspecialidade(
+      req.params.id_profissional,
+      String(id_especialidade)
+    );
+    return res.status(204).send();
+  };
+
+  listEspecialidades = async (req: Request, res: Response) => {
+    const resu = await this.service.listEspecialidades(
+      req.params.id_profissional
+    );
+    return res.json(resu);
+  };
+
+  listEspecialidadesPaginated = async (req: Request, res: Response) => {
+    const { page = 1, limit = 10 } = req.query;
+    const resu = await this.service.listEspecialidadesPaginated(
+      req.params.id_profissional,
+      Number(page),
+      Number(limit)
+    );
+    return res.json(resu);
+  };
+
+  searchEspecialidadesPaginated = async (req: Request, res: Response) => {
+    const { q = "", page = 1, limit = 10 } = req.query;
+    const resu = await this.service.searchEspecialidadesPaginated(
+      req.params.id_profissional,
+      String(q),
+      Number(page),
+      Number(limit)
+    );
+    return res.json(resu);
+  };
+
+  syncEspecialidades = async (req: Request, res: Response) => {
+    const { especialidadesIds } = req.body;
+    const resu = await this.service.syncEspecialidades(
+      req.params.id_profissional,
+      especialidadesIds || []
+    );
+    return res.json(resu);
+  };
+
+  // --- Serviços ---
   addServico = async (req: Request, res: Response) => {
     const { id_servico } = req.body;
-    const resu = await this.service.addServico(req.params.id_profissional, id_servico);
+    const resu = await this.service.addServico(
+      req.params.id_profissional,
+      id_servico
+    );
     return res.status(201).json(resu);
   };
 
@@ -92,25 +171,40 @@ export class ProfissionalController {
 
   listServicosPaginated = async (req: Request, res: Response) => {
     const { page = 1, limit = 10 } = req.query;
-    const resu = await this.service.listServicosPaginated(req.params.id_profissional, Number(page), Number(limit));
+    const resu = await this.service.listServicosPaginated(
+      req.params.id_profissional,
+      Number(page),
+      Number(limit)
+    );
     return res.json(resu);
   };
 
   searchServicosPaginated = async (req: Request, res: Response) => {
     const { q = "", page = 1, limit = 10 } = req.query;
-    const resu = await this.service.searchServicosPaginated(req.params.id_profissional, String(q), Number(page), Number(limit));
+    const resu = await this.service.searchServicosPaginated(
+      req.params.id_profissional,
+      String(q),
+      Number(page),
+      Number(limit)
+    );
     return res.json(resu);
   };
 
   removeServico = async (req: Request, res: Response) => {
     const id_servico = req.body.id_servico ?? req.query.id_servico;
-    await this.service.removeServico(req.params.id_profissional, String(id_servico));
+    await this.service.removeServico(
+      req.params.id_profissional,
+      String(id_servico)
+    );
     return res.status(204).send();
   };
 
   syncServicos = async (req: Request, res: Response) => {
     const { servicoIds } = req.body;
-    const resu = await this.service.syncServicos(req.params.id_profissional, servicoIds || []);
+    const resu = await this.service.syncServicos(
+      req.params.id_profissional,
+      servicoIds || []
+    );
     return res.json(resu);
   };
 }

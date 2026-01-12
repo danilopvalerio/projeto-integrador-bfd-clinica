@@ -122,14 +122,13 @@ model Especialidade {
 }
 
 model ProfissionalServico {
-  id_profissional_servico String @id @default(uuid())
-  id_profissional         String
-  id_servico              String
+  id_profissional String
+  id_servico      String
 
   profissional Profissional @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
   servico      Servico      @relation(fields: [id_servico], references: [id_servico], onDelete: Cascade)
 
-  @@unique([id_profissional, id_servico])
+  @@id([id_profissional, id_servico])
   @@map("profissional_servico")
 }
 

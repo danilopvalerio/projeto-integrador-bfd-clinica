@@ -1,3 +1,4 @@
+//src/modules/servico/servicoRoutes.ts
 import { Router } from "express";
 import { ServicoRepository } from "./servicoRepository";
 import { ServicoService } from "./servicoService";
@@ -24,12 +25,29 @@ servicoRoutes.get("/:id", servicoController.getById);
 servicoRoutes.delete("/:id", servicoController.delete);
 
 // Rotas Profissionais vinculados ao Serviço
-servicoRoutes.post("/:id_servico/profissionais", servicoController.addProfissional); 
-servicoRoutes.get("/:id_servico/profissionais", servicoController.listProfissionais);
-servicoRoutes.get("/:id_servico/profissionais/paginated", servicoController.listProfissionaisPaginated);
-servicoRoutes.get("/:id_servico/profissionais/search", servicoController.searchProfissionaisPaginated);
-servicoRoutes.put("/:id_servico/profissionais", servicoController.syncProfissionais); 
-servicoRoutes.delete("/:id_servico/profissionais", servicoController.removeProfissional); 
+servicoRoutes.post(
+  "/:id_servico/profissionais",
+  servicoController.addProfissional
+);
+servicoRoutes.get(
+  "/:id_servico/profissionais",
+  servicoController.listProfissionais
+);
+servicoRoutes.get(
+  "/:id_servico/profissionais/paginated",
+  servicoController.listProfissionaisPaginated
+);
+servicoRoutes.get(
+  "/:id_servico/profissionais/search",
+  servicoController.searchProfissionaisPaginated
+);
+servicoRoutes.put(
+  "/:id_servico/profissionais",
+  servicoController.syncProfissionais
+);
+servicoRoutes.delete(
+  "/:id_servico/profissionais",
+  servicoController.removeProfissional
+);
 
 export { servicoRoutes };
-

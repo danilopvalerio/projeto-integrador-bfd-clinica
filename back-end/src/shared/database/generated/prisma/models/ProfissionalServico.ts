@@ -25,19 +25,16 @@ export type AggregateProfissionalServico = {
 }
 
 export type ProfissionalServicoMinAggregateOutputType = {
-  id_profissional_servico: string | null
   id_profissional: string | null
   id_servico: string | null
 }
 
 export type ProfissionalServicoMaxAggregateOutputType = {
-  id_profissional_servico: string | null
   id_profissional: string | null
   id_servico: string | null
 }
 
 export type ProfissionalServicoCountAggregateOutputType = {
-  id_profissional_servico: number
   id_profissional: number
   id_servico: number
   _all: number
@@ -45,19 +42,16 @@ export type ProfissionalServicoCountAggregateOutputType = {
 
 
 export type ProfissionalServicoMinAggregateInputType = {
-  id_profissional_servico?: true
   id_profissional?: true
   id_servico?: true
 }
 
 export type ProfissionalServicoMaxAggregateInputType = {
-  id_profissional_servico?: true
   id_profissional?: true
   id_servico?: true
 }
 
 export type ProfissionalServicoCountAggregateInputType = {
-  id_profissional_servico?: true
   id_profissional?: true
   id_servico?: true
   _all?: true
@@ -136,7 +130,6 @@ export type ProfissionalServicoGroupByArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 export type ProfissionalServicoGroupByOutputType = {
-  id_profissional_servico: string
   id_profissional: string
   id_servico: string
   _count: ProfissionalServicoCountAggregateOutputType | null
@@ -163,7 +156,6 @@ export type ProfissionalServicoWhereInput = {
   AND?: Prisma.ProfissionalServicoWhereInput | Prisma.ProfissionalServicoWhereInput[]
   OR?: Prisma.ProfissionalServicoWhereInput[]
   NOT?: Prisma.ProfissionalServicoWhereInput | Prisma.ProfissionalServicoWhereInput[]
-  id_profissional_servico?: Prisma.StringFilter<"ProfissionalServico"> | string
   id_profissional?: Prisma.StringFilter<"ProfissionalServico"> | string
   id_servico?: Prisma.StringFilter<"ProfissionalServico"> | string
   profissional?: Prisma.XOR<Prisma.ProfissionalScalarRelationFilter, Prisma.ProfissionalWhereInput>
@@ -171,7 +163,6 @@ export type ProfissionalServicoWhereInput = {
 }
 
 export type ProfissionalServicoOrderByWithRelationInput = {
-  id_profissional_servico?: Prisma.SortOrder
   id_profissional?: Prisma.SortOrder
   id_servico?: Prisma.SortOrder
   profissional?: Prisma.ProfissionalOrderByWithRelationInput
@@ -179,7 +170,6 @@ export type ProfissionalServicoOrderByWithRelationInput = {
 }
 
 export type ProfissionalServicoWhereUniqueInput = Prisma.AtLeast<{
-  id_profissional_servico?: string
   id_profissional_id_servico?: Prisma.ProfissionalServicoId_profissionalId_servicoCompoundUniqueInput
   AND?: Prisma.ProfissionalServicoWhereInput | Prisma.ProfissionalServicoWhereInput[]
   OR?: Prisma.ProfissionalServicoWhereInput[]
@@ -188,10 +178,9 @@ export type ProfissionalServicoWhereUniqueInput = Prisma.AtLeast<{
   id_servico?: Prisma.StringFilter<"ProfissionalServico"> | string
   profissional?: Prisma.XOR<Prisma.ProfissionalScalarRelationFilter, Prisma.ProfissionalWhereInput>
   servico?: Prisma.XOR<Prisma.ServicoScalarRelationFilter, Prisma.ServicoWhereInput>
-}, "id_profissional_servico" | "id_profissional_id_servico">
+}, "id_profissional_id_servico">
 
 export type ProfissionalServicoOrderByWithAggregationInput = {
-  id_profissional_servico?: Prisma.SortOrder
   id_profissional?: Prisma.SortOrder
   id_servico?: Prisma.SortOrder
   _count?: Prisma.ProfissionalServicoCountOrderByAggregateInput
@@ -203,47 +192,40 @@ export type ProfissionalServicoScalarWhereWithAggregatesInput = {
   AND?: Prisma.ProfissionalServicoScalarWhereWithAggregatesInput | Prisma.ProfissionalServicoScalarWhereWithAggregatesInput[]
   OR?: Prisma.ProfissionalServicoScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProfissionalServicoScalarWhereWithAggregatesInput | Prisma.ProfissionalServicoScalarWhereWithAggregatesInput[]
-  id_profissional_servico?: Prisma.StringWithAggregatesFilter<"ProfissionalServico"> | string
   id_profissional?: Prisma.StringWithAggregatesFilter<"ProfissionalServico"> | string
   id_servico?: Prisma.StringWithAggregatesFilter<"ProfissionalServico"> | string
 }
 
 export type ProfissionalServicoCreateInput = {
-  id_profissional_servico?: string
   profissional: Prisma.ProfissionalCreateNestedOneWithoutServicosInput
   servico: Prisma.ServicoCreateNestedOneWithoutProfissionaisInput
 }
 
 export type ProfissionalServicoUncheckedCreateInput = {
-  id_profissional_servico?: string
   id_profissional: string
   id_servico: string
 }
 
 export type ProfissionalServicoUpdateInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutServicosNestedInput
   servico?: Prisma.ServicoUpdateOneRequiredWithoutProfissionaisNestedInput
 }
 
 export type ProfissionalServicoUncheckedUpdateInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfissionalServicoCreateManyInput = {
-  id_profissional_servico?: string
   id_profissional: string
   id_servico: string
 }
 
 export type ProfissionalServicoUpdateManyMutationInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
+
 }
 
 export type ProfissionalServicoUncheckedUpdateManyInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -264,19 +246,16 @@ export type ProfissionalServicoId_profissionalId_servicoCompoundUniqueInput = {
 }
 
 export type ProfissionalServicoCountOrderByAggregateInput = {
-  id_profissional_servico?: Prisma.SortOrder
   id_profissional?: Prisma.SortOrder
   id_servico?: Prisma.SortOrder
 }
 
 export type ProfissionalServicoMaxOrderByAggregateInput = {
-  id_profissional_servico?: Prisma.SortOrder
   id_profissional?: Prisma.SortOrder
   id_servico?: Prisma.SortOrder
 }
 
 export type ProfissionalServicoMinOrderByAggregateInput = {
-  id_profissional_servico?: Prisma.SortOrder
   id_profissional?: Prisma.SortOrder
   id_servico?: Prisma.SortOrder
 }
@@ -366,12 +345,10 @@ export type ProfissionalServicoUncheckedUpdateManyWithoutServicoNestedInput = {
 }
 
 export type ProfissionalServicoCreateWithoutProfissionalInput = {
-  id_profissional_servico?: string
   servico: Prisma.ServicoCreateNestedOneWithoutProfissionaisInput
 }
 
 export type ProfissionalServicoUncheckedCreateWithoutProfissionalInput = {
-  id_profissional_servico?: string
   id_servico: string
 }
 
@@ -405,18 +382,15 @@ export type ProfissionalServicoScalarWhereInput = {
   AND?: Prisma.ProfissionalServicoScalarWhereInput | Prisma.ProfissionalServicoScalarWhereInput[]
   OR?: Prisma.ProfissionalServicoScalarWhereInput[]
   NOT?: Prisma.ProfissionalServicoScalarWhereInput | Prisma.ProfissionalServicoScalarWhereInput[]
-  id_profissional_servico?: Prisma.StringFilter<"ProfissionalServico"> | string
   id_profissional?: Prisma.StringFilter<"ProfissionalServico"> | string
   id_servico?: Prisma.StringFilter<"ProfissionalServico"> | string
 }
 
 export type ProfissionalServicoCreateWithoutServicoInput = {
-  id_profissional_servico?: string
   profissional: Prisma.ProfissionalCreateNestedOneWithoutServicosInput
 }
 
 export type ProfissionalServicoUncheckedCreateWithoutServicoInput = {
-  id_profissional_servico?: string
   id_profissional: string
 }
 
@@ -447,49 +421,40 @@ export type ProfissionalServicoUpdateManyWithWhereWithoutServicoInput = {
 }
 
 export type ProfissionalServicoCreateManyProfissionalInput = {
-  id_profissional_servico?: string
   id_servico: string
 }
 
 export type ProfissionalServicoUpdateWithoutProfissionalInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   servico?: Prisma.ServicoUpdateOneRequiredWithoutProfissionaisNestedInput
 }
 
 export type ProfissionalServicoUncheckedUpdateWithoutProfissionalInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfissionalServicoUncheckedUpdateManyWithoutProfissionalInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_servico?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfissionalServicoCreateManyServicoInput = {
-  id_profissional_servico?: string
   id_profissional: string
 }
 
 export type ProfissionalServicoUpdateWithoutServicoInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutServicosNestedInput
 }
 
 export type ProfissionalServicoUncheckedUpdateWithoutServicoInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfissionalServicoUncheckedUpdateManyWithoutServicoInput = {
-  id_profissional_servico?: Prisma.StringFieldUpdateOperationsInput | string
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
 
 export type ProfissionalServicoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id_profissional_servico?: boolean
   id_profissional?: boolean
   id_servico?: boolean
   profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
@@ -497,7 +462,6 @@ export type ProfissionalServicoSelect<ExtArgs extends runtime.Types.Extensions.I
 }, ExtArgs["result"]["profissionalServico"]>
 
 export type ProfissionalServicoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id_profissional_servico?: boolean
   id_profissional?: boolean
   id_servico?: boolean
   profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
@@ -505,7 +469,6 @@ export type ProfissionalServicoSelectCreateManyAndReturn<ExtArgs extends runtime
 }, ExtArgs["result"]["profissionalServico"]>
 
 export type ProfissionalServicoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id_profissional_servico?: boolean
   id_profissional?: boolean
   id_servico?: boolean
   profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
@@ -513,12 +476,11 @@ export type ProfissionalServicoSelectUpdateManyAndReturn<ExtArgs extends runtime
 }, ExtArgs["result"]["profissionalServico"]>
 
 export type ProfissionalServicoSelectScalar = {
-  id_profissional_servico?: boolean
   id_profissional?: boolean
   id_servico?: boolean
 }
 
-export type ProfissionalServicoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_profissional_servico" | "id_profissional" | "id_servico", ExtArgs["result"]["profissionalServico"]>
+export type ProfissionalServicoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_profissional" | "id_servico", ExtArgs["result"]["profissionalServico"]>
 export type ProfissionalServicoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
   servico?: boolean | Prisma.ServicoDefaultArgs<ExtArgs>
@@ -539,7 +501,6 @@ export type $ProfissionalServicoPayload<ExtArgs extends runtime.Types.Extensions
     servico: Prisma.$ServicoPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id_profissional_servico: string
     id_profissional: string
     id_servico: string
   }, ExtArgs["result"]["profissionalServico"]>
@@ -625,8 +586,8 @@ export interface ProfissionalServicoDelegate<ExtArgs extends runtime.Types.Exten
    * // Get first 10 ProfissionalServicos
    * const profissionalServicos = await prisma.profissionalServico.findMany({ take: 10 })
    * 
-   * // Only select the `id_profissional_servico`
-   * const profissionalServicoWithId_profissional_servicoOnly = await prisma.profissionalServico.findMany({ select: { id_profissional_servico: true } })
+   * // Only select the `id_profissional`
+   * const profissionalServicoWithId_profissionalOnly = await prisma.profissionalServico.findMany({ select: { id_profissional: true } })
    * 
    */
   findMany<T extends ProfissionalServicoFindManyArgs>(args?: Prisma.SelectSubset<T, ProfissionalServicoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfissionalServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -670,9 +631,9 @@ export interface ProfissionalServicoDelegate<ExtArgs extends runtime.Types.Exten
    *   ]
    * })
    * 
-   * // Create many ProfissionalServicos and only return the `id_profissional_servico`
-   * const profissionalServicoWithId_profissional_servicoOnly = await prisma.profissionalServico.createManyAndReturn({
-   *   select: { id_profissional_servico: true },
+   * // Create many ProfissionalServicos and only return the `id_profissional`
+   * const profissionalServicoWithId_profissionalOnly = await prisma.profissionalServico.createManyAndReturn({
+   *   select: { id_profissional: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -761,9 +722,9 @@ export interface ProfissionalServicoDelegate<ExtArgs extends runtime.Types.Exten
    *   ]
    * })
    * 
-   * // Update zero or more ProfissionalServicos and only return the `id_profissional_servico`
-   * const profissionalServicoWithId_profissional_servicoOnly = await prisma.profissionalServico.updateManyAndReturn({
-   *   select: { id_profissional_servico: true },
+   * // Update zero or more ProfissionalServicos and only return the `id_profissional`
+   * const profissionalServicoWithId_profissionalOnly = await prisma.profissionalServico.updateManyAndReturn({
+   *   select: { id_profissional: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -967,7 +928,6 @@ export interface Prisma__ProfissionalServicoClient<T, Null = never, ExtArgs exte
  * Fields of the ProfissionalServico model
  */
 export interface ProfissionalServicoFieldRefs {
-  readonly id_profissional_servico: Prisma.FieldRef<"ProfissionalServico", 'String'>
   readonly id_profissional: Prisma.FieldRef<"ProfissionalServico", 'String'>
   readonly id_servico: Prisma.FieldRef<"ProfissionalServico", 'String'>
 }
