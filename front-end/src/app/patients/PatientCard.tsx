@@ -1,49 +1,43 @@
 "use client";
 
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIdCard, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { PatientSummary } from "./types";
 
 interface Props {
   patient: PatientSummary;
-  onClick: () => void;
+  onClick: () => void; // abre o modal de detalhes
+  onEdit: () => void;  // abre o modal de edição (pode ser o mesmo modal)
+  onDelete: () => void; // deleta o paciente
 }
 
-const PatientCard = ({ patient, onClick }: Props) => {
+const PatientCard = ({ patient, onClick, onEdit, onDelete }: Props) => {
   return (
-    <div 
-      className="card-item-bottom-line-rounded h-100 hover-shadow cursor-pointer bg-white"
-      onClick={onClick}
-      style={{ transition: "transform 0.2s" }}
-    >
-      <div className="card-body p-4 d-flex flex-column h-100">
-        <div className="d-flex align-items-center mb-3">
-          <div 
-            className="bg-gradient-vl text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5 me-3"
-            style={{ width: "48px", height: "48px", minWidth: "48px" }}
-          >
-            {patient.nome_completo.charAt(0).toUpperCase()}
-          </div>
-          <div className="overflow-hidden">
-            <h6 className="card-title fw-bold mb-0 text-truncate" title={patient.nome_completo}>
-              {patient.nome_completo}
-            </h6>
-            <small className="text-muted">Paciente</small>
-          </div>
-        </div>
+    <div className="card shadow-sm rounded-4 cursor-pointer position-relative" style={{ minHeight: "150px" }}>
+      {/* Card principal */}
+      <div className="card-body" onClick={onClick}>
+        <h6 className="card-title fw-bold">{patient.nome_completo}</h6>
+        <p className="card-text small mb-1">CPF: {patient.cpf}</p>
+        <p className="card-text small mb-0">Telefone: {patient.telefone}</p>
+      </div>
 
-        <div className="mt-auto pt-3 border-top">
-          <div className="d-flex justify-content-between">
-            <small className="text-secondary">
-              <FontAwesomeIcon icon={faIdCard} className="me-1" />
-              {patient.cpf}
-            </small>
-            <small className="text-secondary">
-              <FontAwesomeIcon icon={faPhone} className="me-1" />
-              {patient.telefone}
-            </small>
-          </div>
-        </div>
+      {/* Botões de ação */}
+      <div className="position-absolute top-0 end-0 m-2 d-flex gap-2">
+        <button
+          className="btn btn-sm btn-outline-primary rounded-pill px-2"
+          onClick={(e) => { e.stopPropagation(); onEdit(); }}
+        >
+          <FontAwesomeIcon icon={faPencil} className="me-1" />
+          Editar
+        </button>
+        <button
+          className="btn btn-sm btn-outline-danger rounded-pill px-2"
+          onClick={(e) => { e.stopPropagation(); onDelete(); }}
+        >
+          <FontAwesomeIcon icon={faTrash} className="me-1" />
+          Excluir
+        </button>
       </div>
     </div>
   );

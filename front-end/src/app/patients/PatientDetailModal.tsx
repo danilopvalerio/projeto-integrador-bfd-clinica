@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from "../../utils/api";
-import { getErrorMessage } from "../../utils/errorUtils";
-import { PatientDetail, UpdatePatientPayload } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import api from "../../utils/api";
+import { getErrorMessage } from "../../utils/errorUtils";
+import { PatientDetail } from "./types";
 import PatientGeneralForm from "./PatientGeneralForm";
 
 interface Props {
@@ -21,22 +21,14 @@ const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
   const [successMsg, setSuccessMsg] = useState("");
 
   const [formData, setFormData] = useState<PatientDetail>({
-    id_paciente: "",
+    id: "",
     nome_completo: "",
     cpf: "",
     telefone: "",
-    data_nascimento: "",
-    id_usuario: "",
-    id_endereco: ""
+    sexo: "",
+    email: "",
+    data_nascimento: ""
   });
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +44,7 @@ const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
     if (patientId) fetchData();
   }, [patientId]);
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: keyof PatientDetail, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -63,8 +55,7 @@ const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
     setSuccessMsg("");
 
     try {
-      const payload: UpdatePatientPayload = { ...formData };
-      await api.patch(`/patients/${patientId}`, payload);
+      await api.patch(`/patients/${patientId}`, formData);
       setSuccessMsg("Dados atualizados com sucesso!");
       setTimeout(() => onSuccess(), 1000);
     } catch (err) {
@@ -114,7 +105,7 @@ const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
             <form onSubmit={handleUpdate}>
               <PatientGeneralForm
                 data={formData}
-                onChange={handleChange as any}
+                onChange={handleChange}
                 disabled={saving}
               />
 

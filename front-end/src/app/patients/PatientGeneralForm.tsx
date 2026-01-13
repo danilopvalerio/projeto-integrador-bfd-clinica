@@ -1,18 +1,12 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faIdCard, faPhone, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-interface PatientFormData {
-  nome_completo: string;
-  cpf: string;
-  telefone: string;
-  data_nascimento: string;
-}
+import { faUser, faIdCard, faPhone, faCalendarAlt, faEnvelope, faVenusMars } from "@fortawesome/free-solid-svg-icons";
+import { PatientDetail } from "./types";
 
 interface Props {
-  data: PatientFormData;
-  onChange: (field: keyof PatientFormData, value: string) => void;
+  data: PatientDetail;
+  onChange: (field: keyof PatientDetail, value: string) => void;
   disabled?: boolean;
 }
 
@@ -66,6 +60,41 @@ const PatientGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
+      {/* Email */}
+      <div className="col-md-6">
+        <label className="form-label small text-muted fw-bold">Email</label>
+        <div className="position-relative">
+          <FontAwesomeIcon icon={faEnvelope} className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
+          <input
+            type="email"
+            className="p-2 ps-5 w-100 form-control-underline"
+            placeholder="exemplo@email.com"
+            value={data.email || ""}
+            onChange={(e) => onChange("email", e.target.value)}
+            disabled={disabled}
+          />
+        </div>
+      </div>
+
+      {/* Sexo */}
+      <div className="col-md-6">
+        <label className="form-label small text-muted fw-bold">Sexo</label>
+        <div className="position-relative">
+          <FontAwesomeIcon icon={faVenusMars} className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
+          <select
+            className="p-2 ps-5 w-100 form-control-underline"
+            value={data.sexo || ""}
+            onChange={(e) => onChange("sexo", e.target.value)}
+            disabled={disabled}
+          >
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+      </div>
+
       {/* Data de Nascimento */}
       <div className="col-12">
         <label className="form-label small text-muted fw-bold">Data de Nascimento</label>
@@ -74,7 +103,7 @@ const PatientGeneralForm = ({ data, onChange, disabled = false }: Props) => {
           <input
             type="date"
             className="p-2 ps-5 w-100 form-control-underline"
-            value={data.data_nascimento}
+            value={data.data_nascimento || ""}
             onChange={(e) => onChange("data_nascimento", e.target.value)}
             disabled={disabled}
           />

@@ -1,23 +1,26 @@
 export interface PatientSummary {
-  id_paciente: string;
+  id: string;                  
   nome_completo: string;
   cpf: string;
   telefone: string;
-  id_usuario: string;
+  sexo?: string;
+  email?: string;
 }
 
+// Detalhes completos do paciente
 export interface PatientDetail extends PatientSummary {
   data_nascimento: string;
-  id_endereco: string;
 }
 
+// Payload para criar paciente
 export interface CreatePatientPayload {
   nome_completo: string;
   cpf: string;
   telefone: string;
   data_nascimento: string;
-  id_usuario?: string;
-  id_endereco?: string;
+  sexo?: string;
+  email?: string;
 }
 
+// Payload para atualizar paciente (parcial)
 export type UpdatePatientPayload = Partial<CreatePatientPayload>;
