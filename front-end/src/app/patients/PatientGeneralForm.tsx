@@ -1,12 +1,21 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faIdCard, faPhone, faCalendarAlt, faEnvelope, faVenusMars } from "@fortawesome/free-solid-svg-icons";
-import { PatientDetail } from "./types";
+import { 
+  faUser, 
+  faIdCard, 
+  faPhone, 
+  faCalendarAlt, 
+  faEnvelope, 
+  faVenusMars, 
+  faLink 
+} from "@fortawesome/free-solid-svg-icons";
+import { PatientDetail, CreatePatientPayload } from "./types";
 
+// Usamos um tipo união ou Partial para permitir que o form aceite ambos os tipos de dados
 interface Props {
-  data: PatientDetail;
-  onChange: (field: keyof PatientDetail, value: string) => void;
+  data: PatientDetail | CreatePatientPayload;
+  onChange: (field: any, value: string) => void;
   disabled?: boolean;
 }
 
@@ -96,7 +105,7 @@ const PatientGeneralForm = ({ data, onChange, disabled = false }: Props) => {
       </div>
 
       {/* Data de Nascimento */}
-      <div className="col-12">
+      <div className="col-md-6">
         <label className="form-label small text-muted fw-bold">Data de Nascimento</label>
         <div className="position-relative">
           <FontAwesomeIcon icon={faCalendarAlt} className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
@@ -106,6 +115,23 @@ const PatientGeneralForm = ({ data, onChange, disabled = false }: Props) => {
             value={data.data_nascimento || ""}
             onChange={(e) => onChange("data_nascimento", e.target.value)}
             disabled={disabled}
+            required
+          />
+        </div>
+      </div>
+
+      {/* ID Usuário (FK) */}
+      <div className="col-md-6">
+        <label className="form-label small text-muted fw-bold">Vínculo de Usuário (UUID)</label>
+        <div className="position-relative">
+          <FontAwesomeIcon icon={faLink} className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
+          <input
+            className="p-2 ps-5 w-100 form-control-underline"
+            placeholder="ID do Usuário no sistema"
+            value={data.id_usuario || ""}
+            onChange={(e) => onChange("id_usuario", e.target.value)}
+            disabled={disabled}
+            required
           />
         </div>
       </div>

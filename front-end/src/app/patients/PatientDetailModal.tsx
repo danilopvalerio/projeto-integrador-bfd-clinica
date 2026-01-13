@@ -21,13 +21,16 @@ const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
   const [successMsg, setSuccessMsg] = useState("");
 
   const [formData, setFormData] = useState<PatientDetail>({
-    id: "",
+    id_paciente: "",
     nome_completo: "",
     cpf: "",
     telefone: "",
     sexo: "",
     email: "",
-    data_nascimento: ""
+    data_nascimento: "",
+    id_endereco: "",
+    id_usuario: ""
+
   });
 
   useEffect(() => {

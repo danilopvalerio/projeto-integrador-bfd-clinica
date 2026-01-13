@@ -15,11 +15,16 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Estado inicial atualizado para refletir o CreatePatientPayload do seu index.ts
   const [formData, setFormData] = useState<CreatePatientPayload>({
     nome_completo: "",
     cpf: "",
     telefone: "",
-    data_nascimento: ""
+    data_nascimento: "",
+    sexo: "",
+    email: "",
+    id_usuario: "",
+    id_endereco: ""
   });
 
   useEffect(() => {
@@ -30,7 +35,8 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  const handleChange = (field: keyof CreatePatientPayload, value: string | boolean) => {
+  // Tipagem ajustada para aceitar as chaves do CreatePatientPayload
+  const handleChange = (field: keyof CreatePatientPayload, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -40,6 +46,7 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
     setError("");
 
     try {
+      // Envia o payload completo para a rota de criação
       await api.post("/patients", formData);
       onSuccess();
     } catch (err) {
@@ -52,12 +59,12 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
   return (
     <div
       className="modal-backdrop d-flex justify-content-center align-items-center"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.48)" }}
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.48)", zIndex: 1050 }}
       onClick={onClose}
     >
       <div
         className="modal-dialog detail-box"
-        style={{ maxWidth: "600px" }}
+        style={{ maxWidth: "600px", width: "100%" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content border-0 shadow rounded-4">
@@ -85,6 +92,7 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
                   type="button"
                   className="btn btn-link text-secondary text-decoration-none"
                   onClick={onClose}
+                  disabled={loading}
                 >
                   Cancelar
                 </button>
@@ -93,7 +101,14 @@ const AddPatientModal = ({ onClose, onSuccess }: Props) => {
                   className="button-dark-grey px-4 py-2 rounded-pill shadow-sm fw-bold"
                   disabled={loading}
                 >
-                  {loading ? "Salvando..." : "Criar Paciente"}
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      Salvando...
+                    </>
+                  ) : (
+                    "Criar Paciente"
+                  )}
                 </button>
               </div>
             </form>

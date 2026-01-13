@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPlus, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 
+import api from "../../utils/api"; // Importado para buscar dados reais futuramente
 import { PatientSummary } from "./types";
 import PatientCard from "./PatientCard";
 import AddPatientModal from "./AddPatientModal";
@@ -24,25 +25,37 @@ const PatientsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
 
-  // Simulando fetch dos pacientes
-  useEffect(() => {
+  // Função para carregar pacientes (Centralizada para facilitar o refresh)
+  const fetchPatients = useCallback(async () => {
     setLoading(true);
-    setTimeout(() => {
-      setPatients(MOCK_PATIENTS_SUMMARY);
+    try {
+      // Quando sua API estiver pronta, use: const res = await api.get("/patients");
+      // setPatients(res.data);
+      
+      // Simulação com Mock por enquanto
+      setTimeout(() => {
+        setPatients(MOCK_PATIENTS_SUMMARY);
+        setLoading(false);
+      }, 500);
+    } catch (error) {
+      console.error("Erro ao buscar pacientes", error);
       setLoading(false);
-    }, 500);
+    }
   }, []);
 
-  // Função de busca (mock simples)
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
+
+  // Função de busca
   const handleSearch = () => {
     const term = searchTerm.toLowerCase();
-    setPatients(
-      MOCK_PATIENTS_SUMMARY.filter(
-        (p) =>
-          p.nome_completo.toLowerCase().includes(term) ||
-          p.cpf.includes(term)
-      )
+    const filtered = MOCK_PATIENTS_SUMMARY.filter(
+      (p) =>
+        p.nome_completo.toLowerCase().includes(term) ||
+        p.cpf.includes(term)
     );
+    setPatients(filtered);
   };
 
   const handleClearSearch = () => {
@@ -123,20 +136,22 @@ const PatientsPage = () => {
             ) : patients.length ? (
               <div className="row g-3">
                 {patients.map((patient) => (
-    <div key={patient.id} className="col-md-6 col-lg-4">
-    <PatientCard
-      patient={patient}
-      onClick={() => setSelectedPatientId(patient.id)}
-      onEdit={() => setSelectedPatientId(patient.id)} 
-      onDelete={() => {
-
-        setPatients((prev) =>
-          prev.filter((p) => p.id !== patient.id)
-        );
-      }}
-    />
-  </div>
-))}
+                  <div key={patient.id_paciente} className="col-md-6 col-lg-4">
+                    <PatientCard
+                      patient={patient}
+                      // Alterado de .id para .id_paciente
+                      onClick={() => setSelectedPatientId(patient.id_paciente)}
+                      onEdit={() => setSelectedPatientId(patient.id_paciente)} 
+                      onDelete={() => {
+                        if(confirm("Deseja remover este paciente?")) {
+                            setPatients((prev) =>
+                                prev.filter((p) => p.id_paciente !== patient.id_paciente)
+                            );
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-center py-5 bg-light rounded-3 mt-3">
@@ -153,7 +168,7 @@ const PatientsPage = () => {
           onClose={() => setIsAddModalOpen(false)}
           onSuccess={() => {
             setIsAddModalOpen(false);
-            setPatients(MOCK_PATIENTS_SUMMARY); // reset mock
+            fetchPatients(); // Atualiza a lista
           }}
         />
       )}
@@ -164,7 +179,7 @@ const PatientsPage = () => {
           onClose={() => setSelectedPatientId(null)}
           onSuccess={() => {
             setSelectedPatientId(null);
-            setPatients(MOCK_PATIENTS_SUMMARY); // reset mock
+            fetchPatients(); // Atualiza a lista
           }}
         />
       )}
