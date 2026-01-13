@@ -38,7 +38,10 @@ export type MedicalRecordType =
   | 'PLANO_TRATAMENTO'   // Planejamento de procedimentos futuros
   | 'EVOLUCAO_VISITA'    // Diário clínico de cada consulta
   | 'DIAGNOSTICO'        // Identificação de patologias específicas
-  | 'OBSERVACAO_GERAL';  // Notas administrativas ou lembretes
+  | 'OBSERVACAO_GERAL'  // Notas administrativas ou lembretes
+  | 'CONDUTA'   //Medicamento, Exames e Orientações
+  | 'ALERTA'  //Alergias e Doenças Crônicas
+  | 'QUEIXA_PRINCIPAL';  //Motivo da Consulta
 
 /**
  * Interface para a Tabela Prontuarios

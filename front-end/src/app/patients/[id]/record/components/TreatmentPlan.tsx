@@ -1,7 +1,7 @@
 import { MedicalRecord } from "../../../types";
 
 interface Props {
-  records: MedicalRecord[];
+records: MedicalRecord[];
 }
 
 export default function TreatmentPlan({ records }: { records: MedicalRecord[] }) {

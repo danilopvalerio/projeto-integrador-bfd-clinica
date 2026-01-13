@@ -5,6 +5,8 @@ import { MOCK_PATIENTS, MOCK_MEDICAL_RECORDS } from "../../types/mockData";
 import AnamnesisSummary from "./components/AnamnesisSummary";
 import ClinicalTimeline from "./components/ClinicalTimeLine";
 import TreatmentPlan from "./components/TreatmentPlan";
+import ClinicalHistory from "./components/ClinicalHistory";
+
 
 export default function RecordPage() {
   const { id } = useParams();
@@ -50,12 +52,15 @@ export default function RecordPage() {
       <main className="container-fluid px-4 pb-5">
         <div className="row g-4">
           
-          {/* COLUNA ESQUERDA: Resumo e Planejamento */}
+          {/* COLUNA ESQUERDA: Resumo, Planejamento e Histórico */}
           <div className="col-lg-4 col-md-5">
             <div className="d-grid gap-4">
               {/* Componente de Anamnese (Histórico e Alergias) */}
               <AnamnesisSummary records={records} />
-              
+
+              {/* Componente de Histórico Clínico*/}
+              <ClinicalHistory records={records} />
+
               {/* Componente de Plano de Tratamento (Futuro) */}
               <TreatmentPlan records={records} />
             </div>
