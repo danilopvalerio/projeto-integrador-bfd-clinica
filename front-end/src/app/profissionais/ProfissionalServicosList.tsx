@@ -13,10 +13,7 @@ import {
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 
-import type {
-  PaginatedResponse,
-  ServicoEntityForProfissional,
-} from "./types";
+import type { PaginatedResponse, ServicoEntityForProfissional } from "./types";
 
 interface Props {
   profissionalId: string;
@@ -34,7 +31,9 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
   const [linkedSearch, setLinkedSearch] = useState("");
 
   // ===== Disponíveis (para selecionar/vincular) =====
-  const [available, setAvailable] = useState<ServicoEntityForProfissional[]>([]);
+  const [available, setAvailable] = useState<ServicoEntityForProfissional[]>(
+    []
+  );
   const [availableLoading, setAvailableLoading] = useState(true);
   const [availableError, setAvailableError] = useState("");
   const [availablePage, setAvailablePage] = useState(1);
@@ -54,7 +53,8 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
       }
 
       const response = await api.get(url);
-      const data = response.data as PaginatedResponse<ServicoEntityForProfissional>;
+      const data =
+        response.data as PaginatedResponse<ServicoEntityForProfissional>;
 
       setLinked(data.data);
       setLinkedPage(data.page);
@@ -79,7 +79,8 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
       }
 
       const response = await api.get(url);
-      const data = response.data as PaginatedResponse<ServicoEntityForProfissional>;
+      const data =
+        response.data as PaginatedResponse<ServicoEntityForProfissional>;
 
       setAvailable(data.data);
       setAvailablePage(data.page);
@@ -94,12 +95,13 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
   useEffect(() => {
     fetchLinked(1, "");
     fetchAvailable(1, "");
-    
   }, [profissionalId]);
 
   const handleLink = async (id_servico: string) => {
     try {
-      await api.post(`/professionals/${profissionalId}/servicos`, { id_servico });
+      await api.post(`/professionals/${profissionalId}/servicos`, {
+        id_servico,
+      });
 
       // Atualiza as duas listas
       fetchLinked(linkedPage, linkedSearch);
@@ -147,7 +149,9 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
               placeholder="Buscar nos vinculados..."
               value={linkedSearch}
               onChange={(e) => setLinkedSearch(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && fetchLinked(1, linkedSearch)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && fetchLinked(1, linkedSearch)
+              }
             />
             {linkedSearch && (
               <span
@@ -193,7 +197,15 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                 className="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2"
               >
                 <div>
-                  <div className="fw-bold">{s.nome}</div>
+                  <div className="fw-bold">
+                    {s.nome} | {s.duracao_estimada} min
+                  </div>
+                  <div className="fw-bold">
+                    {s.preco.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
                   <div className="text-muted small">
                     {s.descricao || "Sem descrição"}
                   </div>
@@ -240,7 +252,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
 
       {/* ===== DISPONÍVEIS ===== */}
       <div className="d-flex align-items-center justify-content-between mb-2">
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 ">
           <FontAwesomeIcon icon={faPlus} />
           <span className="fw-bold">Vincular novo serviço</span>
         </div>
@@ -303,10 +315,18 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
             {available.map((s) => (
               <div
                 key={s.id_servico}
-                className="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2"
+                className="rounded-4 border p-3 hover mt-2 d-flex justify-content-between align-items-center rounded-3 mb-2"
               >
                 <div>
-                  <div className="fw-bold">{s.nome}</div>
+                  <div className="fw-bold">
+                    {s.nome} | {s.duracao_estimada} min
+                  </div>
+                  <div className="fw-bold">
+                    {s.preco.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
                   <div className="text-muted small">
                     {s.descricao || "Sem descrição"}
                   </div>
@@ -316,8 +336,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                   className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm"
                   onClick={() => handleLink(s.id_servico)}
                 >
-                  <FontAwesomeIcon icon={faPlus} className="me-2" />
-                  Vincular
+                  <FontAwesomeIcon icon={faPlus} className="" />
                 </button>
               </div>
             ))}

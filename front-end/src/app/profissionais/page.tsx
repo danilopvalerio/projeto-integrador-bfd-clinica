@@ -32,13 +32,14 @@ export default function ProfissionaisPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedProfissionalId, setSelectedProfissionalId] = useState<string | null>(null);
+  const [selectedProfissionalId, setSelectedProfissionalId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) router.push("/login");
     else fetchProfissionais(1);
-    
   }, [router]);
 
   const fetchProfissionais = async (page = 1, term = "") => {
@@ -79,7 +80,10 @@ export default function ProfissionaisPage() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ background: "#e9e9e9" }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ background: "#e9e9e9" }}
+    >
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
         <button
           className="btn btn-link text-white p-0 me-3"
@@ -127,7 +131,7 @@ export default function ProfissionaisPage() {
 
               <div className="col-md-2">
                 <button
-                  className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold"
+                  className="button-dark-grey w-100 w-md-auto rounded-pill px-2 py-2 shadow-sm fw-bold"
                   onClick={handleSearch}
                 >
                   Pesquisar
@@ -154,16 +158,23 @@ export default function ProfissionaisPage() {
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
-                <p className="text-muted small mt-2">Carregando profissionais...</p>
+                <p className="text-muted small mt-2">
+                  Carregando profissionais...
+                </p>
               </div>
             ) : profissionais.length ? (
               <>
                 <div className="row g-3">
                   {profissionais.map((prof) => (
-                    <div key={prof.id_profissional} className="col-md-6 col-lg-4">
+                    <div
+                      key={prof.id_profissional}
+                      className="col-md-6 col-lg-4"
+                    >
                       <ProfissionalCard
                         profissional={prof}
-                        onClick={() => setSelectedProfissionalId(prof.id_profissional)}
+                        onClick={() =>
+                          setSelectedProfissionalId(prof.id_profissional)
+                        }
                       />
                     </div>
                   ))}
@@ -173,7 +184,9 @@ export default function ProfissionaisPage() {
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
                     disabled={currentPage === 1}
-                    onClick={() => fetchProfissionais(currentPage - 1, searchTerm)}
+                    onClick={() =>
+                      fetchProfissionais(currentPage - 1, searchTerm)
+                    }
                   >
                     Anterior
                   </button>
@@ -183,7 +196,9 @@ export default function ProfissionaisPage() {
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
                     disabled={currentPage === totalPages}
-                    onClick={() => fetchProfissionais(currentPage + 1, searchTerm)}
+                    onClick={() =>
+                      fetchProfissionais(currentPage + 1, searchTerm)
+                    }
                   >
                     Próxima
                   </button>
@@ -191,7 +206,9 @@ export default function ProfissionaisPage() {
               </>
             ) : (
               <div className="text-center py-5 bg-light rounded-3 mt-3">
-                <p className="text-muted fw-bold mb-0">Nenhum profissional encontrado.</p>
+                <p className="text-muted fw-bold mb-0">
+                  Nenhum profissional encontrado.
+                </p>
                 <small className="text-secondary">
                   Tente mudar os termos da busca ou adicione um novo.
                 </small>

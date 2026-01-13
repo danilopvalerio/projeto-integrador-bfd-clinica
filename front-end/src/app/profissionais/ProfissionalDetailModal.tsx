@@ -37,7 +37,6 @@ const ProfissionalDetailModal = ({
     nome: "",
     cpf: "",
     registro_conselho: "",
-  
   });
 
   useEffect(() => {
@@ -127,7 +126,7 @@ const ProfissionalDetailModal = ({
       >
         <div className="modal-content border-0 rounded-4 shadow">
           {/* Header */}
-          <div className="modal-header bg-gradient-vl text-white rounded-top-4">
+          <div className="modal-header bg-gradient-vl text-white rounded-top-4 d-flex justify-content-between align-items-center px-4 py-3">
             <div>
               <h5 className="modal-title fw-bold mb-0">
                 Detalhes do Profissional
@@ -213,7 +212,9 @@ const ProfissionalDetailModal = ({
                   <div className="col-lg-6">
                     <div className="bg-white border rounded-4 p-4 shadow-sm h-100">
                       <h6 className="fw-bold mb-3">Serviços</h6>
-                      <ProfissionalServicosList profissionalId={profissionalId} />
+                      <ProfissionalServicosList
+                        profissionalId={profissionalId}
+                      />
                     </div>
                   </div>
                 </div>
