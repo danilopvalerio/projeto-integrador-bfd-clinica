@@ -164,7 +164,8 @@ html {
   text-decoration: none;
 }
 
-footer {
+/* Removido o estilo fixo do footer para permitir layouts flexíveis */
+/* footer {
   background-color: var(--color-quinary);
   color: var(--color-white);
   margin: 0;
@@ -172,7 +173,7 @@ footer {
   justify-content: center;
   align-items: center;
   height: 1.5rem;
-}
+} */
 
 /* Remove o estilo padrão do input radio */
 .radio-clean {
