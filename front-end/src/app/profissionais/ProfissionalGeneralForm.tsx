@@ -50,18 +50,33 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
         />
       </div>
 
-      {/* ID Usuário */}
-      <div className="col-md-6">
-        <label className="form-label fw-bold">ID do Usuário</label>
-        <input
-          className="form-control rounded-pill"
-          placeholder="ID do usuário vinculado"
-          value={value.id_usuario ?? ""}
-          onChange={(e) => onChange({ ...value, id_usuario: e.target.value })}
-          disabled={mode === "edit"}
-          required
-        />
-      </div>
+      {/* Campos de usuário SOMENTE no create */}
+      {mode === "create" && (
+        <>
+          <div className="col-md-6">
+            <label className="form-label fw-bold">E-mail do Usuário</label>
+            <input
+              className="form-control rounded-pill"
+              placeholder="email@dominio.com"
+              value={value.email ?? ""}
+              onChange={(e) => onChange({ ...value, email: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label fw-bold">Senha do Usuário</label>
+            <input
+              className="form-control rounded-pill"
+              placeholder="Senha"
+              type="password"
+              value={value.senha ?? ""}
+              onChange={(e) => onChange({ ...value, senha: e.target.value })}
+              required
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

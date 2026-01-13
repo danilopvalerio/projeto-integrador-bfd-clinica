@@ -1,7 +1,3 @@
-// src/app/professionals/types/index.ts
-
-// ======= Tipos principais (espelho do back-end) =======
-
 export interface ProfissionalSummary {
   id_profissional: string;
   nome: string;
@@ -10,15 +6,24 @@ export interface ProfissionalSummary {
   id_usuario: string;
 }
 
-// No back, o "detail" do profissional é basicamente o entity.
-// Se no futuro o back retornar mais campos (telefones/horarios), você adiciona aqui.
+
 export type ProfissionalDetail = ProfissionalSummary;
 
 export interface CreateProfissionalPayload {
   nome: string;
   cpf: string;
   registro_conselho: string;
-  id_usuario: string;
+
+  // legado (opcional agora)
+  id_usuario?: string;
+
+  
+  usuario?: {
+    email: string;
+    senha: string;
+    tipo_usuario?: string; // default: "PROFISSIONAL"
+  };
+
   telefones?: { telefone: string; principal: boolean }[];
   horarios?: { dia_semana: number; hora_inicio: Date; hora_fim: Date }[];
 }
@@ -39,7 +44,7 @@ export interface UpdateHorarioPayload {
   hora_fim?: Date;
 }
 
-// ======= Paginação (igual padrão que o services/page.tsx espera) =======
+// ======= Paginação =======
 
 export interface PaginatedResponse<T> {
   data: T[];
@@ -48,11 +53,8 @@ export interface PaginatedResponse<T> {
   lastPage: number;
 }
 
-// ======= Tipos de vínculos (usados dentro do módulo Profissionais) =======
-// Regra do líder: usar DTO próprio do módulo de Profissional.
-// Então a gente declara aqui os shapes necessários pro front.
+// ======= Tipos de vínculos =======
 
-// O back retorna ServicoEntity (muito parecido com o ServicoSummary do módulo Services)
 export interface ServicoEntityForProfissional {
   id_servico: string;
   nome: string;
@@ -60,10 +62,8 @@ export interface ServicoEntityForProfissional {
   preco: number;
   duracao_estimada: number;
   ativo: boolean;
-  // se o back incluir mais campos, você adiciona aqui sem medo
 }
 
-// EspecialidadeEntity do back (não recebi o DTO, então fiz o mínimo seguro)
 export interface EspecialidadeEntityForProfissional {
   id_especialidade: string;
   nome: string;
@@ -81,9 +81,17 @@ export interface AddEspecialidadeToProfissionalPayload {
   id_especialidade: string;
 }
 
+// ======= Form do modal =======
+
 export interface ProfissionalFormData {
   nome?: string;
   cpf?: string;
   registro_conselho?: string;
+
+ 
+  email?: string;
+  senha?: string;
+
+  
   id_usuario?: string;
 }

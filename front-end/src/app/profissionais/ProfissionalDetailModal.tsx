@@ -19,22 +19,27 @@ interface Props {
   onSuccess: () => void;
 }
 
-const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) => {
+const ProfissionalDetailModal = ({
+  profissionalId,
+  onClose,
+  onSuccess,
+}: Props) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
-  const [profissional, setProfissional] = useState<ProfissionalDetail | null>(null);
+  const [profissional, setProfissional] = useState<ProfissionalDetail | null>(
+    null
+  );
 
   const [formData, setFormData] = useState<ProfissionalFormData>({
     nome: "",
     cpf: "",
     registro_conselho: "",
-    id_usuario: "",
+  
   });
 
-  
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -59,7 +64,7 @@ const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) 
           nome: data.nome,
           cpf: data.cpf,
           registro_conselho: data.registro_conselho,
-          id_usuario: data.id_usuario,
+          // id_usuario removido aqui também
         });
       } catch (err) {
         setError(getErrorMessage(err));
@@ -124,7 +129,9 @@ const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) 
           {/* Header */}
           <div className="modal-header bg-gradient-vl text-white rounded-top-4">
             <div>
-              <h5 className="modal-title fw-bold mb-0">Detalhes do Profissional</h5>
+              <h5 className="modal-title fw-bold mb-0">
+                Detalhes do Profissional
+              </h5>
               {profissional && (
                 <small className="opacity-75">
                   {profissional.nome} • {profissional.registro_conselho}
@@ -149,11 +156,15 @@ const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) 
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
-                <p className="text-muted small mt-2">Carregando profissional...</p>
+                <p className="text-muted small mt-2">
+                  Carregando profissional...
+                </p>
               </div>
             ) : !profissional ? (
               <div className="text-center py-5 bg-light rounded-3">
-                <p className="text-muted fw-bold mb-0">Profissional não encontrado.</p>
+                <p className="text-muted fw-bold mb-0">
+                  Profissional não encontrado.
+                </p>
               </div>
             ) : (
               <>
@@ -193,17 +204,15 @@ const ProfissionalDetailModal = ({ profissionalId, onClose, onSuccess }: Props) 
                   <div className="col-lg-6">
                     <div className="bg-white border rounded-4 p-4 shadow-sm h-100">
                       <h6 className="fw-bold mb-3">Especialidades</h6>
-
-                      {/* Arquivo 7/7 vai implementar paginado + busca + vincular/desvincular */}
-                      <ProfissionalEspecialidadesList profissionalId={profissionalId} />
+                      <ProfissionalEspecialidadesList
+                        profissionalId={profissionalId}
+                      />
                     </div>
                   </div>
 
                   <div className="col-lg-6">
                     <div className="bg-white border rounded-4 p-4 shadow-sm h-100">
                       <h6 className="fw-bold mb-3">Serviços</h6>
-
-                      {/* Arquivo 7/7 vai implementar paginado + busca + vincular/desvincular */}
                       <ProfissionalServicosList profissionalId={profissionalId} />
                     </div>
                   </div>

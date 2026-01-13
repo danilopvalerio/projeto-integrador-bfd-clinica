@@ -37,11 +37,8 @@ const ProfissionalCard = ({ profissional, onClick }: Props) => {
 
         {/* Corpo */}
         <div className="mt-auto">
-          <p className="mb-1 small text-secondary">
-            <strong>CPF:</strong> {profissional.cpf}
-          </p>
           <p className="mb-0 small text-secondary">
-            <strong>ID Usuário:</strong> {profissional.id_usuario}
+            <strong>CPF:</strong> {profissional.cpf}
           </p>
         </div>
       </div>

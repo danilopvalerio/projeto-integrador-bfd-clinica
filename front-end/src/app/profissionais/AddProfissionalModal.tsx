@@ -23,7 +23,8 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
     nome: "",
     cpf: "",
     registro_conselho: "",
-    id_usuario: "",
+    email: "",
+    senha: "",
   });
 
   useEffect(() => {
@@ -39,12 +40,25 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
     setError("");
 
     try {
-      
+      const email = (formData.email ?? "").trim();
+      const senha = formData.senha ?? "";
+
+      if (!email) {
+        throw new Error("Informe um e-mail para criar o usuário automaticamente.");
+      }
+      if (!senha) {
+        throw new Error("Informe uma senha para o usuário.");
+      }
+
       await api.post("/professionals", {
         nome: formData.nome ?? "",
         cpf: formData.cpf ?? "",
         registro_conselho: formData.registro_conselho ?? "",
-        id_usuario: formData.id_usuario ?? "",
+        usuario: {
+          email,
+          senha,
+          tipo_usuario: "PROFISSIONAL",
+        },
       });
 
       onSuccess();
@@ -85,7 +99,6 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
               </div>
             )}
 
-            {/* Formulário */}
             <ProfissionalGeneralForm
               value={formData}
               onChange={setFormData}

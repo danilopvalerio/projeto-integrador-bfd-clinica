@@ -94,7 +94,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
   useEffect(() => {
     fetchLinked(1, "");
     fetchAvailable(1, "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [profissionalId]);
 
   const handleLink = async (id_servico: string) => {
