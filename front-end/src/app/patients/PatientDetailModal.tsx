@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import api from "../../utils/api";
-import { getErrorMessage } from "../../utils/errorUtils";
+import { useRouter } from "next/navigation";
 import { PatientDetail } from "./types";
 import PatientGeneralForm from "./PatientGeneralForm";
+import { MOCK_PATIENTS } from "./types/mockData"; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileMedical } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   patientId: string;
@@ -15,124 +15,94 @@ interface Props {
 }
 
 const PatientDetailModal = ({ patientId, onClose, onSuccess }: Props) => {
-  const [loadingData, setLoadingData] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const router = useRouter();
+  const [patient, setPatient] = useState<PatientDetail | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-
-  const [formData, setFormData] = useState<PatientDetail>({
-    id_paciente: "",
-    nome_completo: "",
-    cpf: "",
-    telefone: "",
-    sexo: "",
-    email: "",
-    data_nascimento: "",
-    id_endereco: "",
-    id_usuario: ""
-
-  });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadPatientData = () => {
+      setLoading(true);
+      setError("");
+
       try {
-        const res = await api.get<PatientDetail>(`/patients/${patientId}`);
-        setFormData(res.data);
+        const found = MOCK_PATIENTS.find(p => p.id_paciente === patientId);
+
+        if (found) {
+          const detailedPatient: PatientDetail = {
+            ...found,
+            data_nascimento: found.data_nascimento || "1990-01-01", 
+            id_endereco: found.id_endereco || "UUID-VAZIO",
+            email: found.email || "",
+            sexo: found.sexo || ""
+          };
+          setPatient(detailedPatient);
+        } else {
+          setError(`Paciente ${patientId} não encontrado no mock.`);
+        }
       } catch (err) {
-        setError(getErrorMessage(err));
+        setError("Erro ao processar dados do paciente.");
       } finally {
-        setLoadingData(false);
+        setLoading(false);
       }
     };
-    if (patientId) fetchData();
+
+    if (patientId) loadPatientData();
   }, [patientId]);
 
-  const handleChange = (field: keyof PatientDetail, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleGoToProntuario = () => {
+    router.push(`/patients/${patientId}/record`);
+    onClose();
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-    setSuccessMsg("");
-
-    try {
-      await api.patch(`/patients/${patientId}`, formData);
-      setSuccessMsg("Dados atualizados com sucesso!");
-      setTimeout(() => onSuccess(), 1000);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("Deseja realmente excluir este paciente? Esta ação é irreversível.")) return;
-    try {
-      setSaving(true);
-      await api.delete(`/patients/${patientId}`);
-      onSuccess();
-    } catch (err) {
-      setError(getErrorMessage(err));
-      setSaving(false);
-    }
-  };
-
-  if (loadingData) {
-    return (
-      <div className="modal-backdrop d-flex justify-content-center align-items-center" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-        <div className="spinner-border text-white"></div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="modal-backdrop d-flex justify-content-center align-items-center" 
+         style={{ background: "rgba(0,0,0,0.7)", zIndex: 1100, position: 'fixed', inset: 0 }}>
+        <div className="spinner-border text-primary"></div>
+    </div>
+  );
 
   return (
-    <div
-      className="modal-backdrop d-flex justify-content-center align-items-center"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.48)" }}
-      onClick={onClose}
-    >
-      <div className="modal-dialog detail-box" style={{ maxWidth: "650px" }} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-content border-0 shadow rounded-4">
-          <div className="modal-header border-bottom-0 p-4 pb-0 d-flex justify-content-between">
-            <h5 className="modal-title fw-bold text-secondary">Detalhes do Paciente</h5>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+    // Ajustado background para 0.7 para melhor contraste e fixed para garantir cobertura
+    <div className="modal-backdrop d-flex justify-content-center align-items-center" 
+         style={{ background: "rgba(0,0,0,0.7)", zIndex: 1100, position: 'fixed', inset: 0 }} 
+         onClick={onClose}>
+      
+      <div className="modal-dialog modal-lg w-100 shadow-lg" 
+           style={{ maxWidth: "700px" }} 
+           onClick={(e) => e.stopPropagation()}>
+        
+        {/* Adicionado bg-white e border para remover transparência */}
+        <div className="modal-content border border-light shadow rounded-4 bg-white" style={{ opacity: 1 }}>
+          
+          <div className="modal-header border-bottom-0 p-4 d-flex justify-content-between align-items-center bg-white rounded-top-4">
+            <h5 className="fw-bold text-secondary m-0">Detalhes do Paciente</h5>
+            
+            <button 
+              className="btn btn-primary rounded-pill px-3 fw-bold shadow-sm d-flex align-items-center gap-2"
+              onClick={handleGoToProntuario}
+            >
+              <FontAwesomeIcon icon={faFileMedical} />
+              Acessar Prontuário
+            </button>
           </div>
 
-          <div className="modal-body p-4 pt-2">
-            {error && <div className="alert alert-danger small py-2 rounded-3 mb-3">{error}</div>}
-            {successMsg && <div className="alert alert-success small py-2 rounded-3 mb-3">{successMsg}</div>}
+          <div className="modal-body p-4 pt-0 bg-white">
+            {error && <div className="alert alert-danger small">{error}</div>}
 
-            <form onSubmit={handleUpdate}>
-              <PatientGeneralForm
-                data={formData}
-                onChange={handleChange}
-                disabled={saving}
+            {patient && (
+              <PatientGeneralForm 
+                data={patient} 
+                onChange={(field, value) => setPatient(prev => prev ? {...prev, [field]: value} : null)}
               />
+            )}
 
-              <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-                <button
-                  type="button"
-                  className="btn btn-outline-danger border-0 d-flex align-items-center gap-2 px-2"
-                  onClick={handleDelete}
-                  disabled={saving}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                  <span className="small fw-bold">Excluir Registro</span>
-                </button>
-
-                <div className="d-flex gap-3">
-                  <button type="button" className="btn btn-link text-secondary text-decoration-none" onClick={onClose}>
-                    Fechar
-                  </button>
-                  <button type="submit" className="button-dark-grey px-4 py-2 rounded-pill shadow-sm fw-bold" disabled={saving}>
-                    {saving ? "Salvando..." : "Salvar Alterações"}
-                  </button>
-                </div>
-              </div>
-            </form>
+            <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top bg-white rounded-bottom-4">
+              <button className="btn btn-link text-secondary fw-bold text-decoration-none" onClick={onClose}>Fechar</button>
+              <button className="button-dark-grey px-4 py-2 rounded-pill fw-bold text-white shadow-sm" style={{ backgroundColor: '#343a40', border: 'none' }}>
+                Salvar Alterações
+              </button>
+            </div>
           </div>
         </div>
       </div>

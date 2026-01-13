@@ -11,7 +11,7 @@ import PatientCard from "./PatientCard";
 import AddPatientModal from "./AddPatientModal";
 import PatientDetailModal from "./PatientDetailModal";
 
-import { MOCK_PATIENTS_SUMMARY } from "./types/mockPatients";
+import { MOCK_PATIENTS } from "./types/mockData";
 
 const PatientsPage = () => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const PatientsPage = () => {
       
       // Simulação com Mock por enquanto
       setTimeout(() => {
-        setPatients(MOCK_PATIENTS_SUMMARY);
+        setPatients(MOCK_PATIENTS);
         setLoading(false);
       }, 500);
     } catch (error) {
@@ -50,7 +50,7 @@ const PatientsPage = () => {
   // Função de busca
   const handleSearch = () => {
     const term = searchTerm.toLowerCase();
-    const filtered = MOCK_PATIENTS_SUMMARY.filter(
+    const filtered = MOCK_PATIENTS.filter(
       (p) =>
         p.nome_completo.toLowerCase().includes(term) ||
         p.cpf.includes(term)
@@ -60,7 +60,7 @@ const PatientsPage = () => {
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    setPatients(MOCK_PATIENTS_SUMMARY);
+    setPatients(MOCK_PATIENTS);
   };
 
   return (
