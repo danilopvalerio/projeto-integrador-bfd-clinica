@@ -11,7 +11,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { getPaginatedServicos, searchServicos } from "../mocks/services/mockServices";
+import { getPaginatedServicos, searchServicos } from "./types/mockServices";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { ServicoSummary } from "./types";
 
