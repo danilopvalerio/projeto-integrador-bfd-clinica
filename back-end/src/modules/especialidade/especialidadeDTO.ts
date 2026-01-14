@@ -18,6 +18,12 @@ export interface UpdateEspecialidadeDTO {
   descricao?: string;
 }
 
+export interface ProfissionalVinculadoDTO {
+  id_profissional: string;
+  nome: string;
+  cargo: string;
+}
+
 // O tipo que devolvemos para o Frontend
 export type EspecialidadeResponseDTO = EspecialidadeEntity;
 

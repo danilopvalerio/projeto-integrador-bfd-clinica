@@ -26,3 +26,4 @@ especialidadeRoutes.patch("/:id", especialidadeController.update);
 especialidadeRoutes.delete("/:id", especialidadeController.delete);
 
 export { especialidadeRoutes };
+
