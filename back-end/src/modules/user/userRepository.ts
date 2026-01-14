@@ -41,11 +41,12 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    const user = await prisma.usuario.findUnique({
-      where: { email },
-    });
-    return user as unknown as UserEntity | null;
-  }
+  const user = await prisma.usuario.findFirst({
+    where: { email },
+  });
+  return user as unknown as UserEntity | null;
+}
+
 
   async delete(id: string): Promise<void> {
     await prisma.usuario.delete({

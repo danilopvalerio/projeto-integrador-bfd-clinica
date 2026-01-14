@@ -217,7 +217,8 @@ export default function MenuPage() {
               title="Pacientes"
               description="Base de clientes."
               icon={faUsers}
-              active={false}
+              active={true}
+              onClick={() => navigateTo("/patients")}
             />
             <MenuCard
               title="Relatórios"

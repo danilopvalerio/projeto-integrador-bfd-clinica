@@ -11,7 +11,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
-import api from "../../utils/api";
+import { getPaginatedServicos, searchServicos } from "./types/mockServices";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { ServicoSummary } from "./types";
 
@@ -51,20 +51,20 @@ const ServicosPage = () => {
   const fetchServicos = async (page = 1, term = "") => {
     setLoading(true);
     setError("");
+
     try {
-      let url = `/services/paginated?page=${page}&limit=${LIMIT}`;
+      let response;
+      
       if (term) {
-        url = `/services/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+        response = await searchServicos(term, page, LIMIT);
+      } else {
+        response = await getPaginatedServicos(page, LIMIT);
       }
 
-      const response = await api.get(url);
-
       // Adaptando para a estrutura retornada pelo RepositoryPaginatedResult
-      setServicos(response.data.data);
-      setCurrentPage(response.data.page);
-      setTotalPages(response.data.lastPage);
+      setServicos(response.data);
+      setCurrentPage(response.page);
+      setTotalPages(response.lastPage);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

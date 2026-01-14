@@ -1,0 +1,68 @@
+/* CONTAINER */
+.pacientes-container {
+  padding: 16px;
+  background-color: var(--color-white);
+}
+
+/* BUSCA */
+.paciente-search input {
+  padding: 8px;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 4px;
+  width: 250px;
+  color: var(--color-black);
+}
+
+.paciente-search input::placeholder {
+  color: var(--color-gray-medium);
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th,
+td {
+  border: 1px solid var(--color-gray-light);
+  padding: 10px;
+  text-align: left;
+  color: var(--color-black);
+}
+
+th {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-quartenary);
+}
+
+
+button {
+  background-color: var(--color-secondary);
+  color: var(--color-white);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--color-accent);
+}
+
+/* BOTÃO DE EXCLUIR */
+button.delete {
+  background-color: var(--color-gray-dark);
+}
+
+button.delete:hover {
+  background-color: var(--color-black);
+}
