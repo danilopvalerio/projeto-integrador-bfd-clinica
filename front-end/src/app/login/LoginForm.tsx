@@ -25,6 +25,22 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    // --- LOGIN FORÇADO FICTÍCIO ---
+    if (email.toLowerCase() === "paciente@teste.com" && password === "123456") {
+      const mockUser = {
+        id: "mock-id-123",
+        nome: "Ana Beatriz Oliveira",
+        email: "paciente@teste.com",
+        role: "PACIENTE" // Isso garante que o router.push vá para /meu-perfil
+      };
+
+      localStorage.setItem("accessToken", "token-ficticio-valido");
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      
+      router.push("/meu-perfil");
+      setLoading(false);
+      return; // Interrompe aqui para não tentar chamar a API real
+    }
 
     try {
       const response = await api.post("/sessions/login", {
@@ -37,7 +53,11 @@ export default function LoginForm() {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
         api.defaults.headers.Authorization = `Bearer ${accessToken}`;
-        router.push("/menu");
+        if (user.role === "PACIENTE") {
+          router.push("/meu-perfil"); 
+        } else {
+          router.push("/menu");
+        }
       }
     } catch (err: unknown) {
       const axiosErr = err as AxiosError<{ error: string }>;
