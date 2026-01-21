@@ -5,7 +5,7 @@ import axios from "axios";
 const API_URL = "http://localhost:3333/api";
 
 // Cria uma instância do Axios
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true, // IMPORTANTE: Permite que o navegador envie/receba Cookies HttpOnly
 });

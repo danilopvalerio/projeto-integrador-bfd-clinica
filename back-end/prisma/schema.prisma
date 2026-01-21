@@ -17,6 +17,8 @@ model Usuario {
   profissional   Profissional?
   refresh_tokens RefreshToken[]
 
+  logs Log[]
+
   @@map("usuarios")
 }
 
@@ -143,4 +145,19 @@ model RefreshToken {
   usuario Usuario @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
 
   @@map("refresh_tokens")
+}
+
+model Log {
+  id         String   @id @default(uuid())
+  id_usuario String?
+  acao       String   @db.VarChar(100)
+  ip         String?  @db.VarChar(50)
+  user_agent String?  @db.VarChar(255)
+  sucesso    Boolean
+  tipo       String   @db.VarChar(50)
+  data       DateTime @default(now())
+
+  usuario Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull)
+
+  @@map("logs")
 }

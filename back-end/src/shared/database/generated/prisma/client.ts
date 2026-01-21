@@ -94,3 +94,8 @@ export type ProfissionalServico = Prisma.ProfissionalServicoModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model Log
+ * 
+ */
+export type Log = Prisma.LogModel

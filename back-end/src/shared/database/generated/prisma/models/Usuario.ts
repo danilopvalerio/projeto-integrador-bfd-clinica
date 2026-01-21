@@ -185,6 +185,7 @@ export type UsuarioWhereInput = {
   paciente?: Prisma.XOR<Prisma.PacienteNullableScalarRelationFilter, Prisma.PacienteWhereInput> | null
   profissional?: Prisma.XOR<Prisma.ProfissionalNullableScalarRelationFilter, Prisma.ProfissionalWhereInput> | null
   refresh_tokens?: Prisma.RefreshTokenListRelationFilter
+  logs?: Prisma.LogListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -196,6 +197,7 @@ export type UsuarioOrderByWithRelationInput = {
   paciente?: Prisma.PacienteOrderByWithRelationInput
   profissional?: Prisma.ProfissionalOrderByWithRelationInput
   refresh_tokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
+  logs?: Prisma.LogOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -210,6 +212,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   paciente?: Prisma.XOR<Prisma.PacienteNullableScalarRelationFilter, Prisma.PacienteWhereInput> | null
   profissional?: Prisma.XOR<Prisma.ProfissionalNullableScalarRelationFilter, Prisma.ProfissionalWhereInput> | null
   refresh_tokens?: Prisma.RefreshTokenListRelationFilter
+  logs?: Prisma.LogListRelationFilter
 }, "id_usuario" | "email">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -243,6 +246,7 @@ export type UsuarioCreateInput = {
   paciente?: Prisma.PacienteCreateNestedOneWithoutUsuarioInput
   profissional?: Prisma.ProfissionalCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -254,6 +258,7 @@ export type UsuarioUncheckedCreateInput = {
   paciente?: Prisma.PacienteUncheckedCreateNestedOneWithoutUsuarioInput
   profissional?: Prisma.ProfissionalUncheckedCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -265,6 +270,7 @@ export type UsuarioUpdateInput = {
   paciente?: Prisma.PacienteUpdateOneWithoutUsuarioNestedInput
   profissional?: Prisma.ProfissionalUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -276,6 +282,7 @@ export type UsuarioUncheckedUpdateInput = {
   paciente?: Prisma.PacienteUncheckedUpdateOneWithoutUsuarioNestedInput
   profissional?: Prisma.ProfissionalUncheckedUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -331,6 +338,11 @@ export type UsuarioScalarRelationFilter = {
   isNot?: Prisma.UsuarioWhereInput
 }
 
+export type UsuarioNullableScalarRelationFilter = {
+  is?: Prisma.UsuarioWhereInput | null
+  isNot?: Prisma.UsuarioWhereInput | null
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -381,6 +393,22 @@ export type UsuarioUpdateOneRequiredWithoutRefresh_tokensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutRefresh_tokensInput, Prisma.UsuarioUpdateWithoutRefresh_tokensInput>, Prisma.UsuarioUncheckedUpdateWithoutRefresh_tokensInput>
 }
 
+export type UsuarioCreateNestedOneWithoutLogsInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutLogsInput, Prisma.UsuarioUncheckedCreateWithoutLogsInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutLogsInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneWithoutLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutLogsInput, Prisma.UsuarioUncheckedCreateWithoutLogsInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutLogsInput
+  upsert?: Prisma.UsuarioUpsertWithoutLogsInput
+  disconnect?: Prisma.UsuarioWhereInput | boolean
+  delete?: Prisma.UsuarioWhereInput | boolean
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutLogsInput, Prisma.UsuarioUpdateWithoutLogsInput>, Prisma.UsuarioUncheckedUpdateWithoutLogsInput>
+}
+
 export type UsuarioCreateWithoutPacienteInput = {
   id_usuario?: string
   email: string
@@ -389,6 +417,7 @@ export type UsuarioCreateWithoutPacienteInput = {
   ativo?: boolean
   profissional?: Prisma.ProfissionalCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutPacienteInput = {
@@ -399,6 +428,7 @@ export type UsuarioUncheckedCreateWithoutPacienteInput = {
   ativo?: boolean
   profissional?: Prisma.ProfissionalUncheckedCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutPacienteInput = {
@@ -425,6 +455,7 @@ export type UsuarioUpdateWithoutPacienteInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   profissional?: Prisma.ProfissionalUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutPacienteInput = {
@@ -435,6 +466,7 @@ export type UsuarioUncheckedUpdateWithoutPacienteInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   profissional?: Prisma.ProfissionalUncheckedUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutProfissionalInput = {
@@ -445,6 +477,7 @@ export type UsuarioCreateWithoutProfissionalInput = {
   ativo?: boolean
   paciente?: Prisma.PacienteCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutProfissionalInput = {
@@ -455,6 +488,7 @@ export type UsuarioUncheckedCreateWithoutProfissionalInput = {
   ativo?: boolean
   paciente?: Prisma.PacienteUncheckedCreateNestedOneWithoutUsuarioInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutProfissionalInput = {
@@ -481,6 +515,7 @@ export type UsuarioUpdateWithoutProfissionalInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paciente?: Prisma.PacienteUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutProfissionalInput = {
@@ -491,6 +526,7 @@ export type UsuarioUncheckedUpdateWithoutProfissionalInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paciente?: Prisma.PacienteUncheckedUpdateOneWithoutUsuarioNestedInput
   refresh_tokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutRefresh_tokensInput = {
@@ -501,6 +537,7 @@ export type UsuarioCreateWithoutRefresh_tokensInput = {
   ativo?: boolean
   paciente?: Prisma.PacienteCreateNestedOneWithoutUsuarioInput
   profissional?: Prisma.ProfissionalCreateNestedOneWithoutUsuarioInput
+  logs?: Prisma.LogCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutRefresh_tokensInput = {
@@ -511,6 +548,7 @@ export type UsuarioUncheckedCreateWithoutRefresh_tokensInput = {
   ativo?: boolean
   paciente?: Prisma.PacienteUncheckedCreateNestedOneWithoutUsuarioInput
   profissional?: Prisma.ProfissionalUncheckedCreateNestedOneWithoutUsuarioInput
+  logs?: Prisma.LogUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutRefresh_tokensInput = {
@@ -537,6 +575,7 @@ export type UsuarioUpdateWithoutRefresh_tokensInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paciente?: Prisma.PacienteUpdateOneWithoutUsuarioNestedInput
   profissional?: Prisma.ProfissionalUpdateOneWithoutUsuarioNestedInput
+  logs?: Prisma.LogUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutRefresh_tokensInput = {
@@ -547,6 +586,67 @@ export type UsuarioUncheckedUpdateWithoutRefresh_tokensInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paciente?: Prisma.PacienteUncheckedUpdateOneWithoutUsuarioNestedInput
   profissional?: Prisma.ProfissionalUncheckedUpdateOneWithoutUsuarioNestedInput
+  logs?: Prisma.LogUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioCreateWithoutLogsInput = {
+  id_usuario?: string
+  email: string
+  senha_hash: string
+  tipo_usuario: string
+  ativo?: boolean
+  paciente?: Prisma.PacienteCreateNestedOneWithoutUsuarioInput
+  profissional?: Prisma.ProfissionalCreateNestedOneWithoutUsuarioInput
+  refresh_tokens?: Prisma.RefreshTokenCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutLogsInput = {
+  id_usuario?: string
+  email: string
+  senha_hash: string
+  tipo_usuario: string
+  ativo?: boolean
+  paciente?: Prisma.PacienteUncheckedCreateNestedOneWithoutUsuarioInput
+  profissional?: Prisma.ProfissionalUncheckedCreateNestedOneWithoutUsuarioInput
+  refresh_tokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutLogsInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutLogsInput, Prisma.UsuarioUncheckedCreateWithoutLogsInput>
+}
+
+export type UsuarioUpsertWithoutLogsInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutLogsInput, Prisma.UsuarioUncheckedUpdateWithoutLogsInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutLogsInput, Prisma.UsuarioUncheckedCreateWithoutLogsInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutLogsInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutLogsInput, Prisma.UsuarioUncheckedUpdateWithoutLogsInput>
+}
+
+export type UsuarioUpdateWithoutLogsInput = {
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senha_hash?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  paciente?: Prisma.PacienteUpdateOneWithoutUsuarioNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneWithoutUsuarioNestedInput
+  refresh_tokens?: Prisma.RefreshTokenUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutLogsInput = {
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senha_hash?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  paciente?: Prisma.PacienteUncheckedUpdateOneWithoutUsuarioNestedInput
+  profissional?: Prisma.ProfissionalUncheckedUpdateOneWithoutUsuarioNestedInput
+  refresh_tokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 
@@ -556,10 +656,12 @@ export type UsuarioUncheckedUpdateWithoutRefresh_tokensInput = {
 
 export type UsuarioCountOutputType = {
   refresh_tokens: number
+  logs: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refresh_tokens?: boolean | UsuarioCountOutputTypeCountRefresh_tokensArgs
+  logs?: boolean | UsuarioCountOutputTypeCountLogsArgs
 }
 
 /**
@@ -579,6 +681,13 @@ export type UsuarioCountOutputTypeCountRefresh_tokensArgs<ExtArgs extends runtim
   where?: Prisma.RefreshTokenWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LogWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_usuario?: boolean
@@ -589,6 +698,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   paciente?: boolean | Prisma.Usuario$pacienteArgs<ExtArgs>
   profissional?: boolean | Prisma.Usuario$profissionalArgs<ExtArgs>
   refresh_tokens?: boolean | Prisma.Usuario$refresh_tokensArgs<ExtArgs>
+  logs?: boolean | Prisma.Usuario$logsArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -621,6 +731,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   paciente?: boolean | Prisma.Usuario$pacienteArgs<ExtArgs>
   profissional?: boolean | Prisma.Usuario$profissionalArgs<ExtArgs>
   refresh_tokens?: boolean | Prisma.Usuario$refresh_tokensArgs<ExtArgs>
+  logs?: boolean | Prisma.Usuario$logsArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -632,6 +743,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     paciente: Prisma.$PacientePayload<ExtArgs> | null
     profissional: Prisma.$ProfissionalPayload<ExtArgs> | null
     refresh_tokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+    logs: Prisma.$LogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_usuario: string
@@ -1036,6 +1148,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   paciente<T extends Prisma.Usuario$pacienteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$pacienteArgs<ExtArgs>>): Prisma.Prisma__PacienteClient<runtime.Types.Result.GetResult<Prisma.$PacientePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   profissional<T extends Prisma.Usuario$profissionalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$profissionalArgs<ExtArgs>>): Prisma.Prisma__ProfissionalClient<runtime.Types.Result.GetResult<Prisma.$ProfissionalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   refresh_tokens<T extends Prisma.Usuario$refresh_tokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$refresh_tokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  logs<T extends Prisma.Usuario$logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1517,6 +1630,30 @@ export type Usuario$refresh_tokensArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+}
+
+/**
+ * Usuario.logs
+ */
+export type Usuario$logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Log
+   */
+  select?: Prisma.LogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Log
+   */
+  omit?: Prisma.LogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LogInclude<ExtArgs> | null
+  where?: Prisma.LogWhereInput
+  orderBy?: Prisma.LogOrderByWithRelationInput | Prisma.LogOrderByWithRelationInput[]
+  cursor?: Prisma.LogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LogScalarFieldEnum | Prisma.LogScalarFieldEnum[]
 }
 
 /**

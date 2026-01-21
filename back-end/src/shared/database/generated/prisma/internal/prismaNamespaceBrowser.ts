@@ -61,7 +61,8 @@ export const ModelName = {
   Servico: 'Servico',
   Especialidade: 'Especialidade',
   ProfissionalServico: 'ProfissionalServico',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Log: 'Log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -195,6 +196,20 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const LogScalarFieldEnum = {
+  id: 'id',
+  id_usuario: 'id_usuario',
+  acao: 'acao',
+  ip: 'ip',
+  user_agent: 'user_agent',
+  sucesso: 'sucesso',
+  tipo: 'tipo',
+  data: 'data'
+} as const
+
+export type LogScalarFieldEnum = (typeof LogScalarFieldEnum)[keyof typeof LogScalarFieldEnum]
 
 
 export const SortOrder = {
