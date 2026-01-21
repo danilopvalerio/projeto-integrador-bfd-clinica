@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { EspecialidadeService } from "./especialidadeService";
 
+
 export class EspecialidadeController {
   constructor(private especialidadeService: EspecialidadeService) {}
 
