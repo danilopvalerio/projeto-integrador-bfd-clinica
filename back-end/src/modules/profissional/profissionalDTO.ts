@@ -1,3 +1,4 @@
+//src/modules/profissional/profissionalDTO.ts
 import {
   IBaseRepository,
   RepositoryPaginatedResult,
@@ -18,7 +19,6 @@ export interface CreateProfissionalDTO {
   cpf: string;
   registro_conselho: string;
 
- 
   id_usuario?: string;
 
   usuario?: {

@@ -1,79 +1,110 @@
-// lib/api.ts
-import axios from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
-// URL base da API
-const API_URL = "http://localhost:3333/api";
+// Fila de requisições que falharam enquanto o token estava sendo atualizado
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (err: unknown) => void;
+}> = [];
 
-// Cria uma instância do Axios
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+  failedQueue = [];
+};
+
 const api = axios.create({
-  baseURL: API_URL,
-  withCredentials: true, // IMPORTANTE: Permite que o navegador envie/receba Cookies HttpOnly
+  baseURL: "http://localhost:3333/api", // Ajuste se sua porta for diferente
+  withCredentials: true, // Importante para enviar/receber Cookies (RefreshToken)
 });
 
-// ---------------------------
-// REQUEST INTERCEPTOR (Envia o Access Token)
-// ---------------------------
-api.interceptors.request.use(
-  (config) => {
-    // MUDANÇA: Usamos localStorage para manter o usuário logado se fechar a aba
-    const accessToken = localStorage.getItem("accessToken");
+// Interceptor de Requisição: Adiciona o Token se existir
+api.interceptors.request.use((config) => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
-// ---------------------------
-// RESPONSE INTERCEPTOR (Renova o Token)
-// ---------------------------
+// Interceptor de Resposta: Trata o erro 401
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    // Se deu erro 401 (Não autorizado) e ainda não tentamos renovar...
+    // --- CORREÇÃO AQUI ---
+    // Se o erro for 401 E a URL for a de login, NÃO tente dar refresh.
+    // Apenas rejeite o erro para que o LoginForm exiba "Senha incorreta".
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry &&
-      // Evita loop infinito: se o erro veio da própria rota de refresh, não tenta de novo
-      originalRequest.url !== "/auth/refresh"
+      originalRequest.url?.includes("/sessions/login")
     ) {
+      return Promise.reject(error);
+    }
+
+    // Se der 401 em outras rotas, tenta renovar o token
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Se já está renovando, coloca na fila
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            },
+            reject: (err) => {
+              reject(err);
+            },
+          });
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        // MUDANÇA: Chama a rota correta do seu backend (/auth/refresh)
-        // Não precisa enviar body, o cookie vai automático por causa do withCredentials
-        const { data } = await api.post("/auth/refresh");
+        // Tenta pegar novo token
+        const response = await api.post("/sessions/refresh");
+        const { accessToken } = response.data;
 
-        const { accessToken: newAccessToken } = data;
+        localStorage.setItem("accessToken", accessToken);
 
-        // Salva o novo token
-        localStorage.setItem("accessToken", newAccessToken);
+        // Configura o header padrão para as próximas chamadas
+        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
-        // Atualiza o header da requisição que falhou e tenta de novo
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        // Processa a fila de requisições pausadas
+        processQueue(null, accessToken);
 
         return api(originalRequest);
       } catch (refreshError) {
-        // Se falhar (Refresh token expirou ou inválido), desloga tudo
-        console.error("Sessão expirada. Faça login novamente.");
+        // Se o refresh falhar (refresh token expirado ou inválido)
+        processQueue(refreshError, null);
 
+        // Limpa tudo e redireciona pro login
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
 
-        // Redireciona para login (usando window para forçar reload limpo)
-        window.location.href = "/login";
+        if (
+          typeof window !== "undefined" &&
+          !window.location.pathname.includes("/login")
+        ) {
+          window.location.href = "/login";
+        }
 
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

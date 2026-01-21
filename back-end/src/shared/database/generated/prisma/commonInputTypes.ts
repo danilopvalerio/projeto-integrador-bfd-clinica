@@ -60,6 +60,13 @@ export type BoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
+export type EnumSexoFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sexo | Prisma.EnumSexoFieldRefInput<$PrismaModel>
+  in?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSexoFilter<$PrismaModel> | $Enums.Sexo
+}
+
 export type DateTimeFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
@@ -69,47 +76,6 @@ export type DateTimeFilter<$PrismaModel = never> = {
   gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedDateTimeFilter<$PrismaModel> | Date | string
-}
-
-export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
-  notIn?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
-  lt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  lte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
-  _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
-}
-
-export type IntFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntFilter<$PrismaModel> | number
-}
-
-export type IntWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
-  _sum?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedIntFilter<$PrismaModel>
-  _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
 export type StringNullableFilter<$PrismaModel = never> = {
@@ -130,6 +96,30 @@ export type StringNullableFilter<$PrismaModel = never> = {
 export type SortOrderInput = {
   sort: Prisma.SortOrder
   nulls?: Prisma.NullsOrder
+}
+
+export type EnumSexoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sexo | Prisma.EnumSexoFieldRefInput<$PrismaModel>
+  in?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSexoWithAggregatesFilter<$PrismaModel> | $Enums.Sexo
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSexoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSexoFilter<$PrismaModel>
+}
+
+export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
+  notIn?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
+  lt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  lte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
+  _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
 export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -161,6 +151,13 @@ export type FloatFilter<$PrismaModel = never> = {
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
+export type EnumStatusPagamentoFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPagamento | Prisma.EnumStatusPagamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel> | $Enums.StatusPagamento
+}
+
 export type FloatWithAggregatesFilter<$PrismaModel = never> = {
   equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
@@ -175,6 +172,43 @@ export type FloatWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatFilter<$PrismaModel>
   _min?: Prisma.NestedFloatFilter<$PrismaModel>
   _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type EnumStatusPagamentoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPagamento | Prisma.EnumStatusPagamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPagamentoWithAggregatesFilter<$PrismaModel> | $Enums.StatusPagamento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel>
+}
+
+export type IntFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntFilter<$PrismaModel> | number
+}
+
+export type IntWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
 export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -213,6 +247,40 @@ export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedBoolNullableFilter<$PrismaModel>
   _max?: Prisma.NestedBoolNullableFilter<$PrismaModel>
+}
+
+export type EnumTipoEntradaProntuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEntradaProntuario | Prisma.EnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel> | $Enums.TipoEntradaProntuario
+}
+
+export type EnumTipoEntradaProntuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEntradaProntuario | Prisma.EnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEntradaProntuarioWithAggregatesFilter<$PrismaModel> | $Enums.TipoEntradaProntuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel>
+}
+
+export type EnumTipoArquivoProntuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoArquivoProntuario | Prisma.EnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel> | $Enums.TipoArquivoProntuario
+}
+
+export type EnumTipoArquivoProntuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoArquivoProntuario | Prisma.EnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoArquivoProntuarioWithAggregatesFilter<$PrismaModel> | $Enums.TipoArquivoProntuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel>
 }
 
 export type NestedStringFilter<$PrismaModel = never> = {
@@ -270,6 +338,13 @@ export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
+export type NestedEnumSexoFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sexo | Prisma.EnumSexoFieldRefInput<$PrismaModel>
+  in?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSexoFilter<$PrismaModel> | $Enums.Sexo
+}
+
 export type NestedDateTimeFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
@@ -279,47 +354,6 @@ export type NestedDateTimeFilter<$PrismaModel = never> = {
   gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedDateTimeFilter<$PrismaModel> | Date | string
-}
-
-export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
-  notIn?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
-  lt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  lte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
-  _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
-}
-
-export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
-  _sum?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedIntFilter<$PrismaModel>
-  _max?: Prisma.NestedIntFilter<$PrismaModel>
-}
-
-export type NestedFloatFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
-  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
 export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -334,6 +368,30 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
+}
+
+export type NestedEnumSexoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Sexo | Prisma.EnumSexoFieldRefInput<$PrismaModel>
+  in?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Sexo[] | Prisma.ListEnumSexoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSexoWithAggregatesFilter<$PrismaModel> | $Enums.Sexo
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSexoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSexoFilter<$PrismaModel>
+}
+
+export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
+  notIn?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
+  lt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  lte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
+  _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
 export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -364,6 +422,24 @@ export type NestedIntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
+export type NestedFloatFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type NestedEnumStatusPagamentoFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPagamento | Prisma.EnumStatusPagamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel> | $Enums.StatusPagamento
+}
+
 export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
   equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
@@ -378,6 +454,32 @@ export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatFilter<$PrismaModel>
   _min?: Prisma.NestedFloatFilter<$PrismaModel>
   _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusPagamentoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPagamento | Prisma.EnumStatusPagamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPagamento[] | Prisma.ListEnumStatusPagamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPagamentoWithAggregatesFilter<$PrismaModel> | $Enums.StatusPagamento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPagamentoFilter<$PrismaModel>
+}
+
+export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -416,6 +518,40 @@ export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedBoolNullableFilter<$PrismaModel>
   _max?: Prisma.NestedBoolNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumTipoEntradaProntuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEntradaProntuario | Prisma.EnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel> | $Enums.TipoEntradaProntuario
+}
+
+export type NestedEnumTipoEntradaProntuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEntradaProntuario | Prisma.EnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEntradaProntuario[] | Prisma.ListEnumTipoEntradaProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEntradaProntuarioWithAggregatesFilter<$PrismaModel> | $Enums.TipoEntradaProntuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoEntradaProntuarioFilter<$PrismaModel>
+}
+
+export type NestedEnumTipoArquivoProntuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoArquivoProntuario | Prisma.EnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel> | $Enums.TipoArquivoProntuario
+}
+
+export type NestedEnumTipoArquivoProntuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoArquivoProntuario | Prisma.EnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoArquivoProntuario[] | Prisma.ListEnumTipoArquivoProntuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoArquivoProntuarioWithAggregatesFilter<$PrismaModel> | $Enums.TipoArquivoProntuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoArquivoProntuarioFilter<$PrismaModel>
 }
 
 

@@ -3,6 +3,7 @@ import { SessionRepository } from "./sessionRepository";
 import { UserRepository } from "../user/userRepository";
 import { SessionService } from "./sessionService";
 import { SessionController } from "./sessionController";
+import { authMiddleware } from "../../shared/http/middlewares/auth.middleware";
 
 const sessionRoutes = Router();
 
@@ -14,6 +15,7 @@ const userRepo = new UserRepository();
 const sessionService = new SessionService(sessionRepo, userRepo);
 const sessionController = new SessionController(sessionService);
 
+sessionRoutes.get("/profile", authMiddleware, sessionController.getProfile);
 sessionRoutes.post("/login", sessionController.login);
 sessionRoutes.post("/refresh", sessionController.refresh);
 sessionRoutes.post("/logout", sessionController.logout);

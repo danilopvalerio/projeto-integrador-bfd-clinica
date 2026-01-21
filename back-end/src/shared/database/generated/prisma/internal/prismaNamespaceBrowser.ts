@@ -53,6 +53,9 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Usuario: 'Usuario',
   Paciente: 'Paciente',
+  PacienteTelefone: 'PacienteTelefone',
+  PacienteTag: 'PacienteTag',
+  PacienteDebito: 'PacienteDebito',
   Profissional: 'Profissional',
   Horario_Trabalho: 'Horario_Trabalho',
   Profissional_telefone: 'Profissional_telefone',
@@ -61,7 +64,10 @@ export const ModelName = {
   Servico: 'Servico',
   Especialidade: 'Especialidade',
   ProfissionalServico: 'ProfissionalServico',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Prontuario: 'Prontuario',
+  ProntuarioEntrada: 'ProntuarioEntrada',
+  ProntuarioArquivo: 'ProntuarioArquivo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -94,14 +100,47 @@ export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeo
 export const PacienteScalarFieldEnum = {
   id_paciente: 'id_paciente',
   nome: 'nome',
+  sexo: 'sexo',
   cpf: 'cpf',
-  telefone: 'telefone',
   data_nascimento: 'data_nascimento',
   id_usuario: 'id_usuario',
   id_endereco: 'id_endereco'
 } as const
 
 export type PacienteScalarFieldEnum = (typeof PacienteScalarFieldEnum)[keyof typeof PacienteScalarFieldEnum]
+
+
+export const PacienteTelefoneScalarFieldEnum = {
+  id_telefone: 'id_telefone',
+  telefone: 'telefone',
+  principal: 'principal',
+  id_paciente: 'id_paciente'
+} as const
+
+export type PacienteTelefoneScalarFieldEnum = (typeof PacienteTelefoneScalarFieldEnum)[keyof typeof PacienteTelefoneScalarFieldEnum]
+
+
+export const PacienteTagScalarFieldEnum = {
+  id_tag: 'id_tag',
+  nome: 'nome',
+  id_paciente: 'id_paciente'
+} as const
+
+export type PacienteTagScalarFieldEnum = (typeof PacienteTagScalarFieldEnum)[keyof typeof PacienteTagScalarFieldEnum]
+
+
+export const PacienteDebitoScalarFieldEnum = {
+  id_debito: 'id_debito',
+  id_paciente: 'id_paciente',
+  id_agendamento: 'id_agendamento',
+  valor_total: 'valor_total',
+  valor_pago: 'valor_pago',
+  status_pagamento: 'status_pagamento',
+  data_vencimento: 'data_vencimento',
+  observacoes: 'observacoes'
+} as const
+
+export type PacienteDebitoScalarFieldEnum = (typeof PacienteDebitoScalarFieldEnum)[keyof typeof PacienteDebitoScalarFieldEnum]
 
 
 export const ProfissionalScalarFieldEnum = {
@@ -195,6 +234,43 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const ProntuarioScalarFieldEnum = {
+  id_prontuario: 'id_prontuario',
+  id_paciente: 'id_paciente',
+  criado_em: 'criado_em'
+} as const
+
+export type ProntuarioScalarFieldEnum = (typeof ProntuarioScalarFieldEnum)[keyof typeof ProntuarioScalarFieldEnum]
+
+
+export const ProntuarioEntradaScalarFieldEnum = {
+  id_entrada: 'id_entrada',
+  id_prontuario: 'id_prontuario',
+  id_profissional: 'id_profissional',
+  id_agendamento: 'id_agendamento',
+  tipo: 'tipo',
+  descricao: 'descricao',
+  criado_em: 'criado_em',
+  atualizado_em: 'atualizado_em'
+} as const
+
+export type ProntuarioEntradaScalarFieldEnum = (typeof ProntuarioEntradaScalarFieldEnum)[keyof typeof ProntuarioEntradaScalarFieldEnum]
+
+
+export const ProntuarioArquivoScalarFieldEnum = {
+  id_arquivo: 'id_arquivo',
+  id_entrada: 'id_entrada',
+  nome_arquivo: 'nome_arquivo',
+  url_arquivo: 'url_arquivo',
+  tipo_arquivo: 'tipo_arquivo',
+  tipo_documento: 'tipo_documento',
+  descricao: 'descricao',
+  data_upload: 'data_upload'
+} as const
+
+export type ProntuarioArquivoScalarFieldEnum = (typeof ProntuarioArquivoScalarFieldEnum)[keyof typeof ProntuarioArquivoScalarFieldEnum]
 
 
 export const SortOrder = {

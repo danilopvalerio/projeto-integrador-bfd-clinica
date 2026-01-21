@@ -1,3 +1,5 @@
+//src/modules/profissional/profissionalService.ts
+import { hashPassword } from "../../shared/utils/hash";
 import {
   IProfissionalRepository,
   CreateProfissionalDTO,
@@ -38,13 +40,13 @@ export class ProfissionalService {
         const emailExists = await tx.usuario.findUnique({ where: { email } });
         if (emailExists) throw new AppError("E-mail já cadastrado", 409);
 
-        // Sem dependências: senha_hash temporária (depois vocês melhoram)
-        const senha_hash = "senha_padrao_temp";
+        const senhaTexto = data.usuario.senha || "Mudar123!";
+        const senhaCriptografada = await hashPassword(senhaTexto);
 
         const usuarioCriado = await tx.usuario.create({
           data: {
             email,
-            senha_hash,
+            senha_hash: senhaCriptografada, // Salva criptografado
             tipo_usuario: data.usuario.tipo_usuario ?? "PROFISSIONAL",
             ativo: true,
           },
@@ -97,7 +99,10 @@ export class ProfissionalService {
   // =======================
   // CRUD / Consultas básicas
   // =======================
-  async update(id: string, data: UpdateProfissionalDTO): Promise<ProfissionalEntity> {
+  async update(
+    id: string,
+    data: UpdateProfissionalDTO
+  ): Promise<ProfissionalEntity> {
     const profissional = await this.profissionalRepository.findById(id);
     if (!profissional) throw new AppError("Profissional não encontrado", 404);
 
@@ -227,7 +232,9 @@ export class ProfissionalService {
 
   async listEspecialidades(id_profissional: string) {
     await this.getById(id_profissional);
-    return await this.profissionalRepository.listEspecialidades(id_profissional);
+    return await this.profissionalRepository.listEspecialidades(
+      id_profissional
+    );
   }
 
   async listEspecialidadesPaginated(
@@ -264,7 +271,10 @@ export class ProfissionalService {
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
-  async syncEspecialidades(id_profissional: string, especialidadesIds: string[]) {
+  async syncEspecialidades(
+    id_profissional: string,
+    especialidadesIds: string[]
+  ) {
     await this.getById(id_profissional);
     return await this.profissionalRepository.syncEspecialidades(
       id_profissional,
@@ -281,12 +291,18 @@ export class ProfissionalService {
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
-    return await this.profissionalRepository.addServico(id_profissional, id_servico);
+    return await this.profissionalRepository.addServico(
+      id_profissional,
+      id_servico
+    );
   }
 
   async removeServico(id_profissional: string, id_servico: string) {
     await this.getById(id_profissional);
-    return await this.profissionalRepository.removeServico(id_profissional, id_servico);
+    return await this.profissionalRepository.removeServico(
+      id_profissional,
+      id_servico
+    );
   }
 
   async listServicos(id_profissional: string) {
@@ -294,13 +310,18 @@ export class ProfissionalService {
     return await this.profissionalRepository.listServicos(id_profissional);
   }
 
-  async listServicosPaginated(id_profissional: string, page: number, limit: number) {
+  async listServicosPaginated(
+    id_profissional: string,
+    page: number,
+    limit: number
+  ) {
     await this.getById(id_profissional);
-    const { data, total } = await this.profissionalRepository.findServicosPaginated(
-      id_profissional,
-      page,
-      limit
-    );
+    const { data, total } =
+      await this.profissionalRepository.findServicosPaginated(
+        id_profissional,
+        page,
+        limit
+      );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
@@ -312,12 +333,13 @@ export class ProfissionalService {
     limit: number
   ) {
     await this.getById(id_profissional);
-    const { data, total } = await this.profissionalRepository.searchServicosPaginated(
-      id_profissional,
-      query,
-      page,
-      limit
-    );
+    const { data, total } =
+      await this.profissionalRepository.searchServicosPaginated(
+        id_profissional,
+        query,
+        page,
+        limit
+      );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }

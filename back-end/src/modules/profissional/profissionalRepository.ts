@@ -1,3 +1,4 @@
+//src/modules/profissional/profissionalRepository.ts
 import { prisma } from "../../shared/database/prisma";
 import {
   IProfissionalRepository,
@@ -23,7 +24,7 @@ export class ProfissionalRepository implements IProfissionalRepository {
         nome,
         cpf,
         registro_conselho,
-        id_usuario: id_usuario!, 
+        id_usuario: id_usuario!,
         telefones: telefones
           ? {
               create: telefones.map((tel) => ({
@@ -136,7 +137,10 @@ export class ProfissionalRepository implements IProfissionalRepository {
     });
   }
 
-  async updateTelefone(id_telefone: string, data: UpdateTelefoneDTO): Promise<any> {
+  async updateTelefone(
+    id_telefone: string,
+    data: UpdateTelefoneDTO
+  ): Promise<any> {
     return await prisma.profissional_telefone.update({
       where: { id_telefone },
       data,
@@ -164,7 +168,10 @@ export class ProfissionalRepository implements IProfissionalRepository {
     });
   }
 
-  async updateHorario(id_horario: string, data: UpdateHorarioDTO): Promise<any> {
+  async updateHorario(
+    id_horario: string,
+    data: UpdateHorarioDTO
+  ): Promise<any> {
     return await prisma.horario_Trabalho.update({
       where: { id_horario },
       data,
@@ -203,14 +210,18 @@ export class ProfissionalRepository implements IProfissionalRepository {
     });
   }
 
-  async listEspecialidades(id_profissional: string): Promise<EspecialidadeEntity[]> {
+  async listEspecialidades(
+    id_profissional: string
+  ): Promise<EspecialidadeEntity[]> {
     const result = await prisma.profissional_Especialidade.findMany({
       where: { id_profissional },
       include: { especialidade: true },
       orderBy: { especialidade: { nome: "asc" } },
     });
 
-    return result.map((r) => r.especialidade) as unknown as EspecialidadeEntity[];
+    return result.map(
+      (r) => r.especialidade
+    ) as unknown as EspecialidadeEntity[];
   }
 
   async findEspecialidadesPaginated(
@@ -233,7 +244,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
     ]);
 
     return {
-      data: result.map((r) => r.especialidade) as unknown as EspecialidadeEntity[],
+      data: result.map(
+        (r) => r.especialidade
+      ) as unknown as EspecialidadeEntity[],
       total,
     };
   }
@@ -250,7 +263,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
       prisma.profissional_Especialidade.findMany({
         where: {
           id_profissional,
-          especialidade: { nome: { contains: query, mode: "insensitive" as const } },
+          especialidade: {
+            nome: { contains: query, mode: "insensitive" as const },
+          },
         },
         skip,
         take: limit,
@@ -259,13 +274,17 @@ export class ProfissionalRepository implements IProfissionalRepository {
       prisma.profissional_Especialidade.count({
         where: {
           id_profissional,
-          especialidade: { nome: { contains: query, mode: "insensitive" as const } },
+          especialidade: {
+            nome: { contains: query, mode: "insensitive" as const },
+          },
         },
       }),
     ]);
 
     return {
-      data: result.map((r) => r.especialidade) as unknown as EspecialidadeEntity[],
+      data: result.map(
+        (r) => r.especialidade
+      ) as unknown as EspecialidadeEntity[],
       total,
     };
   }
@@ -299,7 +318,10 @@ export class ProfissionalRepository implements IProfissionalRepository {
     });
   }
 
-  async removeServico(id_profissional: string, id_servico: string): Promise<void> {
+  async removeServico(
+    id_profissional: string,
+    id_servico: string
+  ): Promise<void> {
     await prisma.profissionalServico.delete({
       where: {
         id_profissional_id_servico: { id_profissional, id_servico },

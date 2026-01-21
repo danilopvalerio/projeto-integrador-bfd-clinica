@@ -8,12 +8,11 @@ interface Props {
 }
 
 const ProfissionalCard = ({ profissional, onClick }: Props) => {
-  const initial =
-    profissional.nome?.trim()?.charAt(0)?.toUpperCase() ?? "P";
+  const initial = profissional.nome?.trim()?.charAt(0)?.toUpperCase() ?? "P";
 
   return (
     <div
-      className="card h-100 shadow-sm border-0 cursor-pointer"
+      className="card-item-bottom-line-rounded h-100 hover-shadow cursor-pointer bg-white p-3"
       onClick={onClick}
       role="button"
     >

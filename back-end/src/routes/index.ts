@@ -5,23 +5,24 @@ import { sessionRoutes } from "@/modules/session/sessionRoutes";
 import { servicoRoutes } from "@/modules/servico/servicoRoutes";
 import { especialidadeRoutes } from "@/modules/especialidade/especialidadeRoutes";
 import { profissionalRoutes } from "@/modules/profissional/profissionalRoutes";
-
+import { pacienteRoutes } from "@/modules/paciente/pacienteRoutes";
+import { arquivoRoutes } from "@/modules/arquivos/arquivoRoutes";
+import { prontuarioRoutes } from "@/modules/paciente/prontuarioRoutes";
 
 const router = Router();
 
-// Rota de saúde
 router.get("/health", (req, res) => {
   return res.json({ status: "ok", message: "API funcionando 🚀" });
 });
 
-// // Rotas de Autenticação (Públicas)
-// router.use("/auth", sessionRoutes);
-
-// // Rotas de Negócio (Protegidas internamente)
+// Rotas de Negócio
 router.use("/users", userRoutes);
 router.use("/sessions", sessionRoutes);
 router.use("/specialities", especialidadeRoutes);
 router.use("/services", servicoRoutes);
 router.use("/professionals", profissionalRoutes);
+router.use("/patients", pacienteRoutes);
+router.use("/arquivos", arquivoRoutes);
+router.use("/prontuarios", prontuarioRoutes);
 
 export default router;
