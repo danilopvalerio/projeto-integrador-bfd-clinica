@@ -5,7 +5,6 @@ export interface EspecialidadeEntity {
   id_especialidade: string;
   nome: string;
   descricao?: string | null;
-  // Removi created_at e updated_at pois não constam no seu Schema Prisma para esta tabela
 }
 
 export interface CreateEspecialidadeDTO {
@@ -21,7 +20,7 @@ export interface UpdateEspecialidadeDTO {
 export interface ProfissionalVinculadoDTO {
   id_profissional: string;
   nome: string;
-  cargo: string;
+  cargo?: string;
 }
 
 // O tipo que devolvemos para o Frontend
@@ -36,6 +35,23 @@ export interface IEspecialidadeRepository
     CreateEspecialidadeDTO,
     UpdateEspecialidadeDTO
   > {
+  findById(id: string): Promise<EspecialidadeEntity | null>;
   findByNome(nome: string): Promise<EspecialidadeEntity | null>;
   findMany(): Promise<EspecialidadeEntity[]>;
+
+
+  listProfissionais(
+    id_especialidade: string
+  ): Promise<ProfissionalVinculadoDTO[]>;
+
+  addProfissional(
+    id_especialidade: string,
+    id_profissional: string
+  ): Promise<void>;
+
+  removeProfissional(
+    id_especialidade: string,
+    id_profissional: string
+  ): Promise<void>;
+
 }

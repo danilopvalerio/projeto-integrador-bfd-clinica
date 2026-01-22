@@ -4,6 +4,7 @@ import {
   UpdateEspecialidadeDTO,
   EspecialidadeResponseDTO,
   EspecialidadeEntity,
+  ProfissionalVinculadoDTO,
 } from "./especialidadeDTO";
 
 import {
@@ -42,7 +43,7 @@ export class EspecialidadeService {
 
   async findAll(): Promise<EspecialidadeResponseDTO[]> {
     const especialidades = await this.especialidadeRepository.findMany();
-    return especialidades.map(this.mapToResponse);
+    return especialidades.map((e) => this.mapToResponse(e));
   }
 
   async update(
@@ -55,7 +56,6 @@ export class EspecialidadeService {
       throw new AppError("Especialidade não encontrada", 404);
     }
 
-    // Se atualizar nome, valida duplicidade (sem bloquear o próprio registro)
     if (data?.nome && data.nome.trim()) {
       const nomeExiste = await this.especialidadeRepository.findByNome(
         data.nome
@@ -100,7 +100,7 @@ export class EspecialidadeService {
     );
 
     return {
-      data: data.map(this.mapToResponse),
+      data: data.map((e) => this.mapToResponse(e)),
       total,
       page,
       lastPage: Math.ceil(total / limit) || 1,
@@ -125,11 +125,62 @@ export class EspecialidadeService {
     );
 
     return {
-      data: data.map(this.mapToResponse),
+      data: data.map((e) => this.mapToResponse(e)),
       total,
       page,
       lastPage: Math.ceil(total / limit) || 1,
     };
   }
-}
 
+  //profissionais
+  async listProfissionais(
+    idEspecialidade: string
+  ): Promise<ProfissionalVinculadoDTO[]> {
+    const especialidade =
+      await this.especialidadeRepository.findById(idEspecialidade);
+
+    if (!especialidade) {
+      throw new AppError("Especialidade não encontrada", 404);
+    }
+
+    return this.especialidadeRepository.listProfissionais(idEspecialidade);
+  }
+
+  async addProfissional(
+    idEspecialidade: string,
+    idProfissional: string
+  ): Promise<void> {
+    if (!idProfissional) {
+      throw new AppError("Profissional não informado", 400);
+    }
+
+    const especialidade =
+      await this.especialidadeRepository.findById(idEspecialidade);
+
+    if (!especialidade) {
+      throw new AppError("Especialidade não encontrada", 404);
+    }
+
+    await this.especialidadeRepository.addProfissional(
+      idEspecialidade,
+      idProfissional
+    );
+  }
+
+  async removeProfissional(
+    idEspecialidade: string,
+    idProfissional: string
+  ): Promise<void> {
+    const especialidade =
+      await this.especialidadeRepository.findById(idEspecialidade);
+
+    if (!especialidade) {
+      throw new AppError("Especialidade não encontrada", 404);
+    }
+
+    await this.especialidadeRepository.removeProfissional(
+      idEspecialidade,
+      idProfissional
+    );
+  }
+}

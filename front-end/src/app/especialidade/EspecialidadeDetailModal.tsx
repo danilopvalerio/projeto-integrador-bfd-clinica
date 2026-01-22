@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -17,13 +16,16 @@ interface Props {
   onSuccess: () => void;
 }
 
-// Estado local do formulário
 interface LocalFormData {
   nome: string;
   descricao: string;
 }
 
-const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props) => {
+const EspecialidadeDetailModal = ({
+  especialidadeId,
+  onClose,
+  onSuccess,
+}: Props) => {
   const [loadingData, setLoadingData] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +36,6 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
     descricao: "",
   });
 
-  // Fechar com ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -43,11 +44,13 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Fetch da especialidade
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get<EspecialidadeResponse>(`/specialities/${especialidadeId}`);
+        const res = await api.get<EspecialidadeResponse>(
+          `/specialities/${especialidadeId}`
+        );
+
         setFormData({
           nome: res.data.nome,
           descricao: res.data.descricao || "",
@@ -78,7 +81,10 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
         descricao: formData.descricao,
       };
 
-      await api.patch(`/specialities/${especialidadeId}`, payload);
+      await api.patch(
+        `/specialities/${especialidadeId}`,
+        payload
+      );
 
       setSuccessMsg("Especialidade atualizada com sucesso!");
       setTimeout(() => onSuccess(), 1000);
@@ -90,11 +96,20 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
   };
 
   const handleDelete = async () => {
-    if (!confirm("Tem certeza que deseja excluir esta especialidade? Esta ação não pode ser desfeita.")) return;
+    if (
+      !confirm(
+        "Tem certeza que deseja excluir esta especialidade? Esta ação não pode ser desfeita."
+      )
+    )
+      return;
 
     try {
       setSaving(true);
-      await api.delete(`/specialities/${especialidadeId}`);
+
+      await api.delete(
+        `/specialities/${especialidadeId}`
+      );
+
       onSuccess();
     } catch (err) {
       setError(getErrorMessage(err));
@@ -124,9 +139,14 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
         style={{ maxWidth: "600px", maxHeight: "90vh" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-content border-0 shadow rounded-4 d-flex flex-column" style={{ maxHeight: "90vh" }}>
+        <div
+          className="modal-content border-0 shadow rounded-4 d-flex flex-column"
+          style={{ maxHeight: "90vh" }}
+        >
           <div className="modal-header border-bottom-0 p-4 pb-0 d-flex justify-content-between">
-            <h5 className="modal-title fw-bold text-secondary">Detalhes da Especialidade</h5>
+            <h5 className="modal-title fw-bold text-secondary">
+              Detalhes da Especialidade
+            </h5>
             <button className="btn-close" onClick={onClose} />
           </div>
 
@@ -136,6 +156,7 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
                 {error}
               </div>
             )}
+
             {successMsg && (
               <div className="alert alert-success small py-2 rounded-3 border-0 bg-success bg-opacity-10 text-success mb-3">
                 {successMsg}
@@ -149,7 +170,9 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
                 disabled={saving}
               />
 
-              <EspecialidadeProfissionaisList especialidadeId={especialidadeId} />
+              <EspecialidadeProfissionaisList
+                especialidadeId={especialidadeId}
+              />
 
               <div className="d-flex justify-content-between mt-4 pt-3 border-top">
                 <button
@@ -159,13 +182,20 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
                   disabled={saving}
                 >
                   <FontAwesomeIcon icon={faTrash} />
-                  <span className="small fw-bold">Excluir Especialidade</span>
+                  <span className="small fw-bold">
+                    Excluir Especialidade
+                  </span>
                 </button>
 
                 <div className="d-flex gap-3">
-                  <button type="button" className="btn btn-link" onClick={onClose}>
+                  <button
+                    type="button"
+                    className="btn btn-link"
+                    onClick={onClose}
+                  >
                     Fechar
                   </button>
+
                   <button
                     type="submit"
                     className="button-dark-grey px-4 py-2 rounded-pill"
@@ -184,5 +214,4 @@ const EspecialidadeDetailModal = ({ especialidadeId, onClose, onSuccess }: Props
 };
 
 export default EspecialidadeDetailModal;
-
 

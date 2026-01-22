@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { EspecialidadeService } from "./especialidadeService";
 
-
 export class EspecialidadeController {
   constructor(private especialidadeService: EspecialidadeService) {}
 
@@ -15,15 +14,15 @@ export class EspecialidadeController {
     return res.json(especialidades);
   };
 
-  update = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.params;
-    const especialidade = await this.especialidadeService.update(id, req.body);
-    return res.json(especialidade);
-  };
-
   getById = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     const especialidade = await this.especialidadeService.getById(id);
+    return res.json(especialidade);
+  };
+
+  update = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.params;
+    const especialidade = await this.especialidadeService.update(id, req.body);
     return res.json(especialidade);
   };
 
@@ -54,5 +53,48 @@ export class EspecialidadeController {
     });
 
     return res.json(result);
+  };
+
+  //profissionais
+  listProfissionais = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    const { id } = req.params;
+
+    const profissionais =
+      await this.especialidadeService.listProfissionais(id);
+
+    return res.json(profissionais);
+  };
+
+  addProfissional = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    const { id } = req.params;
+    const { id_profissional } = req.body;
+
+    await this.especialidadeService.addProfissional(
+      id,
+      id_profissional
+    );
+
+    return res.status(201).send();
+  };
+
+  removeProfissional = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    const { id } = req.params;
+    const { id_profissional } = req.body;
+
+    await this.especialidadeService.removeProfissional(
+      id,
+      id_profissional
+    );
+
+    return res.status(204).send();
   };
 }

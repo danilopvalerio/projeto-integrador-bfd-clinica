@@ -12,7 +12,7 @@ export interface EspecialidadeResponse {
 export interface ProfissionalVinculado {
   id_profissional: string;
   nome: string;
-  cargo: string
+  conselho: string
 }
 
 export interface UpdateEspecialidadePayload {

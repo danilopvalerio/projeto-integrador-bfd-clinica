@@ -12,18 +12,20 @@ interface Props {
 }
 
 const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
-  const [profissionais, setProfissionais] = useState<ProfissionalVinculado[]>(
-    []
-  );
+  const [profissionais, setProfissionais] = useState<ProfissionalVinculado[]>([]);
   const [loading, setLoading] = useState(false);
   const [novoProfId, setNovoProfId] = useState("");
 
   const fetchProfissionais = useCallback(async () => {
     if (!especialidadeId) return;
+
     try {
       setLoading(true);
-      
-      const res = await api.get(`/specialities/${especialidadeId}/profissionais`);
+
+      const res = await api.get(
+        `/specialities/${especialidadeId}/profissionais`
+      );
+
       setProfissionais(res.data);
     } catch (error) {
       console.error(getErrorMessage(error));
@@ -38,10 +40,15 @@ const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
 
   const handleAdd = async () => {
     if (!novoProfId) return;
+
     try {
-      await api.post(`/specialities/${especialidadeId}/profissionais`, {
-        id_profissional: novoProfId,
-      });
+      await api.post(
+        `/specialities/${especialidadeId}/profissionais`,
+        {
+          id_profissional: novoProfId,
+        }
+      );
+
       setNovoProfId("");
       fetchProfissionais();
     } catch (error) {
@@ -51,11 +58,15 @@ const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
 
   const handleRemove = async (profId: string) => {
     if (!confirm("Desvincular profissional dessa especialidade?")) return;
+
     try {
-      
-      await api.delete(`/specialities/${especialidadeId}/profissionais`, {
-        data: { id_profissional: profId },
-      });
+      await api.delete(
+        `/specialities/${especialidadeId}/profissionais`,
+        {
+          data: { id_profissional: profId },
+        }
+      );
+
       fetchProfissionais();
     } catch (error) {
       alert(getErrorMessage(error));
@@ -77,7 +88,7 @@ const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
         <input
           type="text"
           className="form-control form-control-sm rounded-pill"
-          placeholder="Nome do Profissional"
+          placeholder="ID do Profissional"
           value={novoProfId}
           onChange={(e) => setNovoProfId(e.target.value)}
         />
@@ -109,15 +120,18 @@ const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
                     <FontAwesomeIcon icon={faUserMd} className="small" />
                   </div>
                   <div className="d-flex flex-column">
-                    <span className="fw-bold small text-dark">{prof.nome}</span>
+                    <span className="fw-bold small text-dark">
+                      {prof.nome}
+                    </span>
                     <span
                       className="text-muted"
                       style={{ fontSize: "0.75rem" }}
                     >
-                      {prof.cargo}
+                      {prof.conselho}
                     </span>
                   </div>
                 </div>
+
                 <button
                   className="btn btn-link text-danger p-0 opacity-50 hover-opacity-100"
                   onClick={() => handleRemove(prof.id_profissional)}

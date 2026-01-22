@@ -4,6 +4,7 @@ import {
   EspecialidadeEntity,
   CreateEspecialidadeDTO,
   UpdateEspecialidadeDTO,
+  ProfissionalVinculadoDTO,
 } from "./especialidadeDTO";
 import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 
@@ -101,5 +102,55 @@ export class EspecialidadeRepository implements IEspecialidadeRepository {
 
     return { data: data as unknown as EspecialidadeEntity[], total };
   }
-}
 
+
+ // ==============================
+  // Relação Especialidade × Profissional
+  // ==============================
+
+  async listProfissionais(
+    id_especialidade: string
+  ): Promise<ProfissionalVinculadoDTO[]> {
+    const result = await prisma.profissional_Especialidade.findMany({
+      where: { id_especialidade },
+      include: {
+        profissional: {
+          select: {
+            id_profissional: true,
+            nome: true,
+            registro_conselho: true,
+          },
+        },
+      },
+    });
+
+    return result.map((r) => ({
+      id_profissional: r.profissional.id_profissional,
+      nome: r.profissional.nome,
+      conselho: r.profissional.registro_conselho,
+    }));
+  }
+
+  async addProfissional(
+    id_especialidade: string,
+    id_profissional: string
+  ): Promise<void> {
+    await prisma.profissional_Especialidade.create({
+      data: { id_especialidade, id_profissional },
+    });
+  }
+
+  async removeProfissional(
+    id_especialidade: string,
+    id_profissional: string
+  ): Promise<void> {
+    await prisma.profissional_Especialidade.delete({
+      where: {
+        id_profissional_id_especialidade: {
+          id_profissional,
+          id_especialidade,
+        },
+      },
+    });
+  }
+}

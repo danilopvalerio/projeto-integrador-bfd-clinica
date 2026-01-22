@@ -20,10 +20,26 @@ especialidadeRoutes.get("/", especialidadeController.findAll); // Cuidado com co
 especialidadeRoutes.get("/search", especialidadeController.searchPaginated);
 especialidadeRoutes.get("/paginated", especialidadeController.listPaginated);
 
+
+//profissionais
+especialidadeRoutes.get(
+  "/:id/profissionais",
+  especialidadeController.listProfissionais
+);
+
+especialidadeRoutes.post(
+  "/:id/profissionais",
+  especialidadeController.addProfissional
+);
+
+especialidadeRoutes.delete(
+  "/:id/profissionais",
+  especialidadeController.removeProfissional
+);
+
 // Rotas com ID
 especialidadeRoutes.get("/:id", especialidadeController.getById);
 especialidadeRoutes.patch("/:id", especialidadeController.update);
 especialidadeRoutes.delete("/:id", especialidadeController.delete);
 
 export { especialidadeRoutes };
-
