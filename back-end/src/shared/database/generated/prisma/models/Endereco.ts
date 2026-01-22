@@ -288,9 +288,9 @@ export type EnderecoUncheckedUpdateManyInput = {
   estado?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type EnderecoScalarRelationFilter = {
-  is?: Prisma.EnderecoWhereInput
-  isNot?: Prisma.EnderecoWhereInput
+export type EnderecoNullableScalarRelationFilter = {
+  is?: Prisma.EnderecoWhereInput | null
+  isNot?: Prisma.EnderecoWhereInput | null
 }
 
 export type EnderecoCountOrderByAggregateInput = {
@@ -323,16 +323,14 @@ export type EnderecoCreateNestedOneWithoutPacientesInput = {
   connect?: Prisma.EnderecoWhereUniqueInput
 }
 
-export type EnderecoUpdateOneRequiredWithoutPacientesNestedInput = {
+export type EnderecoUpdateOneWithoutPacientesNestedInput = {
   create?: Prisma.XOR<Prisma.EnderecoCreateWithoutPacientesInput, Prisma.EnderecoUncheckedCreateWithoutPacientesInput>
   connectOrCreate?: Prisma.EnderecoCreateOrConnectWithoutPacientesInput
   upsert?: Prisma.EnderecoUpsertWithoutPacientesInput
+  disconnect?: Prisma.EnderecoWhereInput | boolean
+  delete?: Prisma.EnderecoWhereInput | boolean
   connect?: Prisma.EnderecoWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.EnderecoUpdateToOneWithWhereWithoutPacientesInput, Prisma.EnderecoUpdateWithoutPacientesInput>, Prisma.EnderecoUncheckedUpdateWithoutPacientesInput>
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type EnderecoCreateWithoutPacientesInput = {

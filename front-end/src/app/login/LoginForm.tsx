@@ -36,6 +36,7 @@ export default function LoginForm() {
         const { accessToken, user } = response.data;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
+        api.defaults.headers.Authorization = `Bearer ${accessToken}`;
         router.push("/menu");
       }
     } catch (err: unknown) {

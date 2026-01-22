@@ -1,3 +1,5 @@
+//src/modules/profissional/profissionalService.ts
+import { hashPassword } from "../../shared/utils/hash";
 import {
   IProfissionalRepository,
   CreateProfissionalDTO,
@@ -12,28 +14,112 @@ import { prisma } from "../../shared/database/prisma";
 export class ProfissionalService {
   constructor(private profissionalRepository: IProfissionalRepository) {}
 
+  // =====================================================
+  // CREATE (com transaction: cria usuário + profissional)
+  // =====================================================
   async create(data: CreateProfissionalDTO): Promise<ProfissionalEntity> {
-    const user = await prisma.usuario.findUnique({
-      where: { id_usuario: data.id_usuario },
-    });
-    if (!user) throw new AppError("Usuário não encontrado", 404);
-
     const cpfExists = await this.profissionalRepository.findByCpf(data.cpf);
-    if (cpfExists)
-      throw new AppError("CPF já cadastrado para um profissional", 409);
+    if (cpfExists) throw new AppError("CPF já cadastrado", 409);
 
-    return await this.profissionalRepository.create(data);
+    const hasIdUsuario = !!data.id_usuario;
+    const hasUsuarioPayload = !!data.usuario;
+
+    if (!hasIdUsuario && !hasUsuarioPayload) {
+      throw new AppError(
+        "Envie id_usuario (legado) ou usuario { email, senha } para criar automaticamente.",
+        400
+      );
+    }
+
+    const profissional = await prisma.$transaction(async (tx) => {
+      let id_usuario = data.id_usuario;
+
+      // Se vier usuario, cria automaticamente
+      if (!id_usuario && data.usuario) {
+        const email = data.usuario.email.trim().toLowerCase();
+        const emailExists = await tx.usuario.findUnique({ where: { email } });
+        if (emailExists) throw new AppError("E-mail já cadastrado", 409);
+
+        const senhaTexto = data.usuario.senha || "Mudar123!";
+        const senhaCriptografada = await hashPassword(senhaTexto);
+
+        const usuarioCriado = await tx.usuario.create({
+          data: {
+            email,
+            senha_hash: senhaCriptografada, // Salva criptografado
+            tipo_usuario: data.usuario.tipo_usuario ?? "PROFISSIONAL",
+            ativo: true,
+          },
+        });
+
+        id_usuario = usuarioCriado.id_usuario;
+      }
+
+      // Se veio id_usuario, valida existência
+      if (id_usuario) {
+        const user = await tx.usuario.findUnique({ where: { id_usuario } });
+        if (!user) throw new AppError("Usuário não encontrado", 404);
+      }
+
+      // Cria Profissional (com nested create opcional)
+      const created = await tx.profissional.create({
+        data: {
+          nome: data.nome,
+          cpf: data.cpf,
+          registro_conselho: data.registro_conselho,
+          id_usuario: id_usuario!,
+
+          telefones: data.telefones
+            ? {
+                create: data.telefones.map((t) => ({
+                  telefone: t.telefone,
+                  principal: t.principal ?? false,
+                })),
+              }
+            : undefined,
+
+          horarios: data.horarios
+            ? {
+                create: data.horarios.map((h) => ({
+                  dia_semana: h.dia_semana,
+                  hora_inicio: h.hora_inicio,
+                  hora_fim: h.hora_fim,
+                })),
+              }
+            : undefined,
+        },
+      });
+
+      return created as unknown as ProfissionalEntity;
+    });
+
+    return profissional;
   }
 
-  async update(id: string, data: UpdateProfissionalDTO) {
-    await this.getById(id);
+  // =======================
+  // CRUD / Consultas básicas
+  // =======================
+  async update(
+    id: string,
+    data: UpdateProfissionalDTO
+  ): Promise<ProfissionalEntity> {
+    const profissional = await this.profissionalRepository.findById(id);
+    if (!profissional) throw new AppError("Profissional não encontrado", 404);
+
     return await this.profissionalRepository.update(id, data);
   }
 
-  async getById(id: string) {
-    const prof = await this.profissionalRepository.findById(id);
-    if (!prof) throw new AppError("Profissional não encontrado", 404);
-    return prof;
+  async delete(id: string): Promise<void> {
+    const profissional = await this.profissionalRepository.findById(id);
+    if (!profissional) throw new AppError("Profissional não encontrado", 404);
+
+    await this.profissionalRepository.delete(id);
+  }
+
+  async getById(id: string): Promise<ProfissionalEntity> {
+    const profissional = await this.profissionalRepository.findById(id);
+    if (!profissional) throw new AppError("Profissional não encontrado", 404);
+    return profissional;
   }
 
   async listPaginated({ page, limit }: { page: number; limit: number }) {
@@ -41,7 +127,12 @@ export class ProfissionalService {
       page,
       limit
     );
-    return { data, total, page, lastPage: Math.ceil(total / limit) };
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async searchPaginated({
@@ -58,49 +149,72 @@ export class ProfissionalService {
       page,
       limit
     );
-    return { data, total, page, lastPage: Math.ceil(total / limit) };
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
-  async delete(id: string) {
-    await this.getById(id);
-    await this.profissionalRepository.delete(id);
+  // ==========
+  // Telefones
+  // ==========
+  async addTelefone(
+    id_profissional: string,
+    data: { telefone: string; principal: boolean }
+  ) {
+    await this.getById(id_profissional);
+    return await this.profissionalRepository.addTelefone(id_profissional, data);
   }
 
-  // --- Telefones ---
-  async addTelefone(id: string, data: any) {
-    return await this.profissionalRepository.addTelefone(id, data);
-  }
-  async updateTelefone(id_tel: string, data: UpdateTelefoneDTO) {
-    return await this.profissionalRepository.updateTelefone(id_tel, data);
-  }
-  async listTelefones(id: string) {
-    return await this.profissionalRepository.listTelefones(id);
-  }
-  async deleteTelefone(id_tel: string) {
-    await this.profissionalRepository.deleteTelefone(id_tel);
+  async updateTelefone(id_telefone: string, data: UpdateTelefoneDTO) {
+    return await this.profissionalRepository.updateTelefone(id_telefone, data);
   }
 
-  // --- Horários ---
-  async addHorario(id: string, data: any) {
-    return await this.profissionalRepository.addHorario(id, data);
+  async deleteTelefone(id_telefone: string) {
+    await this.profissionalRepository.deleteTelefone(id_telefone);
   }
+
+  async listTelefones(id_profissional: string) {
+    await this.getById(id_profissional);
+    return await this.profissionalRepository.listTelefones(id_profissional);
+  }
+
+  // ==========
+  // Horários
+  // ==========
+  async addHorario(
+    id_profissional: string,
+    data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }
+  ) {
+    await this.getById(id_profissional);
+    return await this.profissionalRepository.addHorario(id_profissional, data);
+  }
+
   async updateHorario(id_horario: string, data: UpdateHorarioDTO) {
     return await this.profissionalRepository.updateHorario(id_horario, data);
   }
-  async listHorarios(id: string) {
-    return await this.profissionalRepository.listHorarios(id);
-  }
+
   async deleteHorario(id_horario: string) {
     await this.profissionalRepository.deleteHorario(id_horario);
   }
 
-  // --- Especialidades ---
+  async listHorarios(id_profissional: string) {
+    await this.getById(id_profissional);
+    return await this.profissionalRepository.listHorarios(id_profissional);
+  }
+
+  // =================
+  // Especialidades
+  // =================
   async addEspecialidade(id_profissional: string, id_especialidade: string) {
     await this.getById(id_profissional);
-    const especialidade = await prisma.especialidade.findUnique({
+
+    const esp = await prisma.especialidade.findUnique({
       where: { id_especialidade },
     });
-    if (!especialidade) throw new AppError("Especialidade não encontrada", 404);
+    if (!esp) throw new AppError("Especialidade não encontrada", 404);
 
     return await this.profissionalRepository.addEspecialidade(
       id_profissional,
@@ -110,7 +224,7 @@ export class ProfissionalService {
 
   async removeEspecialidade(id_profissional: string, id_especialidade: string) {
     await this.getById(id_profissional);
-    await this.profissionalRepository.removeEspecialidade(
+    return await this.profissionalRepository.removeEspecialidade(
       id_profissional,
       id_especialidade
     );
@@ -135,6 +249,7 @@ export class ProfissionalService {
         page,
         limit
       );
+
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
@@ -152,6 +267,7 @@ export class ProfissionalService {
         page,
         limit
       );
+
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
@@ -160,16 +276,18 @@ export class ProfissionalService {
     especialidadesIds: string[]
   ) {
     await this.getById(id_profissional);
-    // Opcional: Validar se IDs existem
     return await this.profissionalRepository.syncEspecialidades(
       id_profissional,
       especialidadesIds || []
     );
   }
 
-  // --- Serviços ---
+  // ==========
+  // Serviços
+  // ==========
   async addServico(id_profissional: string, id_servico: string) {
     await this.getById(id_profissional);
+
     const servico = await prisma.servico.findUnique({ where: { id_servico } });
     if (!servico) throw new AppError("Serviço não encontrado", 404);
 
@@ -181,7 +299,7 @@ export class ProfissionalService {
 
   async removeServico(id_profissional: string, id_servico: string) {
     await this.getById(id_profissional);
-    await this.profissionalRepository.removeServico(
+    return await this.profissionalRepository.removeServico(
       id_profissional,
       id_servico
     );
@@ -204,6 +322,7 @@ export class ProfissionalService {
         page,
         limit
       );
+
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
@@ -221,25 +340,12 @@ export class ProfissionalService {
         page,
         limit
       );
+
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
 
   async syncServicos(id_profissional: string, servicoIds: string[]) {
     await this.getById(id_profissional);
-    if (servicoIds && servicoIds.length > 0) {
-      const encontrados = await prisma.servico.findMany({
-        where: { id_servico: { in: servicoIds } },
-        select: { id_servico: true },
-      });
-      const encontradosIds = new Set(encontrados.map((s) => s.id_servico));
-      const invalid = servicoIds.filter((id) => !encontradosIds.has(id));
-      if (invalid.length > 0) {
-        throw new AppError(
-          `Serviços não encontrados: ${invalid.join(", ")}`,
-          404
-        );
-      }
-    }
     return await this.profissionalRepository.syncServicos(
       id_profissional,
       servicoIds || []

@@ -26,70 +26,76 @@ export type AggregateLog = {
 
 export type LogMinAggregateOutputType = {
   id: string | null
-  id_usuario: string | null
+  tipo: string | null
   acao: string | null
+  descricao: string | null
   ip: string | null
   user_agent: string | null
   sucesso: boolean | null
-  tipo: string | null
   data: Date | null
+  id_usuario: string | null
 }
 
 export type LogMaxAggregateOutputType = {
   id: string | null
-  id_usuario: string | null
+  tipo: string | null
   acao: string | null
+  descricao: string | null
   ip: string | null
   user_agent: string | null
   sucesso: boolean | null
-  tipo: string | null
   data: Date | null
+  id_usuario: string | null
 }
 
 export type LogCountAggregateOutputType = {
   id: number
-  id_usuario: number
+  tipo: number
   acao: number
+  descricao: number
   ip: number
   user_agent: number
   sucesso: number
-  tipo: number
   data: number
+  id_usuario: number
   _all: number
 }
 
 
 export type LogMinAggregateInputType = {
   id?: true
-  id_usuario?: true
+  tipo?: true
   acao?: true
+  descricao?: true
   ip?: true
   user_agent?: true
   sucesso?: true
-  tipo?: true
   data?: true
+  id_usuario?: true
 }
 
 export type LogMaxAggregateInputType = {
   id?: true
-  id_usuario?: true
+  tipo?: true
   acao?: true
+  descricao?: true
   ip?: true
   user_agent?: true
   sucesso?: true
-  tipo?: true
   data?: true
+  id_usuario?: true
 }
 
 export type LogCountAggregateInputType = {
   id?: true
-  id_usuario?: true
+  tipo?: true
   acao?: true
+  descricao?: true
   ip?: true
   user_agent?: true
   sucesso?: true
-  tipo?: true
   data?: true
+  id_usuario?: true
   _all?: true
 }
 
@@ -167,13 +173,14 @@ export type LogGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type LogGroupByOutputType = {
   id: string
-  id_usuario: string | null
+  tipo: string
   acao: string
+  descricao: string | null
   ip: string | null
   user_agent: string | null
   sucesso: boolean
-  tipo: string
   data: Date
+  id_usuario: string | null
   _count: LogCountAggregateOutputType | null
   _min: LogMinAggregateOutputType | null
   _max: LogMaxAggregateOutputType | null
@@ -199,25 +206,27 @@ export type LogWhereInput = {
   OR?: Prisma.LogWhereInput[]
   NOT?: Prisma.LogWhereInput | Prisma.LogWhereInput[]
   id?: Prisma.StringFilter<"Log"> | string
-  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
+  tipo?: Prisma.StringFilter<"Log"> | string
   acao?: Prisma.StringFilter<"Log"> | string
+  descricao?: Prisma.StringNullableFilter<"Log"> | string | null
   ip?: Prisma.StringNullableFilter<"Log"> | string | null
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
-  tipo?: Prisma.StringFilter<"Log"> | string
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }
 
 export type LogOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
+  tipo?: Prisma.SortOrder
   acao?: Prisma.SortOrder
+  descricao?: Prisma.SortOrderInput | Prisma.SortOrder
   ip?: Prisma.SortOrderInput | Prisma.SortOrder
   user_agent?: Prisma.SortOrderInput | Prisma.SortOrder
   sucesso?: Prisma.SortOrder
-  tipo?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
 
@@ -226,25 +235,27 @@ export type LogWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.LogWhereInput | Prisma.LogWhereInput[]
   OR?: Prisma.LogWhereInput[]
   NOT?: Prisma.LogWhereInput | Prisma.LogWhereInput[]
-  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
+  tipo?: Prisma.StringFilter<"Log"> | string
   acao?: Prisma.StringFilter<"Log"> | string
+  descricao?: Prisma.StringNullableFilter<"Log"> | string | null
   ip?: Prisma.StringNullableFilter<"Log"> | string | null
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
-  tipo?: Prisma.StringFilter<"Log"> | string
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }, "id">
 
 export type LogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
+  tipo?: Prisma.SortOrder
   acao?: Prisma.SortOrder
+  descricao?: Prisma.SortOrderInput | Prisma.SortOrder
   ip?: Prisma.SortOrderInput | Prisma.SortOrder
   user_agent?: Prisma.SortOrderInput | Prisma.SortOrder
   sucesso?: Prisma.SortOrder
-  tipo?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.LogCountOrderByAggregateInput
   _max?: Prisma.LogMaxOrderByAggregateInput
   _min?: Prisma.LogMinOrderByAggregateInput
@@ -255,89 +266,97 @@ export type LogScalarWhereWithAggregatesInput = {
   OR?: Prisma.LogScalarWhereWithAggregatesInput[]
   NOT?: Prisma.LogScalarWhereWithAggregatesInput | Prisma.LogScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Log"> | string
-  id_usuario?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
+  tipo?: Prisma.StringWithAggregatesFilter<"Log"> | string
   acao?: Prisma.StringWithAggregatesFilter<"Log"> | string
+  descricao?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
   ip?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
   user_agent?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
   sucesso?: Prisma.BoolWithAggregatesFilter<"Log"> | boolean
-  tipo?: Prisma.StringWithAggregatesFilter<"Log"> | string
   data?: Prisma.DateTimeWithAggregatesFilter<"Log"> | Date | string
+  id_usuario?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
 }
 
 export type LogCreateInput = {
   id?: string
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
   usuario?: Prisma.UsuarioCreateNestedOneWithoutLogsInput
 }
 
 export type LogUncheckedCreateInput = {
   id?: string
-  id_usuario?: string | null
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
+  id_usuario?: string | null
 }
 
 export type LogUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usuario?: Prisma.UsuarioUpdateOneWithoutLogsNestedInput
 }
 
 export type LogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LogCreateManyInput = {
   id?: string
-  id_usuario?: string | null
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
+  id_usuario?: string | null
 }
 
 export type LogUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type LogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LogListRelationFilter = {
@@ -352,35 +371,38 @@ export type LogOrderByRelationAggregateInput = {
 
 export type LogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  id_usuario?: Prisma.SortOrder
+  tipo?: Prisma.SortOrder
   acao?: Prisma.SortOrder
+  descricao?: Prisma.SortOrder
   ip?: Prisma.SortOrder
   user_agent?: Prisma.SortOrder
   sucesso?: Prisma.SortOrder
-  tipo?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  id_usuario?: Prisma.SortOrder
 }
 
 export type LogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  id_usuario?: Prisma.SortOrder
+  tipo?: Prisma.SortOrder
   acao?: Prisma.SortOrder
+  descricao?: Prisma.SortOrder
   ip?: Prisma.SortOrder
   user_agent?: Prisma.SortOrder
   sucesso?: Prisma.SortOrder
-  tipo?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  id_usuario?: Prisma.SortOrder
 }
 
 export type LogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  id_usuario?: Prisma.SortOrder
+  tipo?: Prisma.SortOrder
   acao?: Prisma.SortOrder
+  descricao?: Prisma.SortOrder
   ip?: Prisma.SortOrder
   user_agent?: Prisma.SortOrder
   sucesso?: Prisma.SortOrder
-  tipo?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  id_usuario?: Prisma.SortOrder
 }
 
 export type LogCreateNestedManyWithoutUsuarioInput = {
@@ -427,21 +449,23 @@ export type LogUncheckedUpdateManyWithoutUsuarioNestedInput = {
 
 export type LogCreateWithoutUsuarioInput = {
   id?: string
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
 }
 
 export type LogUncheckedCreateWithoutUsuarioInput = {
   id?: string
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
 }
 
@@ -476,52 +500,57 @@ export type LogScalarWhereInput = {
   OR?: Prisma.LogScalarWhereInput[]
   NOT?: Prisma.LogScalarWhereInput | Prisma.LogScalarWhereInput[]
   id?: Prisma.StringFilter<"Log"> | string
-  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
+  tipo?: Prisma.StringFilter<"Log"> | string
   acao?: Prisma.StringFilter<"Log"> | string
+  descricao?: Prisma.StringNullableFilter<"Log"> | string | null
   ip?: Prisma.StringNullableFilter<"Log"> | string | null
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
-  tipo?: Prisma.StringFilter<"Log"> | string
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
 }
 
 export type LogCreateManyUsuarioInput = {
   id?: string
+  tipo: string
   acao: string
+  descricao?: string | null
   ip?: string | null
   user_agent?: string | null
   sucesso: boolean
-  tipo: string
   data?: Date | string
 }
 
 export type LogUpdateWithoutUsuarioInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type LogUncheckedUpdateWithoutUsuarioInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type LogUncheckedUpdateManyWithoutUsuarioInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   acao?: Prisma.StringFieldUpdateOperationsInput | string
+  descricao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tipo?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -529,52 +558,56 @@ export type LogUncheckedUpdateManyWithoutUsuarioInput = {
 
 export type LogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  id_usuario?: boolean
+  tipo?: boolean
   acao?: boolean
+  descricao?: boolean
   ip?: boolean
   user_agent?: boolean
   sucesso?: boolean
-  tipo?: boolean
   data?: boolean
+  id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
 
 export type LogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  id_usuario?: boolean
+  tipo?: boolean
   acao?: boolean
+  descricao?: boolean
   ip?: boolean
   user_agent?: boolean
   sucesso?: boolean
-  tipo?: boolean
   data?: boolean
+  id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
 
 export type LogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  id_usuario?: boolean
+  tipo?: boolean
   acao?: boolean
+  descricao?: boolean
   ip?: boolean
   user_agent?: boolean
   sucesso?: boolean
-  tipo?: boolean
   data?: boolean
+  id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
 
 export type LogSelectScalar = {
   id?: boolean
-  id_usuario?: boolean
+  tipo?: boolean
   acao?: boolean
+  descricao?: boolean
   ip?: boolean
   user_agent?: boolean
   sucesso?: boolean
-  tipo?: boolean
   data?: boolean
+  id_usuario?: boolean
 }
 
-export type LogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "id_usuario" | "acao" | "ip" | "user_agent" | "sucesso" | "tipo" | "data", ExtArgs["result"]["log"]>
+export type LogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tipo" | "acao" | "descricao" | "ip" | "user_agent" | "sucesso" | "data" | "id_usuario", ExtArgs["result"]["log"]>
 export type LogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }
@@ -592,13 +625,14 @@ export type $LogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    id_usuario: string | null
+    tipo: string
     acao: string
+    descricao: string | null
     ip: string | null
     user_agent: string | null
     sucesso: boolean
-    tipo: string
     data: Date
+    id_usuario: string | null
   }, ExtArgs["result"]["log"]>
   composites: {}
 }
@@ -1024,13 +1058,14 @@ export interface Prisma__LogClient<T, Null = never, ExtArgs extends runtime.Type
  */
 export interface LogFieldRefs {
   readonly id: Prisma.FieldRef<"Log", 'String'>
-  readonly id_usuario: Prisma.FieldRef<"Log", 'String'>
+  readonly tipo: Prisma.FieldRef<"Log", 'String'>
   readonly acao: Prisma.FieldRef<"Log", 'String'>
+  readonly descricao: Prisma.FieldRef<"Log", 'String'>
   readonly ip: Prisma.FieldRef<"Log", 'String'>
   readonly user_agent: Prisma.FieldRef<"Log", 'String'>
   readonly sucesso: Prisma.FieldRef<"Log", 'Boolean'>
-  readonly tipo: Prisma.FieldRef<"Log", 'String'>
   readonly data: Prisma.FieldRef<"Log", 'DateTime'>
+  readonly id_usuario: Prisma.FieldRef<"Log", 'String'>
 }
     
 

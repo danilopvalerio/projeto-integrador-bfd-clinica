@@ -411,14 +411,6 @@ export type ServicoScalarRelationFilter = {
   isNot?: Prisma.ServicoWhereInput
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ServicoCreateNestedOneWithoutProfissionaisInput = {
   create?: Prisma.XOR<Prisma.ServicoCreateWithoutProfissionaisInput, Prisma.ServicoUncheckedCreateWithoutProfissionaisInput>
   connectOrCreate?: Prisma.ServicoCreateOrConnectWithoutProfissionaisInput

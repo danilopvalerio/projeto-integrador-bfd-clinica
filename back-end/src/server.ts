@@ -3,6 +3,38 @@ import { prisma } from "./shared/database/prisma";
 import app from "./app";
 import { hashPassword } from "./shared/utils/hash"; // Importamos para a senha funcionar no login
 
+async function resetDatabaseHard() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("🚫 Reset bloqueado em produção");
+  }
+
+  console.log("💣 Resetando banco (TRUNCATE CASCADE)...");
+
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE
+      prontuarios_arquivos,
+      prontuarios_entradas,
+      prontuarios,
+      paciente_debitos,
+      paciente_tags,
+      paciente_telefones,
+      pacientes,
+      profissionais_especialidades,
+      profissional_servico,
+      profissional_telefones,
+      horarios_trabalho,
+      profissionais,
+      refresh_tokens,
+      servicos,
+      especialidades,
+      enderecos,
+      usuarios
+    RESTART IDENTITY CASCADE;
+  `);
+
+  console.log("✅ Banco zerado com sucesso!");
+}
+
 async function criaAdmin() {
   const emailAdmin = "emailsimples@exemplo.com";
 
@@ -43,10 +75,12 @@ async function startServer() {
     await prisma.$connect();
     console.log("✅ Banco de dados e Prisma conectados com sucesso!");
 
-    /*
+    //await resetDatabaseHard();
+
     // 1. Garante que o admin existe
     await criaAdmin();
 
+    /*
     // 2. 📋 LISTA TODOS OS USUÁRIOS (Conforme solicitado)
     console.log("\n🔎 Buscando todos os usuários cadastrados...");
     const todosUsuarios = await prisma.usuario.findMany();

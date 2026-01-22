@@ -6,6 +6,15 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+enum Sexo {
+  MASCULINO
+  FEMININO
+}
+
+enum StatusPagamento {
+  PENDENTE
+  PAGO
+}
 
 model Usuario {
   id_usuario     String         @id @default(uuid())
@@ -16,7 +25,7 @@ model Usuario {
   paciente       Paciente?
   profissional   Profissional?
   refresh_tokens RefreshToken[]
-
+  
   logs Log[]
 
   @@map("usuarios")
@@ -25,17 +34,60 @@ model Usuario {
 model Paciente {
   id_paciente     String   @id @default(uuid())
   nome            String   @db.VarChar(200)
+  sexo            Sexo     // Novo campo solicitado
   cpf             String   @unique @db.VarChar(14)
-  telefone        String   @db.VarChar(20)
   data_nascimento DateTime @db.Date
   id_usuario      String   @unique
-  id_endereco     String
+  id_endereco     String?  // Opcional se criar endereço depois, ou obrigatório na transaction
 
-  endereco Endereco @relation(fields: [id_endereco], references: [id_endereco])
-  usuario  Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  usuario  Usuario   @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade)
+  endereco Endereco? @relation(fields: [id_endereco], references: [id_endereco])
+
+  telefones   PacienteTelefone[]
+  tags        PacienteTag[]
+  debitos     PacienteDebito[]
+  prontuarios Prontuario[]
 
   @@map("pacientes")
 }
+
+model PacienteTelefone {
+  id_telefone String  @id @default(uuid())
+  telefone    String  @db.VarChar(20)
+  principal   Boolean @default(false)
+  id_paciente String
+  
+  paciente    Paciente @relation(fields: [id_paciente], references: [id_paciente], onDelete: Cascade)
+
+  @@map("paciente_telefones")
+}
+
+model PacienteTag {
+  id_tag      String @id @default(uuid())
+  nome        String @db.VarChar(50)
+  id_paciente String
+
+  paciente Paciente @relation(fields: [id_paciente], references: [id_paciente], onDelete: Cascade)
+
+  @@map("paciente_tags")
+}
+
+model PacienteDebito {
+  id_debito        String          @id @default(uuid())
+  id_paciente      String
+  id_agendamento   String?         // Opcional caso não venha de um agendamento direto
+  valor_total      Float
+  valor_pago       Float           @default(0)
+  status_pagamento StatusPagamento
+  data_vencimento  DateTime        @db.Date
+  observacoes      String?         @db.Text
+
+  paciente Paciente @relation(fields: [id_paciente], references: [id_paciente], onDelete: Cascade)
+
+  @@map("paciente_debitos")
+}
+
+
 
 model Profissional {
   id_profissional   String @id @default(uuid())
@@ -50,9 +102,11 @@ model Profissional {
   telefones      Profissional_telefone[]
   especialidades Profissional_Especialidade[]
   servicos       ProfissionalServico[]
+  prontuarios    ProntuarioEntrada[]
 
   @@map("profissionais")
 }
+
 
 model Horario_Trabalho {
   id_horario      String   @id @default(uuid())
@@ -147,17 +201,82 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
+
+
+enum TipoEntradaProntuario {
+  ANAMNESE
+  PLANO_TRATAMENTO
+  EVOLUCAO_VISITA
+  DIAGNOSTICO
+  OBSERVACAO_GERAL
+}
+
+enum TipoArquivoProntuario {
+  RADIOGRAFIA
+  FOTO
+  CONSENTIMENTO
+  RECEITA
+  ATESTADO
+  EXAME_EXTERNO
+  OUTRO
+}
+
+
+model Prontuario {
+  id_prontuario String   @id @default(uuid())
+  id_paciente   String
+  criado_em     DateTime @default(now())
+
+  paciente Paciente @relation(fields: [id_paciente], references: [id_paciente], onDelete: Cascade)
+  entradas ProntuarioEntrada[]
+
+  @@map("prontuarios")
+}
+
+model ProntuarioEntrada {
+  id_entrada      String                 @id @default(uuid())
+  id_prontuario   String
+  id_profissional String
+  id_agendamento  String?
+  tipo            TipoEntradaProntuario
+  descricao       String                 @db.Text
+  criado_em       DateTime               @default(now())
+  atualizado_em   DateTime               @updatedAt
+
+  prontuario   Prontuario   @relation(fields: [id_prontuario], references: [id_prontuario], onDelete: Cascade)
+  profissional Profissional @relation(fields: [id_profissional], references: [id_profissional])
+  arquivos     ProntuarioArquivo[]
+
+  @@map("prontuarios_entradas")
+}
+
+model ProntuarioArquivo {
+  id_arquivo     String                @id @default(uuid())
+  id_entrada     String
+  nome_arquivo   String                @db.VarChar(200)
+  url_arquivo    String                @db.VarChar(500)
+  tipo_arquivo   String                @db.VarChar(50) // mime/extensão
+  tipo_documento TipoArquivoProntuario
+  descricao      String?               @db.Text
+  data_upload    DateTime              @default(now())
+
+  entrada ProntuarioEntrada @relation(fields: [id_entrada], references: [id_entrada], onDelete: Cascade)
+
+  @@map("prontuarios_arquivos")
+}
+
 model Log {
   id         String   @id @default(uuid())
-  id_usuario String?
+  tipo       String   @db.VarChar(30)
   acao       String   @db.VarChar(100)
-  ip         String?  @db.VarChar(50)
-  user_agent String?  @db.VarChar(255)
+  descricao  String?
+  ip         String?
+  user_agent String?
   sucesso    Boolean
-  tipo       String   @db.VarChar(50)
   data       DateTime @default(now())
 
-  usuario Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull)
+  id_usuario String?
+  usuario    Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull)
 
   @@map("logs")
 }

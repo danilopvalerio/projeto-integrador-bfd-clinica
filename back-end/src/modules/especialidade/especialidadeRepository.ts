@@ -102,3 +102,4 @@ export class EspecialidadeRepository implements IEspecialidadeRepository {
     return { data: data as unknown as EspecialidadeEntity[], total };
   }
 }
+

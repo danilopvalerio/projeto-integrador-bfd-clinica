@@ -1,25 +1,38 @@
 import jwt from "jsonwebtoken";
-import { TokenPayload } from "../../modules/session/sessionDTO";
 
-const ACCESS_SECRET =
-  process.env.JWT_ACCESS_SECRET || "clinica_access_secret_safe";
-const REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || "clinica_refresh_secret_safe";
+enum UserType {
+  GERENTE = "GERENTE",
+  RECEPCIONISTA = "RECEPCIONISTA",
+  PROFISSIONAL = "PROFISSIONAL",
+  CLIENTE = "CLIENTE",
+}
+export interface TokenPayload {
+  userId: string; // id_usuario
+  role: UserType | string; // O tipo (GERENTE, PACIENTE, etc)
+}
 
-const ACCESS_EXPIRES = "15m";
-const REFRESH_EXPIRES = "7d";
+// Fallbacks seguros se não houver .env
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "access_secret_123";
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "refresh_secret_123";
 
-export function generateAccessToken(payload: TokenPayload): string {
+const ACCESS_EXPIRES = "15m"; // Padrão
+const REFRESH_EXPIRES = "7d"; // Padrão
+
+// CORREÇÃO: Adicionado 'expiresIn' opcional
+export function generateAccessToken(
+  payload: TokenPayload,
+  expiresIn?: string | number
+): string {
   return jwt.sign(payload, ACCESS_SECRET, {
-    expiresIn: ACCESS_EXPIRES,
-  });
+    // Usa o valor passado ou o padrão
+    expiresIn: expiresIn || ACCESS_EXPIRES,
+  } as jwt.SignOptions);
 }
 
 export function generateRefreshToken(userId: string): string {
-  // Refresh token guarda apenas o ID (Subject)
   return jwt.sign({ sub: userId }, REFRESH_SECRET, {
     expiresIn: REFRESH_EXPIRES,
-  });
+  } as jwt.SignOptions);
 }
 
 export function verifyAccessToken(token: string): TokenPayload {

@@ -28,6 +28,21 @@ export type Usuario = Prisma.UsuarioModel
  */
 export type Paciente = Prisma.PacienteModel
 /**
+ * Model PacienteTelefone
+ * 
+ */
+export type PacienteTelefone = Prisma.PacienteTelefoneModel
+/**
+ * Model PacienteTag
+ * 
+ */
+export type PacienteTag = Prisma.PacienteTagModel
+/**
+ * Model PacienteDebito
+ * 
+ */
+export type PacienteDebito = Prisma.PacienteDebitoModel
+/**
  * Model Profissional
  * 
  */
@@ -72,6 +87,21 @@ export type ProfissionalServico = Prisma.ProfissionalServicoModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model Prontuario
+ * 
+ */
+export type Prontuario = Prisma.ProntuarioModel
+/**
+ * Model ProntuarioEntrada
+ * 
+ */
+export type ProntuarioEntrada = Prisma.ProntuarioEntradaModel
+/**
+ * Model ProntuarioArquivo
+ * 
+ */
+export type ProntuarioArquivo = Prisma.ProntuarioArquivoModel
 /**
  * Model Log
  * 

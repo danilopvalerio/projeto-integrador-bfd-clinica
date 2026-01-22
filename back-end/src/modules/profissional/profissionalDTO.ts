@@ -1,9 +1,10 @@
+//src/modules/profissional/profissionalDTO.ts
 import {
   IBaseRepository,
   RepositoryPaginatedResult,
 } from "../../shared/dtos/index.dto";
 import { ServicoEntity } from "../servico/servicoDTO";
-import { EspecialidadeEntity } from "../especialidade/especialidadeDTO"; // Assumindo que você tem este DTO
+import { EspecialidadeEntity } from "../especialidade/especialidadeDTO";
 
 export interface ProfissionalEntity {
   id_profissional: string;
@@ -17,7 +18,15 @@ export interface CreateProfissionalDTO {
   nome: string;
   cpf: string;
   registro_conselho: string;
-  id_usuario: string;
+
+  id_usuario?: string;
+
+  usuario?: {
+    email: string;
+    senha: string;
+    tipo_usuario?: string; // default: "PROFISSIONAL"
+  };
+
   telefones?: { telefone: string; principal: boolean }[];
   horarios?: { dia_semana: number; hora_inicio: Date; hora_fim: Date }[];
 }

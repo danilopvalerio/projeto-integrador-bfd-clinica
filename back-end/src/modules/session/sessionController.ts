@@ -107,4 +107,9 @@ export class SessionController {
       next(err);
     }
   };
+
+  getProfile = async (req: Request, res: Response) => {
+    // Como o authMiddleware rodou, req.user tem os dados do token
+    return res.json({ user: req.user });
+  };
 }

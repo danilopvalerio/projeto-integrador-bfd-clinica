@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <title>VL Store</title>
+        <title>Gerenciamento de agendamentos</title>
       </head>
       <body>{children}</body>
     </html>

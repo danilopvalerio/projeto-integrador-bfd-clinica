@@ -1,85 +1,175 @@
-// --- Interfaces existentes (Mantidas conforme solicitado) ---
+// src/app/patient/[id]/types.ts
 
-export interface PatientSummary {
-  id_paciente: string;               
-  nome_completo: string;
-  cpf: string;
-  telefone: string;
-  sexo?: string;
-  email?: string;
-  id_usuario: string; 
+// --- SEU CÓDIGO ORIGINAL ---
+
+// Espelho dos Enums do Backend
+export enum Sexo {
+  MASCULINO = "MASCULINO",
+  FEMININO = "FEMININO",
 }
 
-export interface PatientDetail extends PatientSummary {
-  data_nascimento: string;
+// Entidade de Endereço
+export interface Endereco {
   id_endereco: string;
+  rua: string;
+  numero?: string | null;
+  cidade: string;
+  estado: string;
 }
 
-export interface CreatePatientPayload {
-  nome_completo: string;
-  cpf: string;
+// Entidade de Telefone
+export interface PacienteTelefone {
+  id_telefone: string;
   telefone: string;
-  data_nascimento: string;
-  sexo?: string;
-  email?: string;
+  principal: boolean;
+  id_paciente: string;
+}
+
+// Entidade Principal de Paciente (Leitura)
+export interface PacienteSummary {
+  id_paciente: string;
+  nome: string;
+  sexo: Sexo;
+  cpf: string;
+  data_nascimento: string; // JSON retorna data como string
   id_usuario: string;
-  id_endereco?: string; 
+  id_endereco?: string | null;
+
+  // Relations
+  endereco?: Endereco;
+  telefones?: PacienteTelefone[];
 }
 
-export type UpdatePatientPayload = Partial<CreatePatientPayload>;
+// Para o Detail (se houver campos extras no futuro, estende o Summary)
+export type PacienteDetail = PacienteSummary;
 
-// --- NOVAS INTERFACES PARA O PRONTUÁRIO ---
+// Payload de Criação (Entrada) - ATUALIZADO
+export interface CreatePacientePayload {
+  nome: string;
+  sexo: Sexo;
+  cpf: string;
+  data_nascimento: string | Date;
 
-/**
- * Tipos de registros permitidos no prontuário (ENUM do Banco de Dados)
- */
-export type MedicalRecordType = 
-  | 'ANAMNESE'           // Histórico inicial, doenças e hábitos
-  | 'PLANO_TRATAMENTO'   // Planejamento de procedimentos futuros
-  | 'EVOLUCAO_VISITA'    // Diário clínico de cada consulta
-  | 'DIAGNOSTICO'        // Identificação de patologias específicas
-  | 'OBSERVACAO_GERAL'  // Notas administrativas ou lembretes
-  | 'CONDUTA'   //Medicamento, Exames e Orientações
-  | 'ALERTA'  //Alergias e Doenças Crônicas
-  | 'QUEIXA_PRINCIPAL';  //Motivo da Consulta
+  // Objeto de Usuário (Para criar o login)
+  usuario?: {
+    email: string;
+    senha: string;
+    tipo_usuario?: string;
+  };
 
-/**
- * Interface para a Tabela Prontuarios
- */
-export interface MedicalRecord {
-  id_prontuario: string;       // PK (UUID)
-  id_paciente: string;         // FK (UUID)
-  id_profissional: string;     // FK (UUID)
-  id_agendamento?: string;     // FK (UUID) - Opcional
-  data_registro: string;       // TIMESTAMP
-  tipo_registro: MedicalRecordType; // ENUM
-  descricao: string;           // TEXT
-  profissional_nome?: string;  // Campo auxiliar para exibição
+  // Opcionais aninhados
+  endereco?: {
+    rua: string;
+    numero?: string;
+    cidade: string;
+    estado: string;
+  };
+
+  telefones?: { telefone: string; principal: boolean }[];
 }
 
-/**
- * Tipos de documentos aceitos na galeria de arquivos
- */
-export type MedicalFileType = 
-  | 'RADIOGRAFIA' 
-  | 'FOTO' 
-  | 'CONSENTIMENTO' 
-  | 'RECEITA' 
-  | 'ATESTADO' 
-  | 'EXAME_EXTERNO' 
-  | 'OUTRO';
+// Payload de Atualização (Restrito conforme seu backend)
+export interface UpdatePacientePayload {
+  nome?: string;
+  sexo?: Sexo;
+  data_nascimento?: string | Date;
+  cpf?: string;
+  telefones?: string[];
+  endereco?: {
+    rua: string;
+    numero: string;
+    cidade: string;
+    estado: string;
+  };
+}
 
-/**
- * Interface para a Tabela Prontuario_Arquivos
- */
-export interface MedicalFile {
-  id_arquivo: string;          // PK (UUID)
-  id_prontuario: string;       // FK (UUID)
-  id_agendamento?: string;     // FK (UUID/INT)
-  url_arquivo: string;         // VARCHAR
-  nome_arquivo: string;        // VARCHAR
-  tipo_arquivo: string;        // VARCHAR (MimeType)
-  tipo_documento: MedicalFileType; // ENUM
-  descricao?: string;          // TEXT
-  data_upload: string;         // TIMESTAMP
+// --- ACRÉSCIMOS PARA O PRONTUÁRIO (UI/Mocks) ---
+
+export enum StatusPagamento {
+  PENDENTE = "PENDENTE",
+  PAGO = "PAGO",
+}
+
+export enum TipoArquivoProntuario {
+  RADIOGRAFIA = "RADIOGRAFIA",
+  FOTO = "FOTO",
+  CONSENTIMENTO = "CONSENTIMENTO",
+  RECEITA = "RECEITA",
+  ATESTADO = "ATESTADO",
+  EXAME_EXTERNO = "EXAME_EXTERNO",
+  OUTRO = "OUTRO",
+}
+
+// Mock para a aba de Débitos
+export interface DebitoData {
+  id_debito: string;
+  data_vencimento: string;
+  observacoes?: string | null;
+  valor_total: number;
+  valor_pago: number;
+  status_pagamento: StatusPagamento;
+}
+
+export enum TipoEntradaProntuario {
+  ANAMNESE = "ANAMNESE",
+  PLANO_TRATAMENTO = "PLANO_TRATAMENTO",
+  EVOLUCAO_VISITA = "EVOLUCAO_VISITA",
+  DIAGNOSTICO = "DIAGNOSTICO",
+  OBSERVACAO_GERAL = "OBSERVACAO_GERAL",
+}
+
+// --- ENTIDADES DE PRONTUÁRIO (Respostas da API) ---
+
+export interface ProntuarioEntity {
+  id_prontuario: string;
+  id_paciente: string;
+  criado_em: string;
+}
+
+export interface ProntuarioArquivo {
+  id_arquivo: string;
+  id_entrada: string;
+  nome_arquivo: string;
+  url_arquivo: string;
+  tipo_arquivo: string;
+  tipo_documento: TipoArquivoProntuario;
+  descricao?: string | null;
+  data_upload: string;
+}
+
+export interface ProntuarioEntrada {
+  id_entrada: string;
+  id_prontuario: string;
+  id_profissional: string;
+  tipo: TipoEntradaProntuario;
+  descricao: string;
+  criado_em: string;
+  atualizado_em: string;
+
+  // Relations (opcionais dependendo do include do prisma)
+  profissional?: {
+    nome: string;
+    registro_conselho: string;
+  };
+  arquivos?: ProntuarioArquivo[];
+}
+
+// --- PAYLOADS (Envio para API) ---
+
+export interface CreateEntradaPayload {
+  tipo: TipoEntradaProntuario;
+  descricao: string;
+  id_agendamento?: string;
+}
+
+export interface UpdateEntradaPayload {
+  descricao: string;
+}
+
+export interface AddArquivoPayload {
+  nome_arquivo: string;
+  url_arquivo: string;
+  tipo_arquivo: string;
+  tipo_documento: TipoArquivoProntuario;
+  descricao?: string;
 }

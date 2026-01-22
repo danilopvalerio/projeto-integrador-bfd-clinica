@@ -9,7 +9,41 @@
 * 🟢 You can import this file directly.
 */
 
+export const Sexo = {
+  MASCULINO: 'MASCULINO',
+  FEMININO: 'FEMININO'
+} as const
+
+export type Sexo = (typeof Sexo)[keyof typeof Sexo]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const StatusPagamento = {
+  PENDENTE: 'PENDENTE',
+  PAGO: 'PAGO'
+} as const
+
+export type StatusPagamento = (typeof StatusPagamento)[keyof typeof StatusPagamento]
+
+
+export const TipoEntradaProntuario = {
+  ANAMNESE: 'ANAMNESE',
+  PLANO_TRATAMENTO: 'PLANO_TRATAMENTO',
+  EVOLUCAO_VISITA: 'EVOLUCAO_VISITA',
+  DIAGNOSTICO: 'DIAGNOSTICO',
+  OBSERVACAO_GERAL: 'OBSERVACAO_GERAL'
+} as const
+
+export type TipoEntradaProntuario = (typeof TipoEntradaProntuario)[keyof typeof TipoEntradaProntuario]
+
+
+export const TipoArquivoProntuario = {
+  RADIOGRAFIA: 'RADIOGRAFIA',
+  FOTO: 'FOTO',
+  CONSENTIMENTO: 'CONSENTIMENTO',
+  RECEITA: 'RECEITA',
+  ATESTADO: 'ATESTADO',
+  EXAME_EXTERNO: 'EXAME_EXTERNO',
+  OUTRO: 'OUTRO'
+} as const
+
+export type TipoArquivoProntuario = (typeof TipoArquivoProntuario)[keyof typeof TipoArquivoProntuario]

@@ -1,3 +1,4 @@
+//src/modules/profissional/profissionalRoutes.ts
 import { Router } from "express";
 import { ProfissionalRepository } from "./profissionalRepository";
 import { ProfissionalService } from "./profissionalService";

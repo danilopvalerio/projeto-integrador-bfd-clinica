@@ -191,7 +191,7 @@ export default function MenuPage() {
               title="Especialidades"
               description="Tipos de atendimento."
               icon={faStethoscope}
-              onClick={() => navigateTo("/especialidades")}
+              onClick={() => navigateTo("/especialidade")}
             />
             <MenuCard
               title="Serviços"

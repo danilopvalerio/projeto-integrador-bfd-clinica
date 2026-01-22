@@ -1,5 +1,5 @@
 // src/modules/user/userService.ts
-
+import { hashPassword } from "../../shared/utils/hash";
 import {
   IUserRepository,
   CreateUserDTO,
@@ -26,12 +26,17 @@ export class UserService {
 
   async create(data: CreateUserDTO): Promise<UserResponseDTO> {
     const emailExiste = await this.userRepository.findByEmail(data.email);
+    if (emailExiste) throw new AppError("E-mail já cadastrado", 409);
 
-    if (emailExiste) {
-      throw new AppError("E-mail já cadastrado", 409);
-    }
+    // --- AQUI A MÁGICA ---
+    // Transforma "123456" em "$2b$10$..."
+    const senhaHash = await hashPassword(data.senha_hash);
 
-    const user = await this.userRepository.create(data);
+    const user = await this.userRepository.create({
+      ...data,
+      senha_hash: senhaHash, // Salva o hash, não o texto
+    });
+
     return this.mapToResponse(user);
   }
 

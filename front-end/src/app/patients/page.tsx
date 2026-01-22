@@ -1,73 +1,99 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faPlus, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faPlus,
+  faSearch,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 
-import api from "../../utils/api"; // Importado para buscar dados reais futuramente
-import { PatientSummary } from "./types";
-import PatientCard from "./PatientCard";
-import AddPatientModal from "./AddPatientModal";
-import PatientDetailModal from "./PatientDetailModal";
+import api from "../../utils/api";
+import { getErrorMessage } from "../../utils/errorUtils";
+import { PacienteSummary } from "./types";
 
-import { MOCK_PATIENTS } from "./types/mockData";
+// Importação dos Componentes
+import PacienteCard from "./PacienteCard";
+import AddPacienteModal from "./AddPatientModal";
+import PacienteDetailModal from "./PacienteDetailModal";
 
-const PatientsPage = () => {
+const LIMIT = 6;
+
+const PacientesPage = () => {
   const router = useRouter();
 
-  // Estados de dados
-  const [patients, setPatients] = useState<PatientSummary[]>([]);
+  // Estados de Dados
+  const [pacientes, setPacientes] = useState<PacienteSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Paginação e Busca
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
-
-  // Função para carregar pacientes (Centralizada para facilitar o refresh)
-  const fetchPatients = useCallback(async () => {
-    setLoading(true);
-    try {
-      // Quando sua API estiver pronta, use: const res = await api.get("/patients");
-      // setPatients(res.data);
-      
-      // Simulação com Mock por enquanto
-      setTimeout(() => {
-        setPatients(MOCK_PATIENTS);
-        setLoading(false);
-      }, 500);
-    } catch (error) {
-      console.error("Erro ao buscar pacientes", error);
-      setLoading(false);
-    }
-  }, []);
+  const [selectedPacienteId, setSelectedPacienteId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
-    fetchPatients();
-  }, [fetchPatients]);
+    const token = localStorage.getItem("accessToken");
+    if (!token) router.push("/login");
+    else fetchPacientes(1);
+  }, [router]);
 
-  // Função de busca
-  const handleSearch = () => {
-    const term = searchTerm.toLowerCase();
-    const filtered = MOCK_PATIENTS.filter(
-      (p) =>
-        p.nome_completo.toLowerCase().includes(term) ||
-        p.cpf.includes(term)
-    );
-    setPatients(filtered);
+  const fetchPacientes = async (page = 1, term = "") => {
+    setLoading(true);
+    setError("");
+    try {
+      let url = `/patients/paginated?page=${page}&limit=${LIMIT}`;
+      if (term) {
+        url = `/patients/search?q=${encodeURIComponent(
+          term
+        )}&page=${page}&limit=${LIMIT}`;
+      }
+
+      const response = await api.get(url);
+
+      // Adaptando para estrutura RepositoryPaginatedResult
+      setPacientes(response.data.data);
+      setCurrentPage(response.data.page);
+      setTotalPages(response.data.lastPage);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSearch = () => fetchPacientes(1, searchTerm);
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    setPatients(MOCK_PATIENTS);
+    fetchPacientes(1);
+  };
+
+  const handleRefresh = () => {
+    fetchPacientes(currentPage, searchTerm);
+    setIsAddModalOpen(false);
+    setSelectedPacienteId(null);
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ background: "#e9e9e9" }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ background: "#e9e9e9" }}
+    >
       {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
-        <button className="btn btn-link text-white p-0 me-3" onClick={() => router.push("/menu")}>
+        <button
+          className="btn btn-link text-white p-0 me-3"
+          onClick={() => router.push("/menu")}
+        >
           <FontAwesomeIcon icon={faArrowLeft} className="fs-4" />
         </button>
         <span className="text-white fw-bold fs-5">Módulo de Pacientes</span>
@@ -75,10 +101,12 @@ const PatientsPage = () => {
 
       <div className="container my-5 flex-grow-1">
         <div className="bg-white border rounded-4 shadow-sm overflow-hidden">
-          {/* Banner */}
+          {/* Banner Interno */}
           <div className="bg-gradient-vl p-4 text-center text-white">
-            <h3 className="fw-bold m-0">Gestão de Pacientes</h3>
-            <p className="opacity-75 small m-0 mt-1">Consulte e gerencie o cadastro de pacientes</p>
+            <h3 className="fw-bold m-0">Cadastro de Pacientes</h3>
+            <p className="opacity-75 small m-0 mt-1">
+              Gerencie fichas, contatos e históricos
+            </p>
           </div>
 
           <div className="p-4">
@@ -110,7 +138,7 @@ const PatientsPage = () => {
 
               <div className="col-md-2">
                 <button
-                  className="button-dark-grey w-100 rounded-pill px-4 py-2 shadow-sm fw-bold"
+                  className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold"
                   onClick={handleSearch}
                 >
                   Pesquisar
@@ -128,34 +156,66 @@ const PatientsPage = () => {
               </div>
             </div>
 
-            {/* Grid de Pacientes */}
+            {/* Error Feedback */}
+            {error && (
+              <div className="alert alert-danger text-center border-0 bg-danger bg-opacity-10 text-danger rounded-3">
+                {error}
+              </div>
+            )}
+
+            {/* Grid de Cards */}
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
+                <p className="text-muted small mt-2">Carregando pacientes...</p>
               </div>
-            ) : patients.length ? (
-              <div className="row g-3">
-                {patients.map((patient) => (
-                  <div key={patient.id_paciente} className="col-md-6 col-lg-4">
-                    <PatientCard
-                      patient={patient}
-                      // Alterado de .id para .id_paciente
-                      onClick={() => setSelectedPatientId(patient.id_paciente)}
-                      onEdit={() => setSelectedPatientId(patient.id_paciente)} 
-                      onDelete={() => {
-                        if(confirm("Deseja remover este paciente?")) {
-                            setPatients((prev) =>
-                                prev.filter((p) => p.id_paciente !== patient.id_paciente)
-                            );
+            ) : pacientes.length ? (
+              <>
+                <div className="row g-3">
+                  {pacientes.map((paciente) => (
+                    <div
+                      key={paciente.id_paciente}
+                      className="col-md-6 col-lg-4"
+                    >
+                      <PacienteCard
+                        paciente={paciente}
+                        onClick={() =>
+                          setSelectedPacienteId(paciente.id_paciente)
                         }
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Paginação */}
+                <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
+                  <button
+                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                    disabled={currentPage === 1}
+                    onClick={() => fetchPacientes(currentPage - 1, searchTerm)}
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-secondary small fw-bold">
+                    Página {currentPage} de {totalPages}
+                  </span>
+                  <button
+                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                    disabled={currentPage === totalPages}
+                    onClick={() => fetchPacientes(currentPage + 1, searchTerm)}
+                  >
+                    Próxima
+                  </button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-5 bg-light rounded-3 mt-3">
-                <p className="text-muted fw-bold mb-0">Nenhum paciente encontrado.</p>
+                <p className="text-muted fw-bold mb-0">
+                  Nenhum paciente encontrado.
+                </p>
+                <small className="text-secondary">
+                  Tente mudar os termos da busca ou cadastre um novo.
+                </small>
               </div>
             )}
           </div>
@@ -164,27 +224,21 @@ const PatientsPage = () => {
 
       {/* Modais */}
       {isAddModalOpen && (
-        <AddPatientModal
+        <AddPacienteModal
           onClose={() => setIsAddModalOpen(false)}
-          onSuccess={() => {
-            setIsAddModalOpen(false);
-            fetchPatients(); // Atualiza a lista
-          }}
+          onSuccess={handleRefresh}
         />
       )}
 
-      {selectedPatientId && (
-        <PatientDetailModal
-          patientId={selectedPatientId}
-          onClose={() => setSelectedPatientId(null)}
-          onSuccess={() => {
-            setSelectedPatientId(null);
-            fetchPatients(); // Atualiza a lista
-          }}
+      {selectedPacienteId && (
+        <PacienteDetailModal
+          pacienteId={selectedPacienteId}
+          onClose={() => setSelectedPacienteId(null)}
+          onSuccess={handleRefresh}
         />
       )}
     </div>
   );
 };
 
-export default PatientsPage;
+export default PacientesPage;
