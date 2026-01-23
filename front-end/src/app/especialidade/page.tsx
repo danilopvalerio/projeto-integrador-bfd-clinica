@@ -8,11 +8,12 @@ import {
   faPlus,
   faSearch,
   faTimes,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
-import { EspecialidadeResponse  } from "./types";
+import { EspecialidadeResponse } from "./types";
 
 // Componentes
 import EspecialidadeCard from "./EspecialidadeCard";
@@ -25,8 +26,9 @@ const EspecialidadesPage = () => {
   const router = useRouter();
 
   // Dados
-  const [especialidades, setEspecialidades] =
-    useState<EspecialidadeResponse[]>([]);
+  const [especialidades, setEspecialidades] = useState<EspecialidadeResponse[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -37,26 +39,28 @@ const EspecialidadesPage = () => {
 
   // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedEspecialidadeId, setSelectedEspecialidadeId] =
-    useState<string | null>(null);
+  const [selectedEspecialidadeId, setSelectedEspecialidadeId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    if (!token) router.push("/login");
-    else fetchEspecialidades(1);
+    if (!token) {
+      router.push("/login");
+    } else {
+      fetchEspecialidades(1);
+    }
   }, [router]);
 
   const fetchEspecialidades = async (page = 1, term = "") => {
     setLoading(true);
-    setError("");
+    setError(""); // Limpa o erro ao iniciar uma nova busca
 
     try {
       let url = `/specialities/paginated?page=${page}&limit=${LIMIT}`;
 
       if (term) {
-        url = `/specialities/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+        url = `/specialities/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
 
       const response = await api.get(url);
@@ -85,7 +89,10 @@ const EspecialidadesPage = () => {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ background: "#e9e9e9" }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ background: "#e9e9e9" }}
+    >
       {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
         <button
@@ -128,6 +135,7 @@ const EspecialidadesPage = () => {
                   {searchTerm && (
                     <span
                       className="position-absolute top-50 end-0 translate-middle-y me-3"
+                      style={{ cursor: "pointer" }}
                       onClick={handleClearSearch}
                     >
                       <FontAwesomeIcon icon={faTimes} />
@@ -156,57 +164,93 @@ const EspecialidadesPage = () => {
               </div>
             </div>
 
+            {/* Mensagem de Erro */}
+            {error && (
+              <div
+                className="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm"
+                role="alert"
+              >
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon
+                    icon={faExclamationTriangle}
+                    className="me-2"
+                  />
+                  <div>
+                    <strong>Erro: </strong> {error}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setError("")}
+                  aria-label="Close"
+                ></button>
+              </div>
+            )}
+
             {/* Conteúdo */}
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
+                <p className="text-muted mt-2">Carregando dados...</p>
               </div>
-            ) : especialidades.length ? (
-              <>
-                <div className="row g-3">
-                  {especialidades.map((esp) => (
-                    <div key={esp.id_especialidade} className="col-md-6 col-lg-4">
-                      <EspecialidadeCard
-                        especialidade={esp}
-                        onClick={() =>
-                          setSelectedEspecialidadeId(esp.id_especialidade)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Paginação */}
-                <div className="d-flex justify-content-center gap-3 mt-5">
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    disabled={currentPage === 1}
-                    onClick={() =>
-                      fetchEspecialidades(currentPage - 1, searchTerm)
-                    }
-                  >
-                    Anterior
-                  </button>
-
-                  <span className="small fw-bold">
-                    Página {currentPage} de {totalPages}
-                  </span>
-
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    disabled={currentPage === totalPages}
-                    onClick={() =>
-                      fetchEspecialidades(currentPage + 1, searchTerm)
-                    }
-                  >
-                    Próxima
-                  </button>
-                </div>
-              </>
             ) : (
-              <p className="text-center text-muted">
-                Nenhuma especialidade encontrada.
-              </p>
+              <>
+                {especialidades.length > 0 ? (
+                  <>
+                    <div className="row g-3">
+                      {especialidades.map((esp) => (
+                        <div
+                          key={esp.id_especialidade}
+                          className="col-md-6 col-lg-4"
+                        >
+                          <EspecialidadeCard
+                            especialidade={esp}
+                            onClick={() =>
+                              setSelectedEspecialidadeId(esp.id_especialidade)
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Paginação */}
+                    <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
+                      <button
+                        className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                        disabled={currentPage === 1}
+                        onClick={() =>
+                          fetchEspecialidades(currentPage - 1, searchTerm)
+                        }
+                      >
+                        Anterior
+                      </button>
+
+                      <span className="small fw-bold">
+                        Página {currentPage} de {totalPages}
+                      </span>
+
+                      <button
+                        className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                        disabled={currentPage === totalPages}
+                        onClick={() =>
+                          fetchEspecialidades(currentPage + 1, searchTerm)
+                        }
+                      >
+                        Próxima
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  !error && (
+                    <div className="text-center py-5">
+                      <p className="text-muted m-0">
+                        Nenhuma especialidade encontrada para sua busca.
+                      </p>
+                    </div>
+                  )
+                )}
+              </>
             )}
           </div>
         </div>

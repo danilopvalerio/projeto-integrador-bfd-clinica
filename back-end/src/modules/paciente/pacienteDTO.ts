@@ -158,7 +158,7 @@ export interface ProntuarioEntity {
 export interface ProntuarioEntradaEntity {
   id_entrada: string;
   id_prontuario: string;
-  id_profissional: string;
+  id_profissional?: string;
   id_agendamento?: string | null;
   tipo: TipoEntradaProntuario;
   descricao: string;
@@ -206,19 +206,18 @@ export interface AddArquivoEntradaDTO {
 }
 // --- REPOSITORY INTERFACE ---
 
-export interface IPacienteRepository
-  extends IBaseRepository<
-    PacienteEntity,
-    CreatePacienteDTO,
-    UpdatePacienteDTO
-  > {
+export interface IPacienteRepository extends IBaseRepository<
+  PacienteEntity,
+  CreatePacienteDTO,
+  UpdatePacienteDTO
+> {
   findByCpf(cpf: string): Promise<PacienteEntity | null>;
   findAll(): Promise<PacienteEntity[]>; // Solicitado sem paginação também
 
   // Sub-recursos
   addTelefone(
     id_paciente: string,
-    data: { telefone: string; principal: boolean }
+    data: { telefone: string; principal: boolean },
   ): Promise<PacienteTelefoneEntity>;
   deleteTelefone(id_telefone: string): Promise<void>;
   listTelefones(id_paciente: string): Promise<PacienteTelefoneEntity[]>;
@@ -234,38 +233,38 @@ export interface IPacienteRepository
       data_vencimento: Date;
       observacoes?: string;
       id_agendamento?: string;
-    }
+    },
   ): Promise<PacienteDebitoEntity>;
   listDebitos(id_paciente: string): Promise<PacienteDebitoEntity[]>;
 
   getProntuarioByPaciente(
-    id_paciente: string
+    id_paciente: string,
   ): Promise<ProntuarioEntity | null>;
 
   // Auxiliar para segurança
   findProfissionalByUserId(
-    id_usuario: string
+    id_usuario: string,
   ): Promise<{ id_profissional: string } | null>;
 
   // Entradas
   createProntuarioEntrada(
     id_prontuario: string,
-    id_profissional: string,
-    data: CreateProntuarioEntradaDTO
+    id_profissional: string | null,
+    data: CreateProntuarioEntradaDTO,
   ): Promise<ProntuarioEntradaEntity>;
 
   listProntuarioEntradas(
     id_prontuario: string,
-    filters?: { tipo?: TipoEntradaProntuario }
+    filters?: { tipo?: TipoEntradaProntuario },
   ): Promise<ProntuarioEntradaEntity[]>;
 
   getProntuarioEntradaById(
-    id_entrada: string
+    id_entrada: string,
   ): Promise<ProntuarioEntradaEntity | null>;
 
   updateProntuarioEntrada(
     id_entrada: string,
-    descricao: string
+    descricao: string,
   ): Promise<ProntuarioEntradaEntity>;
 
   deleteProntuarioEntrada(id_entrada: string): Promise<void>;
@@ -273,7 +272,7 @@ export interface IPacienteRepository
   // Arquivos (Agora ligados à Entrada)
   addArquivoEntrada(
     id_entrada: string,
-    data: AddArquivoEntradaDTO
+    data: AddArquivoEntradaDTO,
   ): Promise<ProntuarioArquivoEntity>;
 
   removeArquivoEntrada(id_arquivo: string): Promise<void>;

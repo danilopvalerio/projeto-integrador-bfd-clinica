@@ -234,7 +234,7 @@ model Prontuario {
 model ProntuarioEntrada {
   id_entrada      String                 @id @default(uuid())
   id_prontuario   String
-  id_profissional String
+  id_profissional String?
   id_agendamento  String?
   tipo            TipoEntradaProntuario
   descricao       String                 @db.Text
@@ -242,7 +242,7 @@ model ProntuarioEntrada {
   atualizado_em   DateTime               @updatedAt
 
   prontuario   Prontuario   @relation(fields: [id_prontuario], references: [id_prontuario], onDelete: Cascade)
-  profissional Profissional @relation(fields: [id_profissional], references: [id_profissional])
+  profissional Profissional? @relation(fields: [id_profissional], references: [id_profissional])
   arquivos     ProntuarioArquivo[]
 
   @@map("prontuarios_entradas")

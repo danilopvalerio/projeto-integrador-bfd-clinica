@@ -3,8 +3,6 @@
 import { useState } from "react";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import EspecialidadeGeneralForm from "./EspecialidadeGeneralForm";
 import { CreateEspecialidadePayload } from "./types";
@@ -37,7 +35,6 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
     setError("");
 
     try {
-      
       const payload: CreateEspecialidadePayload = {
         nome: formData.nome,
         descricao: formData.descricao || "",
@@ -115,6 +112,3 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
 };
 
 export default AddEspecialidadeModal;
-
-
-

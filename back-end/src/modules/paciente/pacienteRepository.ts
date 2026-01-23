@@ -157,7 +157,7 @@ export class PacienteRepository implements IPacienteRepository {
 
   async findPaginated(
     page: number,
-    limit: number
+    limit: number,
   ): Promise<RepositoryPaginatedResult<PacienteEntity>> {
     const skip = (page - 1) * limit;
 
@@ -177,7 +177,7 @@ export class PacienteRepository implements IPacienteRepository {
   async searchPaginated(
     query: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<RepositoryPaginatedResult<PacienteEntity>> {
     const skip = (page - 1) * limit;
     const whereCondition = {
@@ -206,7 +206,7 @@ export class PacienteRepository implements IPacienteRepository {
   // --- Telefones ---
   async addTelefone(
     id_paciente: string,
-    data: { telefone: string; principal: boolean }
+    data: { telefone: string; principal: boolean },
   ): Promise<PacienteTelefoneEntity> {
     const result = await prisma.pacienteTelefone.create({
       data: { ...data, id_paciente },
@@ -252,7 +252,7 @@ export class PacienteRepository implements IPacienteRepository {
       data_vencimento: Date;
       observacoes?: string;
       id_agendamento?: string;
-    }
+    },
   ): Promise<PacienteDebitoEntity> {
     const result = await prisma.pacienteDebito.create({
       data: {
@@ -302,7 +302,7 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async getProntuarioByPaciente(
-    id_paciente: string
+    id_paciente: string,
   ): Promise<ProntuarioEntity | null> {
     // Retorna o primeiro prontuário (regra de negócio diz que só tem 1)
     const prontuario = await prisma.prontuario.findFirst({
@@ -312,7 +312,7 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async findProfissionalByUserId(
-    id_usuario: string
+    id_usuario: string,
   ): Promise<{ id_profissional: string } | null> {
     const profissional = await prisma.profissional.findUnique({
       where: { id_usuario },
@@ -323,30 +323,34 @@ export class PacienteRepository implements IPacienteRepository {
 
   async createProntuarioEntrada(
     id_prontuario: string,
-    id_profissional: string,
-    data: CreateProntuarioEntradaDTO
+    id_profissional: string | null, // <--- ACEITA NULL
+    data: CreateProntuarioEntradaDTO,
   ): Promise<ProntuarioEntradaEntity> {
     const entrada = await prisma.prontuarioEntrada.create({
       data: {
         id_prontuario,
-        id_profissional,
+
+        // Se tiver ID, usa. Se for null, passa null (o Prisma aceita se o campo for String?)
+        id_profissional: id_profissional,
+
         tipo: data.tipo,
         descricao: data.descricao,
         id_agendamento: data.id_agendamento,
       },
       include: {
+        // Como profissional agora é opcional, o include pode retornar null nele
         profissional: {
           select: { nome: true, registro_conselho: true },
         },
         arquivos: true,
       },
     });
+
     return entrada as unknown as ProntuarioEntradaEntity;
   }
-
   async listProntuarioEntradas(
     id_prontuario: string,
-    filters?: { tipo?: TipoEntradaProntuario }
+    filters?: { tipo?: TipoEntradaProntuario },
   ): Promise<ProntuarioEntradaEntity[]> {
     const where: any = { id_prontuario };
 
@@ -369,7 +373,7 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async getProntuarioEntradaById(
-    id_entrada: string
+    id_entrada: string,
   ): Promise<ProntuarioEntradaEntity | null> {
     const entrada = await prisma.prontuarioEntrada.findUnique({
       where: { id_entrada },
@@ -385,7 +389,7 @@ export class PacienteRepository implements IPacienteRepository {
 
   async updateProntuarioEntrada(
     id_entrada: string,
-    descricao: string
+    descricao: string,
   ): Promise<ProntuarioEntradaEntity> {
     const entrada = await prisma.prontuarioEntrada.update({
       where: { id_entrada },
@@ -409,7 +413,7 @@ export class PacienteRepository implements IPacienteRepository {
 
   async addArquivoEntrada(
     id_entrada: string,
-    data: AddArquivoEntradaDTO
+    data: AddArquivoEntradaDTO,
   ): Promise<ProntuarioArquivoEntity> {
     const arquivo = await prisma.prontuarioArquivo.create({
       data: {
@@ -431,7 +435,7 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async listArquivosByEntrada(
-    id_entrada: string
+    id_entrada: string,
   ): Promise<ProntuarioArquivoEntity[]> {
     const arquivos = await prisma.prontuarioArquivo.findMany({
       where: { id_entrada },

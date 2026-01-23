@@ -12,7 +12,7 @@ import {
   faSave,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core"; // Correção de tipagem
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import api from "../../../utils/api";
 import { getErrorMessage } from "../../../utils/errorUtils";
 import {
@@ -28,11 +28,16 @@ interface Props {
   pacienteId: string;
 }
 
-// Configuração visual para cada tipo de entrada
-const ENTRY_CONFIG: Record<
-  string,
-  { label: string; color: string; icon: any; bg: string }
-> = {
+// 1. Definição da interface para a configuração visual (Fim do 'any')
+interface EntryConfigItem {
+  label: string;
+  color: string;
+  bg: string;
+  icon: IconProp;
+}
+
+// 2. Tipagem estrita usando o Enum como chave
+const ENTRY_CONFIG: Record<TipoEntradaProntuario, EntryConfigItem> = {
   [TipoEntradaProntuario.EVOLUCAO_VISITA]: {
     label: "Evolução / Visita",
     color: "text-primary",
@@ -57,7 +62,6 @@ const ENTRY_CONFIG: Record<
     bg: "bg-secondary",
     icon: faNotesMedical,
   },
-  // Anamnese geralmente fica na outra aba, mas se aparecer aqui, temos config
   [TipoEntradaProntuario.ANAMNESE]: {
     label: "Anamnese",
     color: "text-info",
@@ -74,7 +78,7 @@ export default function TabEvolucao({ pacienteId }: Props) {
   // Estado de Criação
   const [isCreating, setIsCreating] = useState(false);
   const [selectedType, setSelectedType] = useState<TipoEntradaProntuario>(
-    TipoEntradaProntuario.EVOLUCAO_VISITA
+    TipoEntradaProntuario.EVOLUCAO_VISITA,
   );
   const [textoEntrada, setTextoEntrada] = useState("");
   const [saving, setSaving] = useState(false);
@@ -90,40 +94,42 @@ export default function TabEvolucao({ pacienteId }: Props) {
     id: string | null;
   }>({ isOpen: false, id: null });
 
-  // 1. Busca Prontuário e Entradas
+  // 3. Padrão Gold Standard: useCallback para estabilizar a função
   const fetchData = useCallback(async () => {
+    if (!pacienteId) return;
+
     try {
       setLoading(true);
       // Busca ID do Prontuário
       const resProntuario = await api.get<ProntuarioEntity>(
-        `/patients/${pacienteId}/prontuario`
+        `/patients/${pacienteId}/prontuario`,
       );
       setProntuario(resProntuario.data);
 
       // Busca todas as entradas
       const resEntradas = await api.get<ProntuarioEntrada[]>(
-        `/prontuarios/${resProntuario.data.id_prontuario}/entradas`
+        `/prontuarios/${resProntuario.data.id_prontuario}/entradas`,
       );
 
-      // Filtra para NÃO mostrar Anamnese aqui (já que tem aba própria),
-      // ou remova o filter se quiser ver tudo misturado.
+      // Filtra para NÃO mostrar Anamnese aqui
       const filtered = resEntradas.data.filter(
-        (e) => e.tipo !== TipoEntradaProntuario.ANAMNESE
+        (e) => e.tipo !== TipoEntradaProntuario.ANAMNESE,
       );
 
       setEntradas(filtered);
     } catch (err) {
-      console.error(err);
+      console.error(getErrorMessage(err)); // Loga o erro, mas não trava a UI
     } finally {
       setLoading(false);
     }
-  }, [pacienteId]);
+  }, [pacienteId]); // Dependência correta: só recria se o ID do paciente mudar
 
+  // 4. useEffect chamando a função estabilizada
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // 2. Salvar Nova Entrada
+  // Salvar Nova Entrada
   const handleSave = async () => {
     if (!prontuario) return;
     if (!textoEntrada.trim()) {
@@ -144,7 +150,7 @@ export default function TabEvolucao({ pacienteId }: Props) {
 
       await api.post(
         `/prontuarios/${prontuario.id_prontuario}/entradas`,
-        payload
+        payload,
       );
 
       setAlert({
@@ -157,7 +163,7 @@ export default function TabEvolucao({ pacienteId }: Props) {
       setTextoEntrada("");
       setIsCreating(false);
 
-      // Recarregar lista
+      // Recarregar lista (Reusa a função estabilizada)
       fetchData();
     } catch (err) {
       setAlert({
@@ -170,14 +176,17 @@ export default function TabEvolucao({ pacienteId }: Props) {
     }
   };
 
-  // 3. Deletar Entrada
+  // Deletar Entrada
   const handleDelete = async () => {
     if (!confirmDelete.id) return;
     try {
       await api.delete(`/prontuarios/entradas/${confirmDelete.id}`);
+
+      // Otimista: remove da lista localmente sem precisar chamar a API de novo
       setEntradas((prev) =>
-        prev.filter((e) => e.id_entrada !== confirmDelete.id)
+        prev.filter((e) => e.id_entrada !== confirmDelete.id),
       );
+
       setConfirmDelete({ isOpen: false, id: null });
     } catch (err) {
       setAlert({
@@ -213,38 +222,36 @@ export default function TabEvolucao({ pacienteId }: Props) {
 
       {/* Formulário de Nova Entrada */}
       {isCreating && (
-        <div className="card border-primary shadow-sm mb-4 animate__animated animate__fadeIn">
+        <div className="card border-primary shadow-sm mb-4 animate-fade-in">
           <div className="card-header bg-primary bg-opacity-10 border-0">
             <h6 className="fw-bold text-primary mb-0">Novo Registro</h6>
           </div>
           <div className="card-body">
             {/* Seletor de Tipo (Badges clicáveis) */}
             <div className="d-flex gap-2 flex-wrap mb-3">
-              {[
-                TipoEntradaProntuario.EVOLUCAO_VISITA,
-                TipoEntradaProntuario.DIAGNOSTICO,
-                TipoEntradaProntuario.PLANO_TRATAMENTO,
-                TipoEntradaProntuario.OBSERVACAO_GERAL,
-              ].map((tipo) => {
-                const config = ENTRY_CONFIG[tipo];
-                const isSelected = selectedType === tipo;
-                return (
-                  <button
-                    key={tipo}
-                    onClick={() =>
-                      setSelectedType(tipo as TipoEntradaProntuario)
-                    }
-                    className={`btn btn-sm rounded-pill fw-bold d-flex align-items-center gap-2 ${
-                      isSelected
-                        ? `btn-${config.color.replace("text-", "")} text-white`
-                        : "btn-light text-secondary border"
-                    }`}
-                  >
-                    <FontAwesomeIcon icon={config.icon as IconProp} />
-                    {config.label}
-                  </button>
-                );
-              })}
+              {(Object.keys(ENTRY_CONFIG) as TipoEntradaProntuario[])
+                .filter((t) => t !== TipoEntradaProntuario.ANAMNESE) // Opcional: esconder botão de anamnese aqui
+                .map((tipo) => {
+                  const config = ENTRY_CONFIG[tipo];
+                  const isSelected = selectedType === tipo;
+                  return (
+                    <button
+                      key={tipo}
+                      onClick={() => setSelectedType(tipo)}
+                      className={`btn btn-sm rounded-pill fw-bold d-flex align-items-center gap-2 ${
+                        isSelected
+                          ? `btn-${config.color.replace(
+                              "text-",
+                              "",
+                            )} text-white`
+                          : "btn-light text-secondary border"
+                      }`}
+                    >
+                      <FontAwesomeIcon icon={config.icon} />
+                      {config.label}
+                    </button>
+                  );
+                })}
             </div>
 
             <textarea
@@ -304,7 +311,10 @@ export default function TabEvolucao({ pacienteId }: Props) {
             const data = new Date(entrada.criado_em);
 
             return (
-              <div key={entrada.id_entrada} className="card border-0 shadow-sm">
+              <div
+                key={entrada.id_entrada}
+                className="card border-0 shadow-sm animate-fade-in"
+              >
                 <div className="card-body p-0 d-flex">
                   {/* Faixa Colorida Lateral */}
                   <div
@@ -318,7 +328,7 @@ export default function TabEvolucao({ pacienteId }: Props) {
                         <span
                           className={`badge rounded-pill ${config.bg} bg-opacity-10 ${config.color} d-flex align-items-center gap-2 px-3 py-2`}
                         >
-                          <FontAwesomeIcon icon={config.icon as IconProp} />
+                          <FontAwesomeIcon icon={config.icon} />
                           {config.label}
                         </span>
                         <small className="text-muted ms-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // 1. Importe useCallback
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -32,7 +32,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
 
   // ===== Disponíveis (para selecionar/vincular) =====
   const [available, setAvailable] = useState<ServicoEntityForProfissional[]>(
-    []
+    [],
   );
   const [availableLoading, setAvailableLoading] = useState(true);
   const [availableError, setAvailableError] = useState("");
@@ -40,33 +40,40 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
   const [availableTotalPages, setAvailableTotalPages] = useState(1);
   const [availableSearch, setAvailableSearch] = useState("");
 
-  const fetchLinked = async (page = 1, term = "") => {
-    setLinkedLoading(true);
-    setLinkedError("");
+  // 2. Envolva a função em useCallback
+  // Dependência: profissionalId (pois é usado na URL)
+  const fetchLinked = useCallback(
+    async (page = 1, term = "") => {
+      setLinkedLoading(true);
+      setLinkedError("");
 
-    try {
-      let url = `/professionals/${profissionalId}/servicos/paginated?page=${page}&limit=${LIMIT}`;
-      if (term) {
-        url = `/professionals/${profissionalId}/servicos/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+      try {
+        let url = `/professionals/${profissionalId}/servicos/paginated?page=${page}&limit=${LIMIT}`;
+        if (term) {
+          url = `/professionals/${profissionalId}/servicos/search?q=${encodeURIComponent(
+            term,
+          )}&page=${page}&limit=${LIMIT}`;
+        }
+
+        const response = await api.get(url);
+        const data =
+          response.data as PaginatedResponse<ServicoEntityForProfissional>;
+
+        setLinked(data.data);
+        setLinkedPage(data.page);
+        setLinkedTotalPages(data.lastPage);
+      } catch (err) {
+        setLinkedError(getErrorMessage(err));
+      } finally {
+        setLinkedLoading(false);
       }
+    },
+    [profissionalId],
+  );
 
-      const response = await api.get(url);
-      const data =
-        response.data as PaginatedResponse<ServicoEntityForProfissional>;
-
-      setLinked(data.data);
-      setLinkedPage(data.page);
-      setLinkedTotalPages(data.lastPage);
-    } catch (err) {
-      setLinkedError(getErrorMessage(err));
-    } finally {
-      setLinkedLoading(false);
-    }
-  };
-
-  const fetchAvailable = async (page = 1, term = "") => {
+  // 3. Envolva a função em useCallback
+  // Dependência: Nenhuma (api é externa, LIMIT é constante)
+  const fetchAvailable = useCallback(async (page = 1, term = "") => {
     setAvailableLoading(true);
     setAvailableError("");
 
@@ -74,7 +81,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
       let url = `/services/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
         url = `/services/search?q=${encodeURIComponent(
-          term
+          term,
         )}&page=${page}&limit=${LIMIT}`;
       }
 
@@ -90,12 +97,13 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     } finally {
       setAvailableLoading(false);
     }
-  };
+  }, []);
 
+  // 4. Atualize o useEffect com as dependências corretas
   useEffect(() => {
     fetchLinked(1, "");
     fetchAvailable(1, "");
-  }, [profissionalId]);
+  }, [fetchLinked, fetchAvailable]);
 
   const handleLink = async (id_servico: string) => {
     try {
@@ -103,7 +111,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
         id_servico,
       });
 
-      // Atualiza as duas listas
+      // Atualiza as duas listas mantendo o estado atual de busca/página
       fetchLinked(linkedPage, linkedSearch);
       fetchAvailable(availablePage, availableSearch);
     } catch (err) {
@@ -212,10 +220,10 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                 </div>
 
                 <button
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold"
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
                   onClick={() => handleUnlink(s.id_servico)}
                 >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  <FontAwesomeIcon icon={faTrash} />
                   Remover
                 </button>
               </div>
@@ -333,10 +341,11 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                 </div>
 
                 <button
-                  className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                  className="button-dark-grey btn btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
                   onClick={() => handleLink(s.id_servico)}
                 >
                   <FontAwesomeIcon icon={faPlus} className="" />
+                  Vincular
                 </button>
               </div>
             ))}

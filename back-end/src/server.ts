@@ -67,6 +67,20 @@ async function criaAdmin() {
   console.log("✅ Usuário GERENTE criado com sucesso!");
 }
 
+async function limparLinksArquivos() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("🚫 Operação bloqueada em produção");
+  }
+
+  console.log("🧹 Apagando todos os registros de arquivos (links) do banco...");
+
+  const resultado = await prisma.prontuarioArquivo.deleteMany();
+
+  console.log(
+    `✅ ${resultado.count} registros de arquivos removidos com sucesso!`,
+  );
+}
+
 const PORT = process.env.PORT || 3333;
 
 async function startServer() {
@@ -92,7 +106,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(
         `🚀 Servidor rodando em: http://localhost:${PORT}\n` +
-          `Teste a conexão em: http://localhost:${PORT}/api/health`
+          `Teste a conexão em: http://localhost:${PORT}/api/health`,
       );
     });
   } catch (error) {

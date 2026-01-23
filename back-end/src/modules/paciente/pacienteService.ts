@@ -108,7 +108,7 @@ export class PacienteService {
     const { data, total } = await this.repository.searchPaginated(
       query,
       page,
-      limit
+      limit,
     );
     return { data, total, page, lastPage: Math.ceil(total / limit) };
   }
@@ -122,7 +122,7 @@ export class PacienteService {
 
   async addTelefone(
     id_paciente: string,
-    data: { telefone: string; principal: boolean }
+    data: { telefone: string; principal: boolean },
   ) {
     await this.getById(id_paciente);
 
@@ -133,7 +133,7 @@ export class PacienteService {
     if (totalTelefones >= 2) {
       throw new AppError(
         "O paciente já possui o limite máximo de 2 telefones",
-        400
+        400,
       );
     }
 
@@ -151,7 +151,7 @@ export class PacienteService {
 
   async replaceTelefones(
     id_paciente: string,
-    telefones: { telefone: string; principal: boolean }[]
+    telefones: { telefone: string; principal: boolean }[],
   ) {
     await this.getById(id_paciente);
 
@@ -210,7 +210,7 @@ export class PacienteService {
       data_vencimento: Date;
       observacoes?: string;
       id_agendamento?: string;
-    }
+    },
   ) {
     await this.getById(id_paciente);
     return await this.repository.addDebito(id_paciente, data);
@@ -251,9 +251,8 @@ export class PacienteService {
     // Verifica se paciente existe
     await this.getById(id_paciente);
 
-    const prontuario = await this.repository.getProntuarioByPaciente(
-      id_paciente
-    );
+    const prontuario =
+      await this.repository.getProntuarioByPaciente(id_paciente);
 
     // Auto-fix: Se por algum motivo bizarro o paciente não tiver prontuário (banco legado),
     // a regra diz "Todo paciente nasce com prontuário". Poderíamos criar aqui,
@@ -268,26 +267,24 @@ export class PacienteService {
   // 2. Criar Entrada (Núcleo)
   async createEntrada(
     id_prontuario: string,
-    id_usuario_logado: string, // ID do usuário vindo do Token
-    data: CreateProntuarioEntradaDTO
+    id_usuario_logado: string,
+    data: CreateProntuarioEntradaDTO,
   ) {
-    // 2.1 Valida Profissional
-    const profissional = await this.repository.findProfissionalByUserId(
-      id_usuario_logado
-    );
+    // 2.1 Tenta achar o profissional pelo ID do usuário
+    const profissional =
+      await this.repository.findProfissionalByUserId(id_usuario_logado);
 
-    if (!profissional) {
-      throw new AppError(
-        "Usuário não é um profissional válido ou está inativo.",
-        403
-      );
-    }
+    // Se achou profissional, pega o ID.
+    // Se não achou (é recepcionista/admin), manda NULL.
+    const idProfissionalParaSalvar = profissional
+      ? profissional.id_profissional
+      : null;
 
-    // 2.2 Cria a entrada
+    // 2.2 Cria a entrada passando o ID (ou null)
     return await this.repository.createProntuarioEntrada(
       id_prontuario,
-      profissional.id_profissional,
-      data
+      idProfissionalParaSalvar,
+      data,
     );
   }
 
@@ -298,7 +295,7 @@ export class PacienteService {
     if (tipo) {
       if (
         !Object.values(TipoEntradaProntuario).includes(
-          tipo as TipoEntradaProntuario
+          tipo as TipoEntradaProntuario,
         )
       ) {
         throw new AppError("Tipo de registro inválido", 400);
@@ -322,16 +319,15 @@ export class PacienteService {
   async updateEntrada(
     id_entrada: string,
     id_usuario_logado: string,
-    data: UpdateProntuarioEntradaDTO
+    data: UpdateProntuarioEntradaDTO,
   ) {
     // Valida se entrada existe
     const entrada = await this.getEntrada(id_entrada);
 
     // Valida se quem está editando é um profissional (Regra de negócio não exige ser o MESMO autor,
     // mas exige ser profissional. Se exigir ser o mesmo, descomentar abaixo)
-    const profissional = await this.repository.findProfissionalByUserId(
-      id_usuario_logado
-    );
+    const profissional =
+      await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
     // Opcional: Bloquear se não for o autor
@@ -339,16 +335,15 @@ export class PacienteService {
 
     return await this.repository.updateProntuarioEntrada(
       id_entrada,
-      data.descricao
+      data.descricao,
     );
   }
 
   // 6. Remover Entrada
   async deleteEntrada(id_entrada: string, id_usuario_logado: string) {
     // Valida permissão
-    const profissional = await this.repository.findProfissionalByUserId(
-      id_usuario_logado
-    );
+    const profissional =
+      await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
     await this.getEntrada(id_entrada); // garante que existe
@@ -359,12 +354,11 @@ export class PacienteService {
   async addArquivo(
     id_entrada: string,
     id_usuario_logado: string,
-    data: AddArquivoEntradaDTO
+    data: AddArquivoEntradaDTO,
   ) {
     // Valida Profissional
-    const profissional = await this.repository.findProfissionalByUserId(
-      id_usuario_logado
-    );
+    const profissional =
+      await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
     // Valida Entrada
@@ -374,9 +368,8 @@ export class PacienteService {
   }
 
   async removeArquivo(id_arquivo: string, id_usuario_logado: string) {
-    const profissional = await this.repository.findProfissionalByUserId(
-      id_usuario_logado
-    );
+    const profissional =
+      await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
     await this.repository.removeArquivoEntrada(id_arquivo);

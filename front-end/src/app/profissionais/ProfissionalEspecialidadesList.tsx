@@ -26,7 +26,9 @@ const LIMIT = 6;
 
 const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
   // ===== Vinculados =====
-  const [linked, setLinked] = useState<EspecialidadeEntityForProfissional[]>([]);
+  const [linked, setLinked] = useState<EspecialidadeEntityForProfissional[]>(
+    [],
+  );
   const [linkedLoading, setLinkedLoading] = useState(true);
   const [linkedError, setLinkedError] = useState("");
   const [linkedPage, setLinkedPage] = useState(1);
@@ -34,9 +36,9 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
   const [linkedSearch, setLinkedSearch] = useState("");
 
   // ===== Disponíveis (para selecionar/vincular) =====
-  const [available, setAvailable] = useState<EspecialidadeEntityForProfissional[]>(
-    []
-  );
+  const [available, setAvailable] = useState<
+    EspecialidadeEntityForProfissional[]
+  >([]);
   const [availableLoading, setAvailableLoading] = useState(true);
   const [availableError, setAvailableError] = useState("");
   const [availablePage, setAvailablePage] = useState(1);
@@ -51,7 +53,7 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
       let url = `/professionals/${profissionalId}/especialidades/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
         url = `/professionals/${profissionalId}/especialidades/search?q=${encodeURIComponent(
-          term
+          term,
         )}&page=${page}&limit=${LIMIT}`;
       }
 
@@ -77,7 +79,7 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
       let url = `/specialities/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
         url = `/specialities/search?q=${encodeURIComponent(
-          term
+          term,
         )}&page=${page}&limit=${LIMIT}`;
       }
 
@@ -152,7 +154,9 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
               placeholder="Buscar nos vinculados..."
               value={linkedSearch}
               onChange={(e) => setLinkedSearch(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && fetchLinked(1, linkedSearch)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && fetchLinked(1, linkedSearch)
+              }
             />
             {linkedSearch && (
               <span
@@ -205,10 +209,10 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
                 </div>
 
                 <button
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold"
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
                   onClick={() => handleUnlink(e.id_especialidade)}
                 >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  <FontAwesomeIcon icon={faTrash} />
                   Remover
                 </button>
               </div>
@@ -316,12 +320,11 @@ const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
                     {e.descricao || "Sem descrição"}
                   </div>
                 </div>
-
                 <button
-                  className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                  className="button-dark-grey btn btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
                   onClick={() => handleLink(e.id_especialidade)}
                 >
-                  <FontAwesomeIcon icon={faPlus} className="me-2" />
+                  <FontAwesomeIcon icon={faPlus} className="" />
                   Vincular
                 </button>
               </div>
