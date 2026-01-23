@@ -3,12 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faPlus,
-  faSearch,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faPlus, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -17,6 +12,7 @@ import type { ProfissionalSummary } from "./types";
 import ProfissionalCard from "./ProfissionalCard";
 import AddProfissionalModal from "./AddProfissionalModal";
 import ProfissionalDetailModal from "./ProfissionalDetailModal";
+import ProfissionalHorariosModal from "./ProfissionalHorariosModal";
 
 const LIMIT = 6;
 
@@ -32,14 +28,14 @@ export default function ProfissionaisPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedProfissionalId, setSelectedProfissionalId] = useState<
-    string | null
-  >(null);
+  const [selectedProfissionalId, setSelectedProfissionalId] = useState<string | null>(null);
+  const [selectedHorariosProfissionalId, setSelectedHorariosProfissionalId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) router.push("/login");
     else fetchProfissionais(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const fetchProfissionais = async (page = 1, term = "") => {
@@ -49,9 +45,7 @@ export default function ProfissionaisPage() {
     try {
       let url = `/professionals/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
-        url = `/professionals/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+        url = `/professionals/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
 
       const response = await api.get(url);
@@ -77,18 +71,13 @@ export default function ProfissionaisPage() {
     fetchProfissionais(currentPage, searchTerm);
     setIsAddModalOpen(false);
     setSelectedProfissionalId(null);
+    setSelectedHorariosProfissionalId(null);
   };
 
   return (
-    <div
-      className="d-flex flex-column min-vh-100"
-      style={{ background: "#e9e9e9" }}
-    >
+    <div className="d-flex flex-column min-vh-100" style={{ background: "#e9e9e9" }}>
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
-        <button
-          className="btn btn-link text-white p-0 me-3"
-          onClick={() => router.push("/menu")}
-        >
+        <button className="btn btn-link text-white p-0 me-3" onClick={() => router.push("/menu")}>
           <FontAwesomeIcon icon={faArrowLeft} className="fs-4" />
         </button>
         <span className="text-white fw-bold fs-5">Módulo de Profissionais</span>
@@ -158,22 +147,18 @@ export default function ProfissionaisPage() {
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
-                <p className="text-muted small mt-2">
-                  Carregando profissionais...
-                </p>
+                <p className="text-muted small mt-2">Carregando profissionais...</p>
               </div>
             ) : profissionais.length ? (
               <>
                 <div className="row g-3">
                   {profissionais.map((prof) => (
-                    <div
-                      key={prof.id_profissional}
-                      className="col-md-6 col-lg-4"
-                    >
+                    <div key={prof.id_profissional} className="col-md-6 col-lg-4">
                       <ProfissionalCard
                         profissional={prof}
-                        onClick={() =>
-                          setSelectedProfissionalId(prof.id_profissional)
+                        onOpenDetails={() => setSelectedProfissionalId(prof.id_profissional)}
+                        onOpenHorarios={() =>
+                          setSelectedHorariosProfissionalId(prof.id_profissional)
                         }
                       />
                     </div>
@@ -184,9 +169,7 @@ export default function ProfissionaisPage() {
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
                     disabled={currentPage === 1}
-                    onClick={() =>
-                      fetchProfissionais(currentPage - 1, searchTerm)
-                    }
+                    onClick={() => fetchProfissionais(currentPage - 1, searchTerm)}
                   >
                     Anterior
                   </button>
@@ -196,9 +179,7 @@ export default function ProfissionaisPage() {
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
                     disabled={currentPage === totalPages}
-                    onClick={() =>
-                      fetchProfissionais(currentPage + 1, searchTerm)
-                    }
+                    onClick={() => fetchProfissionais(currentPage + 1, searchTerm)}
                   >
                     Próxima
                   </button>
@@ -206,9 +187,7 @@ export default function ProfissionaisPage() {
               </>
             ) : (
               <div className="text-center py-5 bg-light rounded-3 mt-3">
-                <p className="text-muted fw-bold mb-0">
-                  Nenhum profissional encontrado.
-                </p>
+                <p className="text-muted fw-bold mb-0">Nenhum profissional encontrado.</p>
                 <small className="text-secondary">
                   Tente mudar os termos da busca ou adicione um novo.
                 </small>
@@ -229,6 +208,14 @@ export default function ProfissionaisPage() {
         <ProfissionalDetailModal
           profissionalId={selectedProfissionalId}
           onClose={() => setSelectedProfissionalId(null)}
+          onSuccess={handleRefresh}
+        />
+      )}
+
+      {selectedHorariosProfissionalId && (
+        <ProfissionalHorariosModal
+          profissionalId={selectedHorariosProfissionalId}
+          onClose={() => setSelectedHorariosProfissionalId(null)}
           onSuccess={handleRefresh}
         />
       )}

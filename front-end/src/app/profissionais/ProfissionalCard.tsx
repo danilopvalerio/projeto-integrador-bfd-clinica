@@ -1,21 +1,24 @@
 "use client";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarDays, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import type { ProfissionalSummary } from "./types";
 
 interface Props {
   profissional: ProfissionalSummary;
-  onClick: () => void;
+  onOpenDetails: () => void;
+  onOpenHorarios: () => void;
 }
 
-const ProfissionalCard = ({ profissional, onClick }: Props) => {
+const ProfissionalCard = ({
+  profissional,
+  onOpenDetails,
+  onOpenHorarios,
+}: Props) => {
   const initial = profissional.nome?.trim()?.charAt(0)?.toUpperCase() ?? "P";
 
   return (
-    <div
-      className="card-item-bottom-line-rounded h-100 hover-shadow cursor-pointer bg-white p-3"
-      onClick={onClick}
-      role="button"
-    >
+    <div className="card-item-bottom-line-rounded h-100 bg-white p-3">
       <div className="card-body d-flex flex-column">
         {/* Cabeçalho */}
         <div className="d-flex align-items-center mb-3">
@@ -26,7 +29,7 @@ const ProfissionalCard = ({ profissional, onClick }: Props) => {
             {initial}
           </div>
 
-          <div>
+          <div className="flex-grow-1">
             <h6 className="fw-bold mb-0">{profissional.nome}</h6>
             <small className="text-muted">
               Conselho: {profissional.registro_conselho}
@@ -36,9 +39,36 @@ const ProfissionalCard = ({ profissional, onClick }: Props) => {
 
         {/* Corpo */}
         <div className="mt-auto">
-          <p className="mb-0 small text-secondary">
+          <p className="mb-3 small text-secondary">
             <strong>CPF:</strong> {profissional.cpf}
           </p>
+
+          
+          <div className="d-flex gap-2">
+            <button
+              type="button"
+              className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm w-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetails();
+              }}
+            >
+              <FontAwesomeIcon icon={faCircleInfo} className="me-2" />
+              Detalhes
+            </button>
+
+            <button
+              type="button"
+              className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm w-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenHorarios();
+              }}
+            >
+              <FontAwesomeIcon icon={faCalendarDays} className="me-2" />
+              Horários
+            </button>
+          </div>
         </div>
       </div>
     </div>
