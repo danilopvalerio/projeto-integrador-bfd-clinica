@@ -47,7 +47,6 @@ const MOCK_LOGS: Log[] = [
   },
 ];
 
-
 const LogsPage = () => {
   const router = useRouter();
 
@@ -65,16 +64,16 @@ const LogsPage = () => {
     let filteredLogs = MOCK_LOGS;
 
     if (term) {
-        const lower = term.toLowerCase();
+      const lower = term.toLowerCase();
 
-        filteredLogs = MOCK_LOGS.filter((log) =>
-        log.acao.toLowerCase().includes(lower) ||
-        log.usuario?.nome?.toLowerCase().includes(lower) ||
-        log.usuario?.email?.toLowerCase().includes(lower) ||
-        log.ip?.includes(term)
-    );
+      filteredLogs = MOCK_LOGS.filter(
+        (log) =>
+          log.acao.toLowerCase().includes(lower) ||
+          log.usuario?.nome?.toLowerCase().includes(lower) ||
+          log.usuario?.email?.toLowerCase().includes(lower) ||
+          log.ip?.includes(term),
+      );
     }
-
 
     setLogs(filteredLogs);
     setCurrentPage(1);
@@ -115,12 +114,15 @@ const LogsPage = () => {
   }
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: "#e9e9e9ff" }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ backgroundColor: "#e9e9e9ff" }}
+    >
       {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center bg-dark px-2">
         <button
           className="btn btn-link text-white"
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push("/menu")}
           title="Voltar ao Menu"
         >
           <FontAwesomeIcon icon={faArrowLeft} className="fs-4" />
@@ -133,10 +135,15 @@ const LogsPage = () => {
           {/* Título */}
           <div className="bg-gradient-vl p-4 text-center text-white">
             <h3 className="fw-bold m-0">
-              <FontAwesomeIcon icon={faClipboardList} className="me-2 fs-3 opacity-75" />
+              <FontAwesomeIcon
+                icon={faClipboardList}
+                className="me-2 fs-3 opacity-75"
+              />
               Logs de Acesso
             </h3>
-            <p className="m-0 opacity-75 small">Histórico geral de ações e acessos do sistema.</p>
+            <p className="m-0 opacity-75 small">
+              Histórico geral de ações e acessos do sistema.
+            </p>
           </div>
 
           <div className="p-4">
@@ -162,14 +169,20 @@ const LogsPage = () => {
                       style={{ cursor: "pointer" }}
                       onClick={handleClearSearch}
                     >
-                      <FontAwesomeIcon className="text-secondary" icon={faTimes} />
+                      <FontAwesomeIcon
+                        className="text-secondary"
+                        icon={faTimes}
+                      />
                     </span>
                   )}
                 </div>
               </div>
 
               <div className="col-12 col-md-2">
-                <button className="w-100 button-bottom-line-rounded px-4 py-2" onClick={handleSearch}>
+                <button
+                  className="w-100 button-bottom-line-rounded px-4 py-2"
+                  onClick={handleSearch}
+                >
                   Buscar
                 </button>
               </div>
@@ -188,11 +201,15 @@ const LogsPage = () => {
                     <thead className="table-light">
                       <tr>
                         <th className="text-muted small fw-bold">TIPO</th>
-                        <th className="text-muted small fw-bold">DATA / HORA</th>
+                        <th className="text-muted small fw-bold">
+                          DATA / HORA
+                        </th>
                         <th className="text-muted small fw-bold">AÇÃO</th>
                         <th className="text-muted small fw-bold">USUÁRIO</th>
                         <th className="text-muted small fw-bold">IP</th>
-                        <th className="text-muted small fw-bold">DISPOSITIVO</th>
+                        <th className="text-muted small fw-bold">
+                          DISPOSITIVO
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
