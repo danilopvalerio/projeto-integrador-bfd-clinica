@@ -24,7 +24,7 @@ export class PacienteController {
     const { page = 1, limit = 10 } = req.query;
     const result = await this.service.listPaginated(
       Number(page),
-      Number(limit)
+      Number(limit),
     );
     return res.json(result);
   };
@@ -48,7 +48,7 @@ export class PacienteController {
     const result = await this.service.searchPaginated(
       String(q),
       Number(page),
-      Number(limit)
+      Number(limit),
     );
     return res.json(result);
   };
@@ -62,7 +62,7 @@ export class PacienteController {
   addTag = async (req: Request, res: Response) => {
     const result = await this.service.addTag(
       req.params.id_paciente,
-      req.body.nome
+      req.body.nome,
     );
     return res.status(201).json(result);
   };
@@ -100,7 +100,7 @@ export class PacienteController {
   addTelefone = async (req: Request, res: Response) => {
     const result = await this.service.addTelefone(
       req.params.id_paciente,
-      req.body
+      req.body,
     );
     return res.status(201).json(result);
   };
@@ -108,7 +108,7 @@ export class PacienteController {
   replaceTelefones = async (req: Request, res: Response) => {
     const result = await this.service.replaceTelefones(
       req.params.id_paciente,
-      req.body
+      req.body,
     );
     return res.status(200).json(result);
   };
@@ -142,10 +142,10 @@ export class PacienteController {
       return res.status(401).json({ message: "Usuário não autenticado" });
     }
 
-    const result = await this.service.createEntrada(
+    const result = await this.service.createProntuarioEntrada(
       req.params.id_prontuario,
       id_usuario,
-      req.body
+      req.body,
     );
     return res.status(201).json(result);
   };
@@ -155,7 +155,7 @@ export class PacienteController {
     const { tipo } = req.query;
     const result = await this.service.listEntradas(
       req.params.id_prontuario,
-      tipo ? String(tipo) : undefined
+      tipo ? String(tipo) : undefined,
     );
     return res.json(result);
   };
@@ -175,7 +175,7 @@ export class PacienteController {
     const result = await this.service.updateEntrada(
       req.params.id_entrada,
       id_usuario,
-      req.body
+      req.body,
     );
     return res.json(result);
   };
@@ -203,7 +203,7 @@ export class PacienteController {
     const result = await this.service.addArquivo(
       req.params.id_entrada,
       id_usuario,
-      req.body
+      req.body,
     );
     return res.status(201).json(result);
   };

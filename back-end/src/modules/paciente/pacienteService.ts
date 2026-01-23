@@ -8,6 +8,7 @@ import {
   AddArquivoEntradaDTO,
   TipoEntradaProntuario,
   PacienteDebitoEntity,
+  ProntuarioEntradaEntity,
 } from "./pacienteDTO";
 import { AppError } from "../../shared/http/middlewares/error.middleware";
 import { prisma } from "../../shared/database/prisma";
@@ -41,7 +42,7 @@ export class PacienteService {
           data: {
             email,
             senha_hash: data.usuario.senha,
-            tipo_usuario: data.usuario.tipo_usuario ?? "CLIENTE",
+            tipo_usuario: data.usuario.tipo_usuario ?? "PACIENTE",
             ativo: true,
           },
         });
@@ -265,27 +266,35 @@ export class PacienteService {
   }
 
   // 2. Criar Entrada (Núcleo)
-  async createEntrada(
+  // pacienteRepository.ts
+
+  async createProntuarioEntrada(
     id_prontuario: string,
-    id_usuario_logado: string,
+    id_profissional: string | null,
     data: CreateProntuarioEntradaDTO,
-  ) {
-    // 2.1 Tenta achar o profissional pelo ID do usuário
-    const profissional =
-      await this.repository.findProfissionalByUserId(id_usuario_logado);
+  ): Promise<ProntuarioEntradaEntity> {
+    const entrada = await prisma.prontuarioEntrada.create({
+      data: {
+        id_prontuario,
 
-    // Se achou profissional, pega o ID.
-    // Se não achou (é recepcionista/admin), manda NULL.
-    const idProfissionalParaSalvar = profissional
-      ? profissional.id_profissional
-      : null;
+        // CORREÇÃO AQUI:
+        // Se id_profissional for null, passamos undefined (ou null, dependendo da atualização do prisma).
+        // A forma mais segura que o TS aceita se a tipagem não atualizou 100% é:
+        id_profissional: id_profissional ?? undefined,
 
-    // 2.2 Cria a entrada passando o ID (ou null)
-    return await this.repository.createProntuarioEntrada(
-      id_prontuario,
-      idProfissionalParaSalvar,
-      data,
-    );
+        tipo: data.tipo,
+        descricao: data.descricao,
+        id_agendamento: data.id_agendamento,
+      },
+      include: {
+        profissional: {
+          select: { nome: true, registro_conselho: true },
+        },
+        arquivos: true,
+      },
+    });
+
+    return entrada as unknown as ProntuarioEntradaEntity;
   }
 
   // 3. Listar Entradas

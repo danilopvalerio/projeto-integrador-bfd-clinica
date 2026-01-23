@@ -446,10 +446,12 @@ export type ProfissionalCreateNestedOneWithoutProntuariosInput = {
   connect?: Prisma.ProfissionalWhereUniqueInput
 }
 
-export type ProfissionalUpdateOneRequiredWithoutProntuariosNestedInput = {
+export type ProfissionalUpdateOneWithoutProntuariosNestedInput = {
   create?: Prisma.XOR<Prisma.ProfissionalCreateWithoutProntuariosInput, Prisma.ProfissionalUncheckedCreateWithoutProntuariosInput>
   connectOrCreate?: Prisma.ProfissionalCreateOrConnectWithoutProntuariosInput
   upsert?: Prisma.ProfissionalUpsertWithoutProntuariosInput
+  disconnect?: Prisma.ProfissionalWhereInput | boolean
+  delete?: Prisma.ProfissionalWhereInput | boolean
   connect?: Prisma.ProfissionalWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfissionalUpdateToOneWithWhereWithoutProntuariosInput, Prisma.ProfissionalUpdateWithoutProntuariosInput>, Prisma.ProfissionalUncheckedUpdateWithoutProntuariosInput>
 }

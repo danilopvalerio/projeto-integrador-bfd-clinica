@@ -7,12 +7,8 @@ import { authMiddleware } from "../../shared/http/middlewares/auth.middleware";
 
 const pacienteRoutes = Router();
 const controller = new PacienteController(
-  new PacienteService(new PacienteRepository())
+  new PacienteService(new PacienteRepository()),
 );
-
-// 2. APLIQUE O MIDDLEWARE GLOBALMENTE NO ROUTER DE PACIENTES
-// Assim, qualquer rota abaixo exigirá login e terá req.user preenchido.
-pacienteRoutes.use(authMiddleware);
 
 // ============================================================
 // 1. ROTAS ESTÁTICAS

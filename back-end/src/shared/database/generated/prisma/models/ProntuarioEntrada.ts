@@ -168,7 +168,7 @@ export type ProntuarioEntradaGroupByArgs<ExtArgs extends runtime.Types.Extension
 export type ProntuarioEntradaGroupByOutputType = {
   id_entrada: string
   id_prontuario: string
-  id_profissional: string
+  id_profissional: string | null
   id_agendamento: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -200,21 +200,21 @@ export type ProntuarioEntradaWhereInput = {
   NOT?: Prisma.ProntuarioEntradaWhereInput | Prisma.ProntuarioEntradaWhereInput[]
   id_entrada?: Prisma.StringFilter<"ProntuarioEntrada"> | string
   id_prontuario?: Prisma.StringFilter<"ProntuarioEntrada"> | string
-  id_profissional?: Prisma.StringFilter<"ProntuarioEntrada"> | string
+  id_profissional?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   id_agendamento?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFilter<"ProntuarioEntrada"> | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFilter<"ProntuarioEntrada"> | string
   criado_em?: Prisma.DateTimeFilter<"ProntuarioEntrada"> | Date | string
   atualizado_em?: Prisma.DateTimeFilter<"ProntuarioEntrada"> | Date | string
   prontuario?: Prisma.XOR<Prisma.ProntuarioScalarRelationFilter, Prisma.ProntuarioWhereInput>
-  profissional?: Prisma.XOR<Prisma.ProfissionalScalarRelationFilter, Prisma.ProfissionalWhereInput>
+  profissional?: Prisma.XOR<Prisma.ProfissionalNullableScalarRelationFilter, Prisma.ProfissionalWhereInput> | null
   arquivos?: Prisma.ProntuarioArquivoListRelationFilter
 }
 
 export type ProntuarioEntradaOrderByWithRelationInput = {
   id_entrada?: Prisma.SortOrder
   id_prontuario?: Prisma.SortOrder
-  id_profissional?: Prisma.SortOrder
+  id_profissional?: Prisma.SortOrderInput | Prisma.SortOrder
   id_agendamento?: Prisma.SortOrderInput | Prisma.SortOrder
   tipo?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -231,21 +231,21 @@ export type ProntuarioEntradaWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProntuarioEntradaWhereInput[]
   NOT?: Prisma.ProntuarioEntradaWhereInput | Prisma.ProntuarioEntradaWhereInput[]
   id_prontuario?: Prisma.StringFilter<"ProntuarioEntrada"> | string
-  id_profissional?: Prisma.StringFilter<"ProntuarioEntrada"> | string
+  id_profissional?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   id_agendamento?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFilter<"ProntuarioEntrada"> | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFilter<"ProntuarioEntrada"> | string
   criado_em?: Prisma.DateTimeFilter<"ProntuarioEntrada"> | Date | string
   atualizado_em?: Prisma.DateTimeFilter<"ProntuarioEntrada"> | Date | string
   prontuario?: Prisma.XOR<Prisma.ProntuarioScalarRelationFilter, Prisma.ProntuarioWhereInput>
-  profissional?: Prisma.XOR<Prisma.ProfissionalScalarRelationFilter, Prisma.ProfissionalWhereInput>
+  profissional?: Prisma.XOR<Prisma.ProfissionalNullableScalarRelationFilter, Prisma.ProfissionalWhereInput> | null
   arquivos?: Prisma.ProntuarioArquivoListRelationFilter
 }, "id_entrada">
 
 export type ProntuarioEntradaOrderByWithAggregationInput = {
   id_entrada?: Prisma.SortOrder
   id_prontuario?: Prisma.SortOrder
-  id_profissional?: Prisma.SortOrder
+  id_profissional?: Prisma.SortOrderInput | Prisma.SortOrder
   id_agendamento?: Prisma.SortOrderInput | Prisma.SortOrder
   tipo?: Prisma.SortOrder
   descricao?: Prisma.SortOrder
@@ -262,7 +262,7 @@ export type ProntuarioEntradaScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProntuarioEntradaScalarWhereWithAggregatesInput | Prisma.ProntuarioEntradaScalarWhereWithAggregatesInput[]
   id_entrada?: Prisma.StringWithAggregatesFilter<"ProntuarioEntrada"> | string
   id_prontuario?: Prisma.StringWithAggregatesFilter<"ProntuarioEntrada"> | string
-  id_profissional?: Prisma.StringWithAggregatesFilter<"ProntuarioEntrada"> | string
+  id_profissional?: Prisma.StringNullableWithAggregatesFilter<"ProntuarioEntrada"> | string | null
   id_agendamento?: Prisma.StringNullableWithAggregatesFilter<"ProntuarioEntrada"> | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioWithAggregatesFilter<"ProntuarioEntrada"> | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringWithAggregatesFilter<"ProntuarioEntrada"> | string
@@ -278,14 +278,14 @@ export type ProntuarioEntradaCreateInput = {
   criado_em?: Date | string
   atualizado_em?: Date | string
   prontuario: Prisma.ProntuarioCreateNestedOneWithoutEntradasInput
-  profissional: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
+  profissional?: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
   arquivos?: Prisma.ProntuarioArquivoCreateNestedManyWithoutEntradaInput
 }
 
 export type ProntuarioEntradaUncheckedCreateInput = {
   id_entrada?: string
   id_prontuario: string
-  id_profissional: string
+  id_profissional?: string | null
   id_agendamento?: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -302,14 +302,14 @@ export type ProntuarioEntradaUpdateInput = {
   criado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   prontuario?: Prisma.ProntuarioUpdateOneRequiredWithoutEntradasNestedInput
-  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutProntuariosNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneWithoutProntuariosNestedInput
   arquivos?: Prisma.ProntuarioArquivoUpdateManyWithoutEntradaNestedInput
 }
 
 export type ProntuarioEntradaUncheckedUpdateInput = {
   id_entrada?: Prisma.StringFieldUpdateOperationsInput | string
   id_prontuario?: Prisma.StringFieldUpdateOperationsInput | string
-  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  id_profissional?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   id_agendamento?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFieldUpdateOperationsInput | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -321,7 +321,7 @@ export type ProntuarioEntradaUncheckedUpdateInput = {
 export type ProntuarioEntradaCreateManyInput = {
   id_entrada?: string
   id_prontuario: string
-  id_profissional: string
+  id_profissional?: string | null
   id_agendamento?: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -341,7 +341,7 @@ export type ProntuarioEntradaUpdateManyMutationInput = {
 export type ProntuarioEntradaUncheckedUpdateManyInput = {
   id_entrada?: Prisma.StringFieldUpdateOperationsInput | string
   id_prontuario?: Prisma.StringFieldUpdateOperationsInput | string
-  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  id_profissional?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   id_agendamento?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFieldUpdateOperationsInput | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -553,7 +553,7 @@ export type ProntuarioEntradaScalarWhereInput = {
   NOT?: Prisma.ProntuarioEntradaScalarWhereInput | Prisma.ProntuarioEntradaScalarWhereInput[]
   id_entrada?: Prisma.StringFilter<"ProntuarioEntrada"> | string
   id_prontuario?: Prisma.StringFilter<"ProntuarioEntrada"> | string
-  id_profissional?: Prisma.StringFilter<"ProntuarioEntrada"> | string
+  id_profissional?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   id_agendamento?: Prisma.StringNullableFilter<"ProntuarioEntrada"> | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFilter<"ProntuarioEntrada"> | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFilter<"ProntuarioEntrada"> | string
@@ -568,13 +568,13 @@ export type ProntuarioEntradaCreateWithoutProntuarioInput = {
   descricao: string
   criado_em?: Date | string
   atualizado_em?: Date | string
-  profissional: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
+  profissional?: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
   arquivos?: Prisma.ProntuarioArquivoCreateNestedManyWithoutEntradaInput
 }
 
 export type ProntuarioEntradaUncheckedCreateWithoutProntuarioInput = {
   id_entrada?: string
-  id_profissional: string
+  id_profissional?: string | null
   id_agendamento?: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -617,13 +617,13 @@ export type ProntuarioEntradaCreateWithoutArquivosInput = {
   criado_em?: Date | string
   atualizado_em?: Date | string
   prontuario: Prisma.ProntuarioCreateNestedOneWithoutEntradasInput
-  profissional: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
+  profissional?: Prisma.ProfissionalCreateNestedOneWithoutProntuariosInput
 }
 
 export type ProntuarioEntradaUncheckedCreateWithoutArquivosInput = {
   id_entrada?: string
   id_prontuario: string
-  id_profissional: string
+  id_profissional?: string | null
   id_agendamento?: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -655,13 +655,13 @@ export type ProntuarioEntradaUpdateWithoutArquivosInput = {
   criado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   prontuario?: Prisma.ProntuarioUpdateOneRequiredWithoutEntradasNestedInput
-  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutProntuariosNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneWithoutProntuariosNestedInput
 }
 
 export type ProntuarioEntradaUncheckedUpdateWithoutArquivosInput = {
   id_entrada?: Prisma.StringFieldUpdateOperationsInput | string
   id_prontuario?: Prisma.StringFieldUpdateOperationsInput | string
-  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  id_profissional?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   id_agendamento?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFieldUpdateOperationsInput | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -713,7 +713,7 @@ export type ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalInput = {
 
 export type ProntuarioEntradaCreateManyProntuarioInput = {
   id_entrada?: string
-  id_profissional: string
+  id_profissional?: string | null
   id_agendamento?: string | null
   tipo: $Enums.TipoEntradaProntuario
   descricao: string
@@ -728,13 +728,13 @@ export type ProntuarioEntradaUpdateWithoutProntuarioInput = {
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
   criado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizado_em?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profissional?: Prisma.ProfissionalUpdateOneRequiredWithoutProntuariosNestedInput
+  profissional?: Prisma.ProfissionalUpdateOneWithoutProntuariosNestedInput
   arquivos?: Prisma.ProntuarioArquivoUpdateManyWithoutEntradaNestedInput
 }
 
 export type ProntuarioEntradaUncheckedUpdateWithoutProntuarioInput = {
   id_entrada?: Prisma.StringFieldUpdateOperationsInput | string
-  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  id_profissional?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   id_agendamento?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFieldUpdateOperationsInput | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -745,7 +745,7 @@ export type ProntuarioEntradaUncheckedUpdateWithoutProntuarioInput = {
 
 export type ProntuarioEntradaUncheckedUpdateManyWithoutProntuarioInput = {
   id_entrada?: Prisma.StringFieldUpdateOperationsInput | string
-  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  id_profissional?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   id_agendamento?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tipo?: Prisma.EnumTipoEntradaProntuarioFieldUpdateOperationsInput | $Enums.TipoEntradaProntuario
   descricao?: Prisma.StringFieldUpdateOperationsInput | string
@@ -794,7 +794,7 @@ export type ProntuarioEntradaSelect<ExtArgs extends runtime.Types.Extensions.Int
   criado_em?: boolean
   atualizado_em?: boolean
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
   arquivos?: boolean | Prisma.ProntuarioEntrada$arquivosArgs<ExtArgs>
   _count?: boolean | Prisma.ProntuarioEntradaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["prontuarioEntrada"]>
@@ -809,7 +809,7 @@ export type ProntuarioEntradaSelectCreateManyAndReturn<ExtArgs extends runtime.T
   criado_em?: boolean
   atualizado_em?: boolean
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
 }, ExtArgs["result"]["prontuarioEntrada"]>
 
 export type ProntuarioEntradaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -822,7 +822,7 @@ export type ProntuarioEntradaSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   criado_em?: boolean
   atualizado_em?: boolean
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
 }, ExtArgs["result"]["prontuarioEntrada"]>
 
 export type ProntuarioEntradaSelectScalar = {
@@ -839,30 +839,30 @@ export type ProntuarioEntradaSelectScalar = {
 export type ProntuarioEntradaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_entrada" | "id_prontuario" | "id_profissional" | "id_agendamento" | "tipo" | "descricao" | "criado_em" | "atualizado_em", ExtArgs["result"]["prontuarioEntrada"]>
 export type ProntuarioEntradaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
   arquivos?: boolean | Prisma.ProntuarioEntrada$arquivosArgs<ExtArgs>
   _count?: boolean | Prisma.ProntuarioEntradaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProntuarioEntradaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
 }
 export type ProntuarioEntradaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   prontuario?: boolean | Prisma.ProntuarioDefaultArgs<ExtArgs>
-  profissional?: boolean | Prisma.ProfissionalDefaultArgs<ExtArgs>
+  profissional?: boolean | Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>
 }
 
 export type $ProntuarioEntradaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProntuarioEntrada"
   objects: {
     prontuario: Prisma.$ProntuarioPayload<ExtArgs>
-    profissional: Prisma.$ProfissionalPayload<ExtArgs>
+    profissional: Prisma.$ProfissionalPayload<ExtArgs> | null
     arquivos: Prisma.$ProntuarioArquivoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_entrada: string
     id_prontuario: string
-    id_profissional: string
+    id_profissional: string | null
     id_agendamento: string | null
     tipo: $Enums.TipoEntradaProntuario
     descricao: string
@@ -1263,7 +1263,7 @@ readonly fields: ProntuarioEntradaFieldRefs;
 export interface Prisma__ProntuarioEntradaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   prontuario<T extends Prisma.ProntuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProntuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__ProntuarioClient<runtime.Types.Result.GetResult<Prisma.$ProntuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  profissional<T extends Prisma.ProfissionalDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfissionalDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfissionalClient<runtime.Types.Result.GetResult<Prisma.$ProfissionalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profissional<T extends Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProntuarioEntrada$profissionalArgs<ExtArgs>>): Prisma.Prisma__ProfissionalClient<runtime.Types.Result.GetResult<Prisma.$ProfissionalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   arquivos<T extends Prisma.ProntuarioEntrada$arquivosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProntuarioEntrada$arquivosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProntuarioArquivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1695,6 +1695,25 @@ export type ProntuarioEntradaDeleteManyArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many ProntuarioEntradas to delete.
    */
   limit?: number
+}
+
+/**
+ * ProntuarioEntrada.profissional
+ */
+export type ProntuarioEntrada$profissionalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Profissional
+   */
+  select?: Prisma.ProfissionalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Profissional
+   */
+  omit?: Prisma.ProfissionalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProfissionalInclude<ExtArgs> | null
+  where?: Prisma.ProfissionalWhereInput
 }
 
 /**
