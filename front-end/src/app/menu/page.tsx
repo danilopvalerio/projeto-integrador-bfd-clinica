@@ -14,6 +14,7 @@ import {
   faUsers,
   faChartPie,
   faChevronRight,
+  faShieldHalved,
   faCog, // <--- Importado aqui
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -80,6 +81,9 @@ export default function MenuPage() {
   const router = useRouter();
   const [user, setUser] = useState<User>({ nome: "", role: "" });
   const [loading, setLoading] = useState(true);
+  //ACESSO RESTRITO
+  //const isAdmin = 
+    //user.role === "ADMIN" || user.role === "SUPER_ADMIN";
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -92,6 +96,7 @@ export default function MenuPage() {
 
     try {
       const parsedUser = JSON.parse(storedUser);
+      //const normalizedRole = parsedUser.role?.toUpperCase();
       setUser({
         nome: parsedUser.nome || "Usuário",
         role: parsedUser.role || "Visitante",
@@ -226,8 +231,29 @@ export default function MenuPage() {
               icon={faChartPie}
               active={false}
             />
+            <MenuCard
+            title="Histórico de Acessos"
+            description="Registros de login e tentativas de acesso ao sistema."
+            icon={faShieldHalved}
+            active={true}
+            onClick={() => navigateTo("/logs")}
+            />
+
+            {/*ACESSO RESTRITO
+            <MenuCard
+              title="Histórico de Acessos"
+              description={
+                isAdmin
+                ? "Registros de login e saída do sistema."
+                : "Acesso restrito a administradores."
+              }
+              icon={faShieldHalved}
+              active={isAdmin}
+              onClick={() => navigateTo("/logs")}
+            />*/}
+
           </div>
-        </div>
+        </div>        
       </main>
 
       {/* --- Footer --- */}

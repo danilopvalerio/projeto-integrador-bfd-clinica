@@ -4,6 +4,13 @@ import { UserRepository } from "../user/userRepository";
 import { SessionService } from "./sessionService";
 import { SessionController } from "./sessionController";
 import { authMiddleware } from "../../shared/http/middlewares/auth.middleware";
+import { LogRepository } from "../logs/logRepository";
+import { LogService } from "../logs/logService";
+
+
+const logRepo = new LogRepository();
+const logService = new LogService(logRepo);
+
 
 const sessionRoutes = Router();
 
@@ -13,7 +20,7 @@ const userRepo = new UserRepository();
 
 // Injetamos ambos os repositórios no service
 const sessionService = new SessionService(sessionRepo, userRepo);
-const sessionController = new SessionController(sessionService);
+const sessionController = new SessionController(sessionService, logService);
 
 sessionRoutes.get("/profile", authMiddleware, sessionController.getProfile);
 sessionRoutes.post("/login", sessionController.login);

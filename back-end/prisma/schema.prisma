@@ -25,6 +25,8 @@ model Usuario {
   paciente       Paciente?
   profissional   Profissional?
   refresh_tokens RefreshToken[]
+  
+  logs Log[]
 
   @@map("usuarios")
 }
@@ -261,4 +263,20 @@ model ProntuarioArquivo {
   entrada ProntuarioEntrada @relation(fields: [id_entrada], references: [id_entrada], onDelete: Cascade)
 
   @@map("prontuarios_arquivos")
+}
+
+model Log {
+  id         String   @id @default(uuid())
+  tipo       String   @db.VarChar(30)
+  acao       String   @db.VarChar(100)
+  descricao  String?
+  ip         String?
+  user_agent String?
+  sucesso    Boolean
+  data       DateTime @default(now())
+
+  id_usuario String?
+  usuario    Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull)
+
+  @@map("logs")
 }

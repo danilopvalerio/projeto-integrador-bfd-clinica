@@ -124,3 +124,8 @@ export type ProntuarioEntrada = Prisma.ProntuarioEntradaModel
  * 
  */
 export type ProntuarioArquivo = Prisma.ProntuarioArquivoModel
+/**
+ * Model Log
+ * 
+ */
+export type Log = Prisma.LogModel

@@ -400,7 +400,8 @@ export const ModelName = {
   RefreshToken: 'RefreshToken',
   Prontuario: 'Prontuario',
   ProntuarioEntrada: 'ProntuarioEntrada',
-  ProntuarioArquivo: 'ProntuarioArquivo'
+  ProntuarioArquivo: 'ProntuarioArquivo',
+  Log: 'Log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "paciente" | "pacienteTelefone" | "pacienteTag" | "pacienteDebito" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "profissional_Especialidade" | "endereco" | "servico" | "especialidade" | "profissionalServico" | "refreshToken" | "prontuario" | "prontuarioEntrada" | "prontuarioArquivo"
+    modelProps: "usuario" | "paciente" | "pacienteTelefone" | "pacienteTag" | "pacienteDebito" | "profissional" | "horario_Trabalho" | "profissional_telefone" | "profissional_Especialidade" | "endereco" | "servico" | "especialidade" | "profissionalServico" | "refreshToken" | "prontuario" | "prontuarioEntrada" | "prontuarioArquivo" | "log"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1678,6 +1679,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Log: {
+      payload: Prisma.$LogPayload<ExtArgs>
+      fields: Prisma.LogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        findFirst: {
+          args: Prisma.LogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        findMany: {
+          args: Prisma.LogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>[]
+        }
+        create: {
+          args: Prisma.LogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        createMany: {
+          args: Prisma.LogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>[]
+        }
+        delete: {
+          args: Prisma.LogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        update: {
+          args: Prisma.LogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        deleteMany: {
+          args: Prisma.LogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>[]
+        }
+        upsert: {
+          args: Prisma.LogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LogPayload>
+        }
+        aggregate: {
+          args: Prisma.LogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLog>
+        }
+        groupBy: {
+          args: Prisma.LogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1902,6 +1977,21 @@ export const ProntuarioArquivoScalarFieldEnum = {
 } as const
 
 export type ProntuarioArquivoScalarFieldEnum = (typeof ProntuarioArquivoScalarFieldEnum)[keyof typeof ProntuarioArquivoScalarFieldEnum]
+
+
+export const LogScalarFieldEnum = {
+  id: 'id',
+  tipo: 'tipo',
+  acao: 'acao',
+  descricao: 'descricao',
+  ip: 'ip',
+  user_agent: 'user_agent',
+  sucesso: 'sucesso',
+  data: 'data',
+  id_usuario: 'id_usuario'
+} as const
+
+export type LogScalarFieldEnum = (typeof LogScalarFieldEnum)[keyof typeof LogScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2164,6 +2254,7 @@ export type GlobalOmitConfig = {
   prontuario?: Prisma.ProntuarioOmit
   prontuarioEntrada?: Prisma.ProntuarioEntradaOmit
   prontuarioArquivo?: Prisma.ProntuarioArquivoOmit
+  log?: Prisma.LogOmit
 }
 
 /* Types for Logging */

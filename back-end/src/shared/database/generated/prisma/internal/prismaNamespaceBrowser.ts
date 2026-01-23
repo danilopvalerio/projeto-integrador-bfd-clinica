@@ -67,7 +67,8 @@ export const ModelName = {
   RefreshToken: 'RefreshToken',
   Prontuario: 'Prontuario',
   ProntuarioEntrada: 'ProntuarioEntrada',
-  ProntuarioArquivo: 'ProntuarioArquivo'
+  ProntuarioArquivo: 'ProntuarioArquivo',
+  Log: 'Log'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -271,6 +272,21 @@ export const ProntuarioArquivoScalarFieldEnum = {
 } as const
 
 export type ProntuarioArquivoScalarFieldEnum = (typeof ProntuarioArquivoScalarFieldEnum)[keyof typeof ProntuarioArquivoScalarFieldEnum]
+
+
+export const LogScalarFieldEnum = {
+  id: 'id',
+  tipo: 'tipo',
+  acao: 'acao',
+  descricao: 'descricao',
+  ip: 'ip',
+  user_agent: 'user_agent',
+  sucesso: 'sucesso',
+  data: 'data',
+  id_usuario: 'id_usuario'
+} as const
+
+export type LogScalarFieldEnum = (typeof LogScalarFieldEnum)[keyof typeof LogScalarFieldEnum]
 
 
 export const SortOrder = {
