@@ -5,10 +5,10 @@ import { AppError } from "../../shared/http/middlewares/error.middleware";
 // Validação das variáveis de ambiente
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.error("❌ ERRO: Variáveis do Supabase não configuradas!");
-  console.error("SUPABASE_URL:", process.env.SUPABASE_URL);
+  console.error("SUPABASE_URL: ", process.env.SUPABASE_URL);
   console.error(
     "SUPABASE_SERVICE_ROLE_KEY existe?",
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    !!process.env.SUPABASE_SERVICE_ROLE_KEY,
   );
   throw new Error("Configuração do Supabase incompleta");
 }
@@ -22,7 +22,7 @@ const supabase = createClient(
       persistSession: false,
       detectSessionInUrl: false,
     },
-  }
+  },
 );
 
 console.log("✅ Cliente Supabase inicializado com sucesso");
@@ -53,7 +53,7 @@ export class ArquivoController {
       const bucket = "pacientes-arquivos";
       const fileExt = file.originalname.split(".").pop();
       const fileName = `uploads/${Date.now()}_${Math.round(
-        Math.random() * 1000
+        Math.random() * 1000,
       )}.${fileExt}`;
 
       console.log("🎯 Nome do arquivo gerado:", fileName);

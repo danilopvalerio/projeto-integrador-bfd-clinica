@@ -13,7 +13,6 @@ import routes from "./routes/index";
 import { errorMiddleware } from "./shared/http/middlewares/error.middleware";
 import { apiLimiter } from "./shared/http/middlewares/rateLimit.middleware";
 import helmet from "helmet";
-import logRoutes from "./modules/logs/logRoutes"
 // Inicialização da instância da aplicação Express
 const app = express();
 
@@ -33,7 +32,7 @@ app.use(
   cors({
     origin: ["http://localhost:3000"],
     credentials: true,
-  })
+  }),
 );
 
 // Configuração de Proxy Reverso:
@@ -67,7 +66,6 @@ app.use(cookieParser());
 // Montagem das rotas:
 // Define o prefixo '/api' para todos os endpoints definidos no módulo de rotas.
 app.use("/api", routes);
-app.use("/api", logRoutes)
 
 // =========================================================
 // TRATAMENTO DE ERROS (GLOBAL)

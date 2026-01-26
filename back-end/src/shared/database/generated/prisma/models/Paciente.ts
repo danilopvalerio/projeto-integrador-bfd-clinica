@@ -204,6 +204,7 @@ export type PacienteWhereInput = {
   tags?: Prisma.PacienteTagListRelationFilter
   debitos?: Prisma.PacienteDebitoListRelationFilter
   prontuarios?: Prisma.ProntuarioListRelationFilter
+  agendamentos?: Prisma.AgendamentoListRelationFilter
 }
 
 export type PacienteOrderByWithRelationInput = {
@@ -220,6 +221,7 @@ export type PacienteOrderByWithRelationInput = {
   tags?: Prisma.PacienteTagOrderByRelationAggregateInput
   debitos?: Prisma.PacienteDebitoOrderByRelationAggregateInput
   prontuarios?: Prisma.ProntuarioOrderByRelationAggregateInput
+  agendamentos?: Prisma.AgendamentoOrderByRelationAggregateInput
 }
 
 export type PacienteWhereUniqueInput = Prisma.AtLeast<{
@@ -239,6 +241,7 @@ export type PacienteWhereUniqueInput = Prisma.AtLeast<{
   tags?: Prisma.PacienteTagListRelationFilter
   debitos?: Prisma.PacienteDebitoListRelationFilter
   prontuarios?: Prisma.ProntuarioListRelationFilter
+  agendamentos?: Prisma.AgendamentoListRelationFilter
 }, "id_paciente" | "cpf" | "id_usuario">
 
 export type PacienteOrderByWithAggregationInput = {
@@ -279,6 +282,7 @@ export type PacienteCreateInput = {
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateInput = {
@@ -293,6 +297,7 @@ export type PacienteUncheckedCreateInput = {
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUpdateInput = {
@@ -307,6 +312,7 @@ export type PacienteUpdateInput = {
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateInput = {
@@ -321,6 +327,7 @@ export type PacienteUncheckedUpdateInput = {
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateManyInput = {
@@ -543,6 +550,20 @@ export type PacienteUpdateOneRequiredWithoutProntuariosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PacienteUpdateToOneWithWhereWithoutProntuariosInput, Prisma.PacienteUpdateWithoutProntuariosInput>, Prisma.PacienteUncheckedUpdateWithoutProntuariosInput>
 }
 
+export type PacienteCreateNestedOneWithoutAgendamentosInput = {
+  create?: Prisma.XOR<Prisma.PacienteCreateWithoutAgendamentosInput, Prisma.PacienteUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.PacienteCreateOrConnectWithoutAgendamentosInput
+  connect?: Prisma.PacienteWhereUniqueInput
+}
+
+export type PacienteUpdateOneRequiredWithoutAgendamentosNestedInput = {
+  create?: Prisma.XOR<Prisma.PacienteCreateWithoutAgendamentosInput, Prisma.PacienteUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.PacienteCreateOrConnectWithoutAgendamentosInput
+  upsert?: Prisma.PacienteUpsertWithoutAgendamentosInput
+  connect?: Prisma.PacienteWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PacienteUpdateToOneWithWhereWithoutAgendamentosInput, Prisma.PacienteUpdateWithoutAgendamentosInput>, Prisma.PacienteUncheckedUpdateWithoutAgendamentosInput>
+}
+
 export type PacienteCreateWithoutUsuarioInput = {
   id_paciente?: string
   nome: string
@@ -554,6 +575,7 @@ export type PacienteCreateWithoutUsuarioInput = {
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutUsuarioInput = {
@@ -567,6 +589,7 @@ export type PacienteUncheckedCreateWithoutUsuarioInput = {
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutUsuarioInput = {
@@ -596,6 +619,7 @@ export type PacienteUpdateWithoutUsuarioInput = {
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutUsuarioInput = {
@@ -609,6 +633,7 @@ export type PacienteUncheckedUpdateWithoutUsuarioInput = {
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateWithoutTelefonesInput = {
@@ -622,6 +647,7 @@ export type PacienteCreateWithoutTelefonesInput = {
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutTelefonesInput = {
@@ -635,6 +661,7 @@ export type PacienteUncheckedCreateWithoutTelefonesInput = {
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutTelefonesInput = {
@@ -664,6 +691,7 @@ export type PacienteUpdateWithoutTelefonesInput = {
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutTelefonesInput = {
@@ -677,6 +705,7 @@ export type PacienteUncheckedUpdateWithoutTelefonesInput = {
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateWithoutTagsInput = {
@@ -690,6 +719,7 @@ export type PacienteCreateWithoutTagsInput = {
   telefones?: Prisma.PacienteTelefoneCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutTagsInput = {
@@ -703,6 +733,7 @@ export type PacienteUncheckedCreateWithoutTagsInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutTagsInput = {
@@ -732,6 +763,7 @@ export type PacienteUpdateWithoutTagsInput = {
   telefones?: Prisma.PacienteTelefoneUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutTagsInput = {
@@ -745,6 +777,7 @@ export type PacienteUncheckedUpdateWithoutTagsInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateWithoutDebitosInput = {
@@ -758,6 +791,7 @@ export type PacienteCreateWithoutDebitosInput = {
   telefones?: Prisma.PacienteTelefoneCreateNestedManyWithoutPacienteInput
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutDebitosInput = {
@@ -771,6 +805,7 @@ export type PacienteUncheckedCreateWithoutDebitosInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedCreateNestedManyWithoutPacienteInput
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutDebitosInput = {
@@ -800,6 +835,7 @@ export type PacienteUpdateWithoutDebitosInput = {
   telefones?: Prisma.PacienteTelefoneUpdateManyWithoutPacienteNestedInput
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutDebitosInput = {
@@ -813,6 +849,7 @@ export type PacienteUncheckedUpdateWithoutDebitosInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedUpdateManyWithoutPacienteNestedInput
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateWithoutEnderecoInput = {
@@ -826,6 +863,7 @@ export type PacienteCreateWithoutEnderecoInput = {
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutEnderecoInput = {
@@ -839,6 +877,7 @@ export type PacienteUncheckedCreateWithoutEnderecoInput = {
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
   prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutEnderecoInput = {
@@ -891,6 +930,7 @@ export type PacienteCreateWithoutProntuariosInput = {
   telefones?: Prisma.PacienteTelefoneCreateNestedManyWithoutPacienteInput
   tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteUncheckedCreateWithoutProntuariosInput = {
@@ -904,6 +944,7 @@ export type PacienteUncheckedCreateWithoutProntuariosInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedCreateNestedManyWithoutPacienteInput
   tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
   debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutPacienteInput
 }
 
 export type PacienteCreateOrConnectWithoutProntuariosInput = {
@@ -933,6 +974,7 @@ export type PacienteUpdateWithoutProntuariosInput = {
   telefones?: Prisma.PacienteTelefoneUpdateManyWithoutPacienteNestedInput
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutProntuariosInput = {
@@ -946,6 +988,79 @@ export type PacienteUncheckedUpdateWithoutProntuariosInput = {
   telefones?: Prisma.PacienteTelefoneUncheckedUpdateManyWithoutPacienteNestedInput
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
+}
+
+export type PacienteCreateWithoutAgendamentosInput = {
+  id_paciente?: string
+  nome: string
+  sexo: $Enums.Sexo
+  cpf: string
+  data_nascimento: Date | string
+  usuario: Prisma.UsuarioCreateNestedOneWithoutPacienteInput
+  endereco?: Prisma.EnderecoCreateNestedOneWithoutPacientesInput
+  telefones?: Prisma.PacienteTelefoneCreateNestedManyWithoutPacienteInput
+  tags?: Prisma.PacienteTagCreateNestedManyWithoutPacienteInput
+  debitos?: Prisma.PacienteDebitoCreateNestedManyWithoutPacienteInput
+  prontuarios?: Prisma.ProntuarioCreateNestedManyWithoutPacienteInput
+}
+
+export type PacienteUncheckedCreateWithoutAgendamentosInput = {
+  id_paciente?: string
+  nome: string
+  sexo: $Enums.Sexo
+  cpf: string
+  data_nascimento: Date | string
+  id_usuario: string
+  id_endereco?: string | null
+  telefones?: Prisma.PacienteTelefoneUncheckedCreateNestedManyWithoutPacienteInput
+  tags?: Prisma.PacienteTagUncheckedCreateNestedManyWithoutPacienteInput
+  debitos?: Prisma.PacienteDebitoUncheckedCreateNestedManyWithoutPacienteInput
+  prontuarios?: Prisma.ProntuarioUncheckedCreateNestedManyWithoutPacienteInput
+}
+
+export type PacienteCreateOrConnectWithoutAgendamentosInput = {
+  where: Prisma.PacienteWhereUniqueInput
+  create: Prisma.XOR<Prisma.PacienteCreateWithoutAgendamentosInput, Prisma.PacienteUncheckedCreateWithoutAgendamentosInput>
+}
+
+export type PacienteUpsertWithoutAgendamentosInput = {
+  update: Prisma.XOR<Prisma.PacienteUpdateWithoutAgendamentosInput, Prisma.PacienteUncheckedUpdateWithoutAgendamentosInput>
+  create: Prisma.XOR<Prisma.PacienteCreateWithoutAgendamentosInput, Prisma.PacienteUncheckedCreateWithoutAgendamentosInput>
+  where?: Prisma.PacienteWhereInput
+}
+
+export type PacienteUpdateToOneWithWhereWithoutAgendamentosInput = {
+  where?: Prisma.PacienteWhereInput
+  data: Prisma.XOR<Prisma.PacienteUpdateWithoutAgendamentosInput, Prisma.PacienteUncheckedUpdateWithoutAgendamentosInput>
+}
+
+export type PacienteUpdateWithoutAgendamentosInput = {
+  id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutPacienteNestedInput
+  endereco?: Prisma.EnderecoUpdateOneWithoutPacientesNestedInput
+  telefones?: Prisma.PacienteTelefoneUpdateManyWithoutPacienteNestedInput
+  tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
+  debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
+  prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+}
+
+export type PacienteUncheckedUpdateWithoutAgendamentosInput = {
+  id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  id_endereco?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefones?: Prisma.PacienteTelefoneUncheckedUpdateManyWithoutPacienteNestedInput
+  tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
+  debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
+  prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteCreateManyEnderecoInput = {
@@ -968,6 +1083,7 @@ export type PacienteUpdateWithoutEnderecoInput = {
   tags?: Prisma.PacienteTagUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateWithoutEnderecoInput = {
@@ -981,6 +1097,7 @@ export type PacienteUncheckedUpdateWithoutEnderecoInput = {
   tags?: Prisma.PacienteTagUncheckedUpdateManyWithoutPacienteNestedInput
   debitos?: Prisma.PacienteDebitoUncheckedUpdateManyWithoutPacienteNestedInput
   prontuarios?: Prisma.ProntuarioUncheckedUpdateManyWithoutPacienteNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutPacienteNestedInput
 }
 
 export type PacienteUncheckedUpdateManyWithoutEnderecoInput = {
@@ -1002,6 +1119,7 @@ export type PacienteCountOutputType = {
   tags: number
   debitos: number
   prontuarios: number
+  agendamentos: number
 }
 
 export type PacienteCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1009,6 +1127,7 @@ export type PacienteCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   tags?: boolean | PacienteCountOutputTypeCountTagsArgs
   debitos?: boolean | PacienteCountOutputTypeCountDebitosArgs
   prontuarios?: boolean | PacienteCountOutputTypeCountProntuariosArgs
+  agendamentos?: boolean | PacienteCountOutputTypeCountAgendamentosArgs
 }
 
 /**
@@ -1049,6 +1168,13 @@ export type PacienteCountOutputTypeCountProntuariosArgs<ExtArgs extends runtime.
   where?: Prisma.ProntuarioWhereInput
 }
 
+/**
+ * PacienteCountOutputType without action
+ */
+export type PacienteCountOutputTypeCountAgendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AgendamentoWhereInput
+}
+
 
 export type PacienteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_paciente?: boolean
@@ -1064,6 +1190,7 @@ export type PacienteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tags?: boolean | Prisma.Paciente$tagsArgs<ExtArgs>
   debitos?: boolean | Prisma.Paciente$debitosArgs<ExtArgs>
   prontuarios?: boolean | Prisma.Paciente$prontuariosArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Paciente$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.PacienteCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paciente"]>
 
@@ -1109,6 +1236,7 @@ export type PacienteInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   tags?: boolean | Prisma.Paciente$tagsArgs<ExtArgs>
   debitos?: boolean | Prisma.Paciente$debitosArgs<ExtArgs>
   prontuarios?: boolean | Prisma.Paciente$prontuariosArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Paciente$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.PacienteCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PacienteIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1129,6 +1257,7 @@ export type $PacientePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tags: Prisma.$PacienteTagPayload<ExtArgs>[]
     debitos: Prisma.$PacienteDebitoPayload<ExtArgs>[]
     prontuarios: Prisma.$ProntuarioPayload<ExtArgs>[]
+    agendamentos: Prisma.$AgendamentoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_paciente: string
@@ -1538,6 +1667,7 @@ export interface Prisma__PacienteClient<T, Null = never, ExtArgs extends runtime
   tags<T extends Prisma.Paciente$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paciente$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PacienteTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   debitos<T extends Prisma.Paciente$debitosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paciente$debitosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PacienteDebitoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   prontuarios<T extends Prisma.Paciente$prontuariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paciente$prontuariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProntuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  agendamentos<T extends Prisma.Paciente$agendamentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paciente$agendamentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgendamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2082,6 +2212,30 @@ export type Paciente$prontuariosArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ProntuarioScalarFieldEnum | Prisma.ProntuarioScalarFieldEnum[]
+}
+
+/**
+ * Paciente.agendamentos
+ */
+export type Paciente$agendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Agendamento
+   */
+  select?: Prisma.AgendamentoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Agendamento
+   */
+  omit?: Prisma.AgendamentoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgendamentoInclude<ExtArgs> | null
+  where?: Prisma.AgendamentoWhereInput
+  orderBy?: Prisma.AgendamentoOrderByWithRelationInput | Prisma.AgendamentoOrderByWithRelationInput[]
+  cursor?: Prisma.AgendamentoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AgendamentoScalarFieldEnum | Prisma.AgendamentoScalarFieldEnum[]
 }
 
 /**

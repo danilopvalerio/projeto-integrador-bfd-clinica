@@ -1,4 +1,4 @@
-//src/app/middleware/auth.middleware.ts
+//back-end\src\shared\http\middlewares
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../../utils/jwt";
 import { AppError } from "./error.middleware";
@@ -6,7 +6,7 @@ import { AppError } from "./error.middleware";
 export function authMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const authHeader = req.headers.authorization;
 

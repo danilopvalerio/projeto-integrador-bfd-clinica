@@ -1,4 +1,4 @@
-//src/app/services/ServicoGeneralForm.tsx
+// src/app/services/ServicoGeneralForm.tsx
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,6 @@ import {
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
 
-// Interface local que reflete os dados manipulados neste formulário
 interface ServicoFormData {
   nome: string;
   descricao: string;
@@ -21,10 +20,9 @@ interface ServicoFormData {
 
 interface Props {
   data: ServicoFormData;
-  // CORREÇÃO: Substituído 'any' pelos tipos reais aceitos no formulário
   onChange: (
     field: keyof ServicoFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => void;
   disabled?: boolean;
 }
@@ -38,7 +36,6 @@ const ServicoGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </h6>
       </div>
 
-      {/* Nome */}
       <div className="col-12">
         <label className="form-label small text-muted fw-bold">
           Nome do Serviço
@@ -59,7 +56,6 @@ const ServicoGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* Duração */}
       <div className="col-md-6">
         <label className="form-label small text-muted fw-bold">
           Duração (minutos)
@@ -81,7 +77,6 @@ const ServicoGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* Preço */}
       <div className="col-md-6">
         <label className="form-label small text-muted fw-bold">
           Preço (R$)
@@ -104,7 +99,6 @@ const ServicoGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* Descrição */}
       <div className="col-12">
         <label className="form-label small text-muted fw-bold">Descrição</label>
         <div className="position-relative">
@@ -123,7 +117,6 @@ const ServicoGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* Configurações (Switches) */}
       <div className="col-12 mt-3">
         <div className="d-flex gap-4">
           <div className="form-check form-switch">

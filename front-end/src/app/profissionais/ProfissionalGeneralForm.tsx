@@ -15,7 +15,8 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
       <div className="col-md-6">
         <label className="form-label fw-bold">Nome</label>
         <input
-          className="form-control rounded-pill"
+          className="form-control rounded-pill shadow-none"
+          style={{ boxShadow: "none" }}
           placeholder="Nome completo"
           value={value.nome ?? ""}
           onChange={(e) => onChange({ ...value, nome: e.target.value })}
@@ -27,7 +28,8 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
       <div className="col-md-6">
         <label className="form-label fw-bold">CPF</label>
         <input
-          className="form-control rounded-pill"
+          className="form-control rounded-pill shadow-none"
+          style={{ boxShadow: "none" }}
           placeholder="CPF"
           value={value.cpf ?? ""}
           onChange={(e) => onChange({ ...value, cpf: e.target.value })}
@@ -40,7 +42,8 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
       <div className="col-md-6">
         <label className="form-label fw-bold">Registro do Conselho</label>
         <input
-          className="form-control rounded-pill"
+          className="form-control rounded-pill shadow-none"
+          style={{ boxShadow: "none" }}
           placeholder="CRM, CRO, etc."
           value={value.registro_conselho ?? ""}
           onChange={(e) =>
@@ -56,7 +59,8 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
           <div className="col-md-6">
             <label className="form-label fw-bold">E-mail do Usuário</label>
             <input
-              className="form-control rounded-pill"
+              className="form-control rounded-pill shadow-none"
+              style={{ boxShadow: "none" }}
               placeholder="email@dominio.com"
               value={value.email ?? ""}
               onChange={(e) => onChange({ ...value, email: e.target.value })}
@@ -67,7 +71,8 @@ const ProfissionalGeneralForm = ({ value, onChange, mode }: Props) => {
           <div className="col-md-6">
             <label className="form-label fw-bold">Senha do Usuário</label>
             <input
-              className="form-control rounded-pill"
+              className="form-control rounded-pill shadow-none"
+              style={{ boxShadow: "none" }}
               placeholder="Senha"
               type="password"
               value={value.senha ?? ""}

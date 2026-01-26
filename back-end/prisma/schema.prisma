@@ -47,6 +47,7 @@ model Paciente {
   tags        PacienteTag[]
   debitos     PacienteDebito[]
   prontuarios Prontuario[]
+  agendamentos Agendamento[]
 
   @@map("pacientes")
 }
@@ -103,6 +104,7 @@ model Profissional {
   especialidades Profissional_Especialidade[]
   servicos       ProfissionalServico[]
   prontuarios    ProntuarioEntrada[]
+  agendamentos Agendamento[]
 
   @@map("profissionais")
 }
@@ -163,6 +165,7 @@ model Servico {
   preco_visivel_paciente Boolean @default(true)
 
   profissionais ProfissionalServico[]
+  agendamentos AgendamentoServico[]
 
   @@map("servicos")
 }
@@ -274,9 +277,51 @@ model Log {
   user_agent String?
   sucesso    Boolean
   data       DateTime @default(now())
-
+  dados      Json?
   id_usuario String?
   usuario    Usuario? @relation(fields: [id_usuario], references: [id_usuario], onDelete: SetNull)
 
   @@map("logs")
+}
+
+// Adicione ao seu schema.prisma
+
+enum StatusAgendamento {
+  CONFIRMADO
+  PENDENTE
+  CANCELADO
+  CONCLUIDO
+  NAO_COMPARECEU
+}
+
+model Agendamento {
+  id_agendamento   String            @id @default(uuid())
+  id_paciente      String
+  id_profissional  String
+  data_hora_inicio DateTime          @db.Timestamp
+  data_hora_fim    DateTime          @db.Timestamp
+  status           StatusAgendamento @default(PENDENTE)
+  observacoes      String?           @db.Text
+  criado_em        DateTime          @default(now())
+  atualizado_em    DateTime          @updatedAt
+
+  paciente     Paciente              @relation(fields: [id_paciente], references: [id_paciente], onDelete: Cascade)
+  profissional Profissional          @relation(fields: [id_profissional], references: [id_profissional], onDelete: Cascade)
+  servicos     AgendamentoServico[]
+
+  @@map("agendamentos")
+}
+
+model AgendamentoServico {
+  id_agendamento String
+  id_servico     String
+  ordem          Int     @default(0) // Ordem de execução dos serviços
+  preco_cobrado  Float   // Preço no momento do agendamento (pode ser diferente do atual)
+  observacao     String? @db.Text
+
+  agendamento Agendamento @relation(fields: [id_agendamento], references: [id_agendamento], onDelete: Cascade)
+  servico     Servico     @relation(fields: [id_servico], references: [id_servico], onDelete: Restrict)
+
+  @@id([id_agendamento, id_servico])
+  @@map("agendamento_servicos")
 }

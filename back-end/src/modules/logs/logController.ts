@@ -1,22 +1,30 @@
 import { Request, Response } from "express";
-import { LogRepository } from "./logRepository";
+import { LogService } from "./logService";
 
 export class LogController {
-  async index(req: Request, res: Response) {
+  constructor(private logService: LogService) {}
+
+  findAll = async (req: Request, res: Response) => {
+    const logs = await this.logService.findAll();
+    return res.json(logs);
+  };
+
+  listPaginated = async (req: Request, res: Response) => {
     const page = Number(req.query.page) || 1;
-    const perPage = Number(req.query.perPage) || 5;
+    const limit = Number(req.query.limit) || 10;
 
-    const repo = new LogRepository();
+    const result = await this.logService.listPaginated(page, limit);
+    return res.json(result);
+  };
 
-    const { data, total } = await repo.findAll({
-      page,
-      perPage,
-    });
+  searchPaginated = async (req: Request, res: Response) => {
+    const { q, page, limit } = req.query;
 
-    return res.json({
-      data,
-      page,
-      totalPages: Math.ceil(total / perPage),
-    });
-  }
+    const result = await this.logService.searchPaginated(
+      String(q || ""),
+      Number(page) || 1,
+      Number(limit) || 10,
+    );
+    return res.json(result);
+  };
 }

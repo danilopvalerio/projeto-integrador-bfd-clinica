@@ -8,6 +8,38 @@ export class EspecialidadeController {
     const especialidade = await this.especialidadeService.create(req.body);
     return res.status(201).json(especialidade);
   };
+  listProfissionaisPaginated = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
+    const { id } = req.params; // Lembre-se: na rota você define se é :id ou :id_especialidade
+    const { page = 1, limit = 5 } = req.query;
+
+    const result = await this.especialidadeService.listProfissionaisPaginated(
+      id,
+      Number(page),
+      Number(limit),
+    );
+
+    return res.json(result);
+  };
+
+  searchProfissionaisPaginated = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
+    const { id } = req.params;
+    const { q = "", page = 1, limit = 5 } = req.query;
+
+    const result = await this.especialidadeService.searchProfissionaisPaginated(
+      id,
+      String(q),
+      Number(page),
+      Number(limit),
+    );
+
+    return res.json(result);
+  };
 
   findAll = async (_req: Request, res: Response): Promise<Response> => {
     const especialidades = await this.especialidadeService.findAll();
@@ -58,42 +90,32 @@ export class EspecialidadeController {
   //profissionais
   listProfissionais = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response> => {
     const { id } = req.params;
 
-    const profissionais =
-      await this.especialidadeService.listProfissionais(id);
+    const profissionais = await this.especialidadeService.listProfissionais(id);
 
     return res.json(profissionais);
   };
 
-  addProfissional = async (
-    req: Request,
-    res: Response
-  ): Promise<Response> => {
+  addProfissional = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     const { id_profissional } = req.body;
 
-    await this.especialidadeService.addProfissional(
-      id,
-      id_profissional
-    );
+    await this.especialidadeService.addProfissional(id, id_profissional);
 
     return res.status(201).send();
   };
 
   removeProfissional = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response> => {
     const { id } = req.params;
     const { id_profissional } = req.body;
 
-    await this.especialidadeService.removeProfissional(
-      id,
-      id_profissional
-    );
+    await this.especialidadeService.removeProfissional(id, id_profissional);
 
     return res.status(204).send();
   };

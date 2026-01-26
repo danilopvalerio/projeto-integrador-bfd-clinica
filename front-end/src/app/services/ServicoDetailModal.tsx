@@ -1,4 +1,4 @@
-//src/app/services/ServicoDetailModal.tsx
+// src/app/services/ServicoDetailModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,8 +7,6 @@ import { getErrorMessage } from "../../utils/errorUtils";
 import { ServicoDetail, UpdateServicoPayload } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-
-// Sub-componentes
 import ServicoGeneralForm from "./ServicoGeneralForm";
 import ServicoProfissionaisList from "./ServicoProfissionaisList";
 
@@ -18,8 +16,6 @@ interface Props {
   onSuccess: () => void;
 }
 
-// Interface local para o estado do formulário
-// (Sem id_especialidade)
 interface LocalFormData {
   nome: string;
   descricao: string;
@@ -35,7 +31,6 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Estado inicial limpo (sem especialidade)
   const [formData, setFormData] = useState<LocalFormData>({
     nome: "",
     descricao: "",
@@ -53,11 +48,9 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Carregar Dados
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // CORREÇÃO: Rota atualizada para /services
         const res = await api.get<ServicoDetail>(`/services/${servicoId}`);
         const data = res.data;
 
@@ -66,7 +59,6 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
           descricao: data.descricao || "",
           preco: data.preco,
           duracao_estimada: data.duracao_estimada,
-          // REMOVIDO: id_especialidade
           ativo: data.ativo,
           preco_visivel_paciente: data.preco_visivel_paciente,
         });
@@ -81,7 +73,7 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
 
   const handleChange = (
     field: keyof LocalFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -97,10 +89,8 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
         ...formData,
         preco: Number(formData.preco),
         duracao_estimada: Number(formData.duracao_estimada),
-        // id_especialidade não é enviado aqui
       };
 
-      // CORREÇÃO: Rota atualizada para /services
       await api.patch(`/services/${servicoId}`, payload);
 
       setSuccessMsg("Serviço atualizado com sucesso!");
@@ -115,13 +105,12 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
   const handleDelete = async () => {
     if (
       !confirm(
-        "Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita."
+        "Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.",
       )
     )
       return;
     try {
       setSaving(true);
-      // CORREÇÃO: Rota atualizada para /services
       await api.delete(`/services/${servicoId}`);
       onSuccess();
     } catch (err) {
@@ -183,7 +172,6 @@ const ServicoDetailModal = ({ servicoId, onClose, onSuccess }: Props) => {
                 disabled={saving}
               />
 
-              {/* Lista de Profissionais (Assumindo que este componente lida com sua própria lógica de fetch/update interna ou via props, a rota dele também deve ser verificada internamente se ele fizer chamadas de API) */}
               <ServicoProfissionaisList servicoId={servicoId} />
 
               <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">

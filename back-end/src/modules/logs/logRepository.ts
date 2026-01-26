@@ -1,94 +1,95 @@
 import { prisma } from "../../shared/database/prisma";
-
-
-export interface CreateLogDTO {
-  acao: string;
-  tipo?: string;
-  ip?: string;
-  user_agent?: string;
-  sucesso: boolean;
-  id_usuario?: string;
-  data?: Date;
-}
+import { Log } from "../../shared/database/generated/prisma/client";
 
 export class LogRepository {
-  async create(data: CreateLogDTO) {
-    return prisma.log.create({
-      data: {
-        ...data,
-        tipo: data.tipo || "ACESSO",
-        data: data.data || new Date(),
+  // Configuração padrão de include para trazer nomes
+  private includeConfig = {
+    usuario: {
+      select: {
+        id_usuario: true,
+        email: true,
+        tipo_usuario: true, // ou 'tipo'
+        // Traz as relações para sabermos o nome real da pessoa
+        paciente: { select: { nome: true } },
+        profissional: { select: { nome: true } },
       },
+    },
+  };
+
+  async findAll(): Promise<Log[]> {
+    return prisma.log.findMany({
+      orderBy: { data: "desc" },
+      include: this.includeConfig,
     });
   }
 
-  async findAll({
-    page = 1,
-    perPage = 5,
-  }: {
-    page?: number;
-    perPage?: number;
-  }) {
-    const skip = (page - 1) * perPage;
-
-    const [data, total] = await Promise.all([
+  async listPaginated(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const [total, data] = await Promise.all([
+      prisma.log.count(),
       prisma.log.findMany({
         skip,
-        take: perPage,
+        take: limit,
         orderBy: { data: "desc" },
+        include: this.includeConfig,
       }),
-      prisma.log.count(),
     ]);
 
     return {
       data,
-      page,
-      perPage,
       total,
-      totalPages: Math.ceil(total / perPage),
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
     };
   }
 
-  async findBySearch({
-    term,
-    page = 1,
-    perPage = 5,
-  }: {
-    term: string;
-    page?: number;
-    perPage?: number;
-  }) {
-    const skip = (page - 1) * perPage;
+  async searchPaginated(term: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    // Busca em múltiplos campos e tabelas relacionadas
+    const whereClause = {
+      OR: [
+        { acao: { contains: term, mode: "insensitive" } },
+        { tipo: { contains: term, mode: "insensitive" } },
+        { descricao: { contains: term, mode: "insensitive" } },
+        // Busca no email do usuário associado
+        { usuario: { email: { contains: term, mode: "insensitive" } } },
+        // Busca no nome do Paciente associado ao usuário
+        {
+          usuario: {
+            paciente: { nome: { contains: term, mode: "insensitive" } },
+          },
+        },
+        // Busca no nome do Profissional associado ao usuário
+        {
+          usuario: {
+            profissional: { nome: { contains: term, mode: "insensitive" } },
+          },
+        },
+      ],
+    };
+
+    // @ts-ignore
+    const [total, data] = await Promise.all([
+      // @ts-ignore
+      prisma.log.count({ where: whereClause }),
       prisma.log.findMany({
-        where: {
-          OR: [
-            { acao: { contains: term, mode: "insensitive" } },
-            { tipo: { contains: term, mode: "insensitive" } },
-            { ip: { contains: term, mode: "insensitive" } },
-          ],
-        },
+        // @ts-ignore
+        where: whereClause,
         skip,
-        take: perPage,
+        take: limit,
         orderBy: { data: "desc" },
-      }),
-      prisma.log.count({
-        where: {
-          OR: [
-            { acao: { contains: term, mode: "insensitive" } },
-            { tipo: { contains: term, mode: "insensitive" } },
-            { ip: { contains: term, mode: "insensitive" } },
-          ],
-        },
+        include: this.includeConfig,
       }),
     ]);
 
     return {
       data,
+      total,
       page,
-      perPage,
-      totalPages: Math.ceil(total / perPage),
+      limit,
+      lastPage: Math.ceil(total / limit),
     };
   }
 }

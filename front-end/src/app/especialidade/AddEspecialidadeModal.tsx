@@ -3,7 +3,6 @@
 import { useState } from "react";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
-
 import EspecialidadeGeneralForm from "./EspecialidadeGeneralForm";
 import { CreateEspecialidadePayload } from "./types";
 
@@ -39,7 +38,6 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
         nome: formData.nome,
         descricao: formData.descricao || "",
       };
-
       await api.post("/specialities", payload);
       onSuccess();
     } catch (err) {
@@ -67,9 +65,9 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
             </h5>
             <button
               type="button"
-              className="btn-close"
+              className="btn-close shadow-none"
               onClick={onClose}
-            ></button>
+            />
           </div>
 
           <div className="modal-body p-4 pt-2">
@@ -89,7 +87,8 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
               <div className="d-flex justify-content-end mt-4 pt-3 border-top gap-2">
                 <button
                   type="button"
-                  className="btn btn-link"
+                  className="btn btn-link text-decoration-none text-secondary shadow-none"
+                  style={{ boxShadow: "none" }}
                   onClick={onClose}
                   disabled={loading}
                 >
@@ -97,7 +96,8 @@ const AddEspecialidadeModal = ({ onClose, onSuccess }: Props) => {
                 </button>
                 <button
                   type="submit"
-                  className="button-dark-grey px-4 py-2 rounded-pill"
+                  className="button-dark-grey px-4 py-2 rounded-pill shadow-none"
+                  style={{ boxShadow: "none" }}
                   disabled={loading}
                 >
                   {loading ? "Salvando..." : "Criar Especialidade"}

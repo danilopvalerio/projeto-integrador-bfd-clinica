@@ -1,28 +1,17 @@
-import { LogRepository, CreateLogDTO } from "./logRepository";
+import { LogRepository } from "./logRepository";
 
 export class LogService {
-  constructor(private repo = new LogRepository()) {}
+  constructor(private logRepository: LogRepository) {}
 
-  // LOG GENÉRICO
-  async createLog(data: CreateLogDTO) {
-    await this.repo.create(data);
+  async findAll() {
+    return this.logRepository.findAll();
   }
 
-
-  async logAcesso(data: Omit<CreateLogDTO, "tipo">) {
-    await this.repo.create({
-      ...data,
-      tipo: "ACESSO",
-    });
+  async listPaginated(page: number, limit: number) {
+    return this.logRepository.listPaginated(page, limit);
   }
 
-  // BUSCAR LOGS POR PAGINA
-  async getLogs(page = 1, perPage = 5) {
-    return this.repo.findAll({ page, perPage });
-  }
-
-  // BUSCAR LOGS POR TERMO
-  async searchLogs(term: string, page = 1, perPage = 5) {
-    return this.repo.findBySearch({ term, page, perPage });
+  async searchPaginated(term: string, page: number, limit: number) {
+    return this.logRepository.searchPaginated(term, page, limit);
   }
 }

@@ -12,8 +12,8 @@ export interface LogEntity {
   sucesso?: boolean;
   detalhes?: string;
   data: Date;
+  dados?: JSON;
 }
-
 
 export interface CreateLogDTO {
   tipo: LogTipo;

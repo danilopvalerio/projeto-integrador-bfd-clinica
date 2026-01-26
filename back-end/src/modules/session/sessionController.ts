@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { SessionService } from "./sessionService";
 import { LoginDTO } from "./sessionDTO";
-import { LogService } from "../logs/logService"; 
+import { LogService } from "../logs/logService";
 import { AppError } from "../../shared/http/middlewares/error.middleware";
-
 
 // Validação simples inline (idealmente mover para utils)
 const isValidEmail = (email: string) =>
@@ -18,7 +17,10 @@ const COOKIE_OPTIONS = {
 };
 
 export class SessionController {
-  constructor(private sessionService: SessionService,  private logService: LogService) {}
+  constructor(
+    private sessionService: SessionService,
+    private logService: LogService,
+  ) {}
 
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -43,18 +45,8 @@ export class SessionController {
       const result = await this.sessionService.authenticate(
         body,
         String(ip),
-        userAgent
+        userAgent,
       );
-
-      //LOG DE ACESSO
-      await this.logService.logAcesso({
-        id_usuario: result.user.id,
-        acao: "LOGIN",
-        ip: String(ip),
-        user_agent: String(userAgent),
-        sucesso: true,
-      });
-
 
       res.cookie("refreshToken", result.refreshToken, COOKIE_OPTIONS);
 
@@ -87,19 +79,6 @@ export class SessionController {
       if (refreshToken) {
         await this.sessionService.logout(refreshToken);
       }
-
-      const rawIp =
-        req.headers["x-forwarded-for"] || req.socket.remoteAddress || "";
-      const ip = Array.isArray(rawIp) ? rawIp[0] : rawIp;
-      const userAgent = req.headers["user-agent"] || "Desconhecido";
-
-      //LOG DE ACESSO
-      await this.logService.logAcesso({
-        acao: "LOGOUT",
-        ip: String(ip),
-        user_agent: String(userAgent),
-        sucesso: true,
-      });
 
       res.clearCookie("refreshToken", COOKIE_OPTIONS);
       return res.status(204).send();

@@ -1,7 +1,7 @@
-//src/app/services/page.tsx
+// src/app/services/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,8 +14,6 @@ import {
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { ServicoSummary } from "./types";
-
-// Importação dos Componentes da Feature
 import ServicoCard from "./ServicoCard";
 import AddServicoModal from "./AddServicoModal";
 import ServicoDetailModal from "./ServicoDetailModal";
@@ -24,44 +22,27 @@ const LIMIT = 6;
 
 const ServicosPage = () => {
   const router = useRouter();
-
-  // Estados de Dados
   const [servicos, setServicos] = useState<ServicoSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Paginação e Busca
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedServicoId, setSelectedServicoId] = useState<string | null>(
-    null
+    null,
   );
 
-  // Auth simples
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) router.push("/login");
-    else fetchServicos(1);
-  }, [router]);
-
-  const fetchServicos = async (page = 1, term = "") => {
+  const fetchServicos = useCallback(async (page = 1, term = "") => {
     setLoading(true);
     setError("");
     try {
       let url = `/services/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
-        url = `/services/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+        url = `/services/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
 
       const response = await api.get(url);
-
-      // Adaptando para a estrutura retornada pelo RepositoryPaginatedResult
       setServicos(response.data.data);
       setCurrentPage(response.data.page);
       setTotalPages(response.data.lastPage);
@@ -70,7 +51,16 @@ const ServicosPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      router.push("/login");
+    } else {
+      fetchServicos(1);
+    }
+  }, [router, fetchServicos]);
 
   const handleSearch = () => fetchServicos(1, searchTerm);
 
@@ -90,7 +80,6 @@ const ServicosPage = () => {
       className="d-flex flex-column min-vh-100"
       style={{ background: "#e9e9e9" }}
     >
-      {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
         <button
           className="btn btn-link text-white p-0 me-3"
@@ -103,7 +92,6 @@ const ServicosPage = () => {
 
       <div className="container my-5 flex-grow-1">
         <div className="bg-white border rounded-4 shadow-sm overflow-hidden">
-          {/* Banner Interno */}
           <div className="bg-gradient-vl p-4 text-center text-white">
             <h3 className="fw-bold m-0">Catálogo de Serviços</h3>
             <p className="opacity-75 small m-0 mt-1">
@@ -112,7 +100,6 @@ const ServicosPage = () => {
           </div>
 
           <div className="p-4">
-            {/* Toolbar */}
             <div className="row g-3 mb-4 align-items-end">
               <div className="col-md-6">
                 <div className="position-relative">
@@ -158,14 +145,12 @@ const ServicosPage = () => {
               </div>
             </div>
 
-            {/* Error Feedback */}
             {error && (
               <div className="alert alert-danger text-center border-0 bg-danger bg-opacity-10 text-danger rounded-3">
                 {error}
               </div>
             )}
 
-            {/* Grid de Cards */}
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
@@ -184,7 +169,6 @@ const ServicosPage = () => {
                   ))}
                 </div>
 
-                {/* Paginação */}
                 <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
@@ -219,7 +203,6 @@ const ServicosPage = () => {
         </div>
       </div>
 
-      {/* Modais */}
       {isAddModalOpen && (
         <AddServicoModal
           onClose={() => setIsAddModalOpen(false)}

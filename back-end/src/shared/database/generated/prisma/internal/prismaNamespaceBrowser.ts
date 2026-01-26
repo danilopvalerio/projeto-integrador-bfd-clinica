@@ -68,7 +68,9 @@ export const ModelName = {
   Prontuario: 'Prontuario',
   ProntuarioEntrada: 'ProntuarioEntrada',
   ProntuarioArquivo: 'ProntuarioArquivo',
-  Log: 'Log'
+  Log: 'Log',
+  Agendamento: 'Agendamento',
+  AgendamentoServico: 'AgendamentoServico'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -283,10 +285,37 @@ export const LogScalarFieldEnum = {
   user_agent: 'user_agent',
   sucesso: 'sucesso',
   data: 'data',
+  dados: 'dados',
   id_usuario: 'id_usuario'
 } as const
 
 export type LogScalarFieldEnum = (typeof LogScalarFieldEnum)[keyof typeof LogScalarFieldEnum]
+
+
+export const AgendamentoScalarFieldEnum = {
+  id_agendamento: 'id_agendamento',
+  id_paciente: 'id_paciente',
+  id_profissional: 'id_profissional',
+  data_hora_inicio: 'data_hora_inicio',
+  data_hora_fim: 'data_hora_fim',
+  status: 'status',
+  observacoes: 'observacoes',
+  criado_em: 'criado_em',
+  atualizado_em: 'atualizado_em'
+} as const
+
+export type AgendamentoScalarFieldEnum = (typeof AgendamentoScalarFieldEnum)[keyof typeof AgendamentoScalarFieldEnum]
+
+
+export const AgendamentoServicoScalarFieldEnum = {
+  id_agendamento: 'id_agendamento',
+  id_servico: 'id_servico',
+  ordem: 'ordem',
+  preco_cobrado: 'preco_cobrado',
+  observacao: 'observacao'
+} as const
+
+export type AgendamentoServicoScalarFieldEnum = (typeof AgendamentoServicoScalarFieldEnum)[keyof typeof AgendamentoServicoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -295,6 +324,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -311,4 +348,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

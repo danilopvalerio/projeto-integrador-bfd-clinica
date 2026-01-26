@@ -12,7 +12,7 @@ import {
 } from "./pacienteDTO";
 import { AppError } from "../../shared/http/middlewares/error.middleware";
 import { prisma } from "../../shared/database/prisma";
-import { PacienteDebito } from "@/shared/database/generated/prisma/client";
+import { hash } from "bcryptjs";
 
 export class PacienteService {
   constructor(private repository: IPacienteRepository) {}
@@ -91,7 +91,33 @@ export class PacienteService {
   }
 
   async update(id: string, data: UpdatePacienteDTO): Promise<PacienteEntity> {
-    await this.getById(id);
+    // 1. Busca o paciente atual para garantir que existe e pegar o ID do usuário
+    const pacienteAtual = await this.repository.findById(id);
+    if (!pacienteAtual) throw new AppError("Paciente não encontrado", 404);
+
+    // 2. Validações de E-mail (Se foi enviado um novo e-mail)
+    if (data.usuario?.email) {
+      // Verifica se o email já está em uso por OUTRO usuário (não o atual)
+      // Você precisará de um método no user repository ou fazer uma query direta
+      const emailEmUso = await prisma.usuario.findFirst({
+        where: {
+          email: data.usuario.email,
+          NOT: { id_usuario: pacienteAtual.id_usuario }, // Ignora o próprio usuário
+        },
+      });
+
+      if (emailEmUso) {
+        throw new AppError("Este e-mail já está sendo utilizado.", 409);
+      }
+    }
+
+    // 3. Criptografia da Senha (Se foi enviada uma nova senha)
+    if (data.usuario?.senha) {
+      const hashedPassword = await hash(data.usuario.senha, 8);
+      data.usuario.senha = hashedPassword; // Substitui a senha plana pelo hash
+    }
+
+    // 4. Chama o repositório
     return await this.repository.update(id, data);
   }
 

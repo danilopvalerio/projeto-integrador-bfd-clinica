@@ -19,11 +19,11 @@ const processQueue = (error: unknown, token: string | null = null) => {
 };
 
 const api = axios.create({
-  baseURL: "http://localhost:3333/api", // Ajuste se sua porta for diferente
-  withCredentials: true, // Importante para enviar/receber Cookies (RefreshToken)
+  baseURL: "http://localhost:3333/api",
+  withCredentials: true,
 });
 
-// Interceptor de Requisição: Adiciona o Token se existir
+// Interceptor de Requisição
 api.interceptors.request.use((config) => {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
@@ -34,7 +34,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor de Resposta: Trata o erro 401
+// Interceptor de Resposta
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -42,9 +42,7 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // --- CORREÇÃO AQUI ---
-    // Se o erro for 401 E a URL for a de login, NÃO tente dar refresh.
-    // Apenas rejeite o erro para que o LoginForm exiba "Senha incorreta".
+    // 1. Ignorar erro 401 na rota de Login (deixa o form tratar "Senha incorreta")
     if (
       error.response?.status === 401 &&
       originalRequest.url?.includes("/sessions/login")
@@ -52,10 +50,18 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Se der 401 em outras rotas, tenta renovar o token
+    // 2. Tratamento de Token Expirado
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Log bonito avisando que o token expirou
+      console.groupCollapsed("🔒 Autenticação: Token Expirado");
+      console.warn("Recebido 401. Iniciando processo de refresh token...");
+
       if (isRefreshing) {
-        // Se já está renovando, coloca na fila
+        console.info(
+          "⏳ Já existe um refresh em andamento. Colocando requisição na fila...",
+        );
+        console.groupEnd();
+
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
@@ -73,25 +79,29 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Tenta pegar novo token
+        console.info("🔄 Solicitando novo token ao servidor...");
+
         const response = await api.post("/sessions/refresh");
         const { accessToken } = response.data;
 
         localStorage.setItem("accessToken", accessToken);
-
-        // Configura o header padrão para as próximas chamadas
         api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
-        // Processa a fila de requisições pausadas
+        console.log("✅ Token renovado com sucesso!");
+        console.log(
+          `📤 Reenviando ${failedQueue.length + 1} requisições pendentes...`,
+        );
+
         processQueue(null, accessToken);
 
+        console.groupEnd(); // Fecha o grupo do console
         return api(originalRequest);
       } catch (refreshError) {
-        // Se o refresh falhar (refresh token expirado ou inválido)
-        processQueue(refreshError, null);
+        console.error("❌ Falha ao renovar token. Sessão expirada.");
+        console.groupEnd();
 
-        // Limpa tudo e redireciona pro login
+        processQueue(refreshError, null);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
 
@@ -109,7 +119,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

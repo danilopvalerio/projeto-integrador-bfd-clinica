@@ -13,9 +13,14 @@ import {
   ProntuarioArquivoEntity,
   AddArquivoEntradaDTO,
   TipoEntradaProntuario,
-  TipoArquivoProntuario,
 } from "./pacienteDTO";
 import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
+
+import {
+  Prisma,
+  Sexo, // Enum do Prisma
+  TipoArquivoProntuario, // Enum do Prisma
+} from "../../shared/database/generated/prisma/client";
 
 export class PacienteRepository implements IPacienteRepository {
   // ================= CRUD BASE =================
@@ -90,46 +95,62 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async update(id: string, data: UpdatePacienteDTO): Promise<PacienteEntity> {
-    // Iniciamos uma transação para garantir integridade
     return await prisma.$transaction(async (tx) => {
-      // 1. Prepara o objeto de update dos dados básicos
-      const updateData: any = {
+      // 1. Tipagem Forte: Usamos o tipo gerado pelo Prisma
+      const updateData: Prisma.PacienteUpdateInput = {
         nome: data.nome,
-        sexo: data.sexo ? (data.sexo as any) : undefined,
         data_nascimento: data.data_nascimento,
         cpf: data.cpf,
       };
 
-      // 2. Lógica para Endereço (Upsert: Atualiza se existe, cria se não existe)
+      // Cast seguro para o Enum do Prisma se o valor existir
+      if (data.sexo) {
+        updateData.sexo = data.sexo as Sexo;
+      }
+
+      // 2. Lógica do Usuário (Nested Update tipado)
+      if (data.usuario) {
+        updateData.usuario = {
+          update: {
+            email: data.usuario.email,
+            senha_hash: data.usuario.senha,
+          },
+        };
+      }
+
+      // 3. Lógica Endereço
       if (data.endereco) {
         updateData.endereco = {
           upsert: {
-            create: { ...data.endereco },
+            // No CREATE, não podemos aceitar undefined.
+            // Usamos '?? ""' para garantir que seja uma string caso venha nulo.
+            create: {
+              rua: data.endereco.rua ?? "",
+              cidade: data.endereco.cidade ?? "",
+              estado: data.endereco.estado ?? "",
+              numero: data.endereco.numero ?? null,
+            },
             update: { ...data.endereco },
           },
         };
       }
 
-      // 3. Lógica para Telefones (Strategy: Replace)
+      // 4. Lógica Telefones (Manual pois o Prisma não tem 'Replace' nativo para One-to-Many puro)
       if (data.telefones) {
-        // Remove os antigos
-        await tx.pacienteTelefone.deleteMany({
-          where: { id_paciente: id },
-        });
+        await tx.pacienteTelefone.deleteMany({ where: { id_paciente: id } });
 
-        // Cria os novos, se houver
         if (data.telefones.length > 0) {
           await tx.pacienteTelefone.createMany({
             data: data.telefones.map((tel, index) => ({
               id_paciente: id,
-              telefone: tel, // <--- CORRIGIDO: alterado de 'numero' para 'telefone'
+              telefone: tel,
               principal: index === 0,
             })),
           });
         }
       }
 
-      // 4. Executa o update final no Paciente
+      // 5. Executa o update final
       const pacienteAtualizado = await tx.paciente.update({
         where: { id_paciente: id },
         data: updateData,

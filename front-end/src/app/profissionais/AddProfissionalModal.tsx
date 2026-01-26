@@ -44,7 +44,9 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
       const senha = formData.senha ?? "";
 
       if (!email) {
-        throw new Error("Informe um e-mail para criar o usuário automaticamente.");
+        throw new Error(
+          "Informe um e-mail para criar o usuário automaticamente.",
+        );
       }
       if (!senha) {
         throw new Error("Informe uma senha para o usuário.");
@@ -86,7 +88,11 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
           {/* Header */}
           <div className="modal-header bg-gradient-vl text-white rounded-top-4">
             <h5 className="modal-title fw-bold">Novo Profissional</h5>
-            <button className="btn btn-link text-white" onClick={onClose}>
+            <button
+              className="btn btn-link text-white shadow-none"
+              onClick={onClose}
+              style={{ boxShadow: "none" }}
+            >
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
@@ -109,7 +115,8 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
           {/* Footer */}
           <div className="modal-footer border-0 p-4 pt-0">
             <button
-              className="btn btn-outline-secondary rounded-pill px-4 fw-bold"
+              className="btn btn-outline-secondary rounded-pill px-4 fw-bold shadow-none"
+              style={{ boxShadow: "none" }}
               onClick={onClose}
               disabled={loading}
             >
@@ -117,7 +124,8 @@ const AddProfissionalModal = ({ onClose, onSuccess }: Props) => {
             </button>
 
             <button
-              className="button-dark-grey rounded-pill px-4 fw-bold shadow-sm"
+              className="button-dark-grey rounded-pill px-4 fw-bold shadow-sm shadow-none"
+              style={{ boxShadow: "none" }}
               onClick={handleSubmit}
               disabled={loading}
             >

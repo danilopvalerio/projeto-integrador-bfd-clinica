@@ -1,3 +1,5 @@
+// src/app/patient/[id]/PacienteGeneralForm.tsx
+
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,30 +12,23 @@ import {
   faPhone,
   faCity,
   faMobileAlt,
-  faEnvelope,
-  faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import { Sexo } from "./types";
 
-// Interface atualizada contendo os campos de acesso
 export interface PacienteFormData {
   nome: string;
   cpf: string;
-  sexo: Sexo | "";
+  sexo: Sexo; // ou string, dependendo de como está lá
   data_nascimento: string;
-
-  // Endereço
   rua: string;
   numero: string;
   cidade: string;
   estado: string;
-
-  // Telefones
   telefonePrincipal: string;
   telefoneSecundario: string;
 
-  // Acesso (Novo: Usuário/Login)
-  email: string;
+  // MARQUE COMO OPCIONAL
+  email?: string;
   senha?: string;
 }
 
@@ -44,15 +39,10 @@ interface Props {
   isEditing?: boolean;
 }
 
-const PacienteGeneralForm = ({
-  data,
-  onChange,
-  disabled = false,
-  isEditing = false,
-}: Props) => {
+const PacienteGeneralForm = ({ data, onChange, disabled = false }: Props) => {
   return (
     <div className="row g-3">
-      {/* --- DADOS PESSOAIS --- */}
+      {/* --- DADOS PESSOAIS (Mantenha igual) --- */}
       <div className="col-12">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Dados Pessoais
@@ -140,60 +130,16 @@ const PacienteGeneralForm = ({
         </div>
       </div>
 
-      {/* --- DADOS DE ACESSO (Apenas se não estiver editando) --- */}
-      {!isEditing && (
-        <>
-          <div className="col-12 mt-4">
-            <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
-              Dados de Acesso (Login)
-            </h6>
-          </div>
+      {/* --- DADOS DE ACESSO (Login) --- 
+          ALTERAÇÃO: Removemos a condição !isEditing para permitir edição.
+      */}
+      <div className="col-12 mt-4">
+        <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
+          Dados de Acesso (Login)
+        </h6>
+      </div>
 
-          <div className="col-md-6">
-            <label className="form-label small text-muted fw-bold">
-              E-mail
-            </label>
-            <div className="position-relative">
-              <FontAwesomeIcon
-                icon={faEnvelope}
-                className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
-              />
-              <input
-                type="email"
-                className="p-2 ps-5 w-100 form-control-underline"
-                placeholder="paciente@email.com"
-                value={data.email}
-                onChange={(e) => onChange("email", e.target.value)}
-                disabled={disabled}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label small text-muted fw-bold">
-              Senha Inicial
-            </label>
-            <div className="position-relative">
-              <FontAwesomeIcon
-                icon={faLock}
-                className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
-              />
-              <input
-                type="password"
-                className="p-2 ps-5 w-100 form-control-underline"
-                placeholder="******"
-                value={data.senha || ""}
-                onChange={(e) => onChange("senha", e.target.value)}
-                disabled={disabled}
-                required
-              />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* --- CONTATOS --- */}
+      {/* --- CONTATOS (Mantenha igual) --- */}
       <div className="col-12 mt-4">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Contatos
@@ -240,7 +186,7 @@ const PacienteGeneralForm = ({
         </div>
       </div>
 
-      {/* --- ENDEREÇO --- */}
+      {/* --- ENDEREÇO (Mantenha igual) --- */}
       <div className="col-12 mt-4">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Endereço{" "}

@@ -1,4 +1,4 @@
-//src/app/services/ServicoCard.tsx
+// src/app/services/ServicoCard.tsx
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +11,6 @@ interface Props {
 }
 
 const ServicoCard = ({ servico, onClick }: Props) => {
-  // Formata moeda
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -38,7 +37,6 @@ const ServicoCard = ({ servico, onClick }: Props) => {
     >
       <div className="card-body p-4 d-flex flex-column h-100">
         <div className="d-flex align-items-center mb-3">
-          {/* Ícone/Letra Inicial */}
           <div
             className={`rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5 me-3 ${
               servico.ativo

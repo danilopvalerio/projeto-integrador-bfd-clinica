@@ -5,7 +5,10 @@ import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { EspecialidadeResponse, CreateEspecialidadePayload } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faExclamationTriangle,
+} from "@fortawesome/free-solid-svg-icons";
 
 import EspecialidadeGeneralForm from "./EspecialidadeGeneralForm";
 import EspecialidadeProfissionaisList from "./EspecialidadeProfissionaisList";
@@ -30,6 +33,7 @@ const EspecialidadeDetailModal = ({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const [formData, setFormData] = useState<LocalFormData>({
     nome: "",
@@ -48,9 +52,8 @@ const EspecialidadeDetailModal = ({
     const fetchData = async () => {
       try {
         const res = await api.get<EspecialidadeResponse>(
-          `/specialities/${especialidadeId}`
+          `/specialities/${especialidadeId}`,
         );
-
         setFormData({
           nome: res.data.nome,
           descricao: res.data.descricao || "",
@@ -61,7 +64,6 @@ const EspecialidadeDetailModal = ({
         setLoadingData(false);
       }
     };
-
     if (especialidadeId) fetchData();
   }, [especialidadeId]);
 
@@ -80,12 +82,7 @@ const EspecialidadeDetailModal = ({
         nome: formData.nome,
         descricao: formData.descricao,
       };
-
-      await api.patch(
-        `/specialities/${especialidadeId}`,
-        payload
-      );
-
+      await api.patch(`/specialities/${especialidadeId}`, payload);
       setSuccessMsg("Especialidade atualizada com sucesso!");
       setTimeout(() => onSuccess(), 1000);
     } catch (err) {
@@ -95,25 +92,15 @@ const EspecialidadeDetailModal = ({
     }
   };
 
-  const handleDelete = async () => {
-    if (
-      !confirm(
-        "Tem certeza que deseja excluir esta especialidade? Esta ação não pode ser desfeita."
-      )
-    )
-      return;
-
+  const confirmDelete = async () => {
     try {
       setSaving(true);
-
-      await api.delete(
-        `/specialities/${especialidadeId}`
-      );
-
+      await api.delete(`/specialities/${especialidadeId}`);
       onSuccess();
     } catch (err) {
       setError(getErrorMessage(err));
       setSaving(false);
+      setShowConfirmDelete(false);
     }
   };
 
@@ -129,89 +116,136 @@ const EspecialidadeDetailModal = ({
   }
 
   return (
-    <div
-      className="modal-backdrop d-flex justify-content-center align-items-center"
-      style={{ backgroundColor: "rgba(0,0,0,0.48)" }}
-      onClick={onClose}
-    >
+    <>
       <div
-        className="modal-dialog detail-box"
-        style={{ maxWidth: "600px", maxHeight: "90vh" }}
-        onClick={(e) => e.stopPropagation()}
+        className="modal-backdrop d-flex justify-content-center align-items-center"
+        style={{ backgroundColor: "rgba(0,0,0,0.48)" }}
+        onClick={onClose}
       >
         <div
-          className="modal-content border-0 shadow rounded-4 d-flex flex-column"
-          style={{ maxHeight: "90vh" }}
+          className="modal-dialog detail-box"
+          style={{ maxWidth: "600px", maxHeight: "90vh" }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <div className="modal-header border-bottom-0 p-4 pb-0 d-flex justify-content-between">
-            <h5 className="modal-title fw-bold text-secondary">
-              Detalhes da Especialidade
-            </h5>
-            <button className="btn-close" onClick={onClose} />
-          </div>
+          <div
+            className="modal-content border-0 shadow rounded-4 d-flex flex-column"
+            style={{ maxHeight: "90vh" }}
+          >
+            <div className="modal-header border-bottom-0 p-4 pb-0 d-flex justify-content-between">
+              <h5 className="modal-title fw-bold text-secondary">
+                Detalhes da Especialidade
+              </h5>
+              <button className="btn-close shadow-none" onClick={onClose} />
+            </div>
 
-          <div className="modal-body p-4 pt-2 flex-grow-1 overflow-auto">
-            {error && (
-              <div className="alert alert-danger small py-2 rounded-3 border-0 bg-danger bg-opacity-10 text-danger mb-3">
-                {error}
-              </div>
-            )}
+            <div className="modal-body p-4 pt-2 flex-grow-1 overflow-auto">
+              {error && (
+                <div className="alert alert-danger small py-2 rounded-3 border-0 bg-danger bg-opacity-10 text-danger mb-3">
+                  {error}
+                </div>
+              )}
+              {successMsg && (
+                <div className="alert alert-success small py-2 rounded-3 border-0 bg-success bg-opacity-10 text-success mb-3">
+                  {successMsg}
+                </div>
+              )}
 
-            {successMsg && (
-              <div className="alert alert-success small py-2 rounded-3 border-0 bg-success bg-opacity-10 text-success mb-3">
-                {successMsg}
-              </div>
-            )}
-
-            <form onSubmit={handleUpdate} className="d-flex flex-column gap-3">
-              <EspecialidadeGeneralForm
-                data={formData}
-                onChange={handleChange}
-                disabled={saving}
-              />
-
-              <EspecialidadeProfissionaisList
-                especialidadeId={especialidadeId}
-              />
-
-              <div className="d-flex justify-content-between mt-4 pt-3 border-top">
-                <button
-                  type="button"
-                  className="btn btn-outline-danger border-0 d-flex gap-2 align-items-center"
-                  onClick={handleDelete}
+              <form
+                onSubmit={handleUpdate}
+                className="d-flex flex-column gap-3"
+              >
+                <EspecialidadeGeneralForm
+                  data={formData}
+                  onChange={handleChange}
                   disabled={saving}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                  <span className="small fw-bold">
-                    Excluir Especialidade
-                  </span>
-                </button>
+                />
 
-                <div className="d-flex gap-3">
+                <EspecialidadeProfissionaisList
+                  especialidadeId={especialidadeId}
+                />
+
+                <div className="d-flex justify-content-between mt-4 pt-3 border-top">
                   <button
                     type="button"
-                    className="btn btn-link"
-                    onClick={onClose}
-                  >
-                    Fechar
-                  </button>
-
-                  <button
-                    type="submit"
-                    className="button-dark-grey px-4 py-2 rounded-pill"
+                    className="btn btn-outline-danger border-0 d-flex gap-2 align-items-center shadow-none"
+                    style={{ boxShadow: "none" }}
+                    onClick={() => setShowConfirmDelete(true)}
                     disabled={saving}
                   >
-                    {saving ? "Salvando..." : "Salvar Alterações"}
+                    <FontAwesomeIcon icon={faTrash} />
+                    <span className="small fw-bold">Excluir Especialidade</span>
                   </button>
+
+                  <div className="d-flex gap-3">
+                    <button
+                      type="button"
+                      className="btn btn-link text-decoration-none text-secondary shadow-none"
+                      onClick={onClose}
+                    >
+                      Fechar
+                    </button>
+                    <button
+                      type="submit"
+                      className="button-dark-grey px-4 py-2 rounded-pill shadow-none"
+                      disabled={saving}
+                    >
+                      {saving ? "Salvando..." : "Salvar Alterações"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {showConfirmDelete && (
+        <div
+          className="modal-backdrop d-flex justify-content-center align-items-center animate-fade-in"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1070 }}
+          onClick={() => setShowConfirmDelete(false)}
+        >
+          <div
+            className="bg-white rounded-4 shadow p-4"
+            style={{ maxWidth: "400px", width: "90%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-4">
+              <div className="mb-3 text-warning">
+                <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
+              </div>
+              <h5 className="fw-bold text-secondary">Excluir Especialidade?</h5>
+              <p className="text-muted small mb-0">
+                Essa ação não pode ser desfeita e pode afetar profissionais
+                vinculados.
+              </p>
+            </div>
+            <div className="d-flex gap-2 justify-content-center">
+              <button
+                className="btn btn-light text-secondary fw-bold px-4 rounded-pill shadow-none"
+                onClick={() => setShowConfirmDelete(false)}
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+              <button
+                className="btn btn-danger fw-bold px-4 rounded-pill d-flex align-items-center gap-2 shadow-none"
+                onClick={confirmDelete}
+                disabled={saving}
+              >
+                {saving ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
+                  <FontAwesomeIcon icon={faTrash} />
+                )}
+                <span>{saving ? "Removendo..." : "Sim, remover"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
 export default EspecialidadeDetailModal;
-

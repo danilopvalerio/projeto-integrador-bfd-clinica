@@ -237,6 +237,7 @@ export type ServicoWhereInput = {
   ativo?: Prisma.BoolFilter<"Servico"> | boolean
   preco_visivel_paciente?: Prisma.BoolFilter<"Servico"> | boolean
   profissionais?: Prisma.ProfissionalServicoListRelationFilter
+  agendamentos?: Prisma.AgendamentoServicoListRelationFilter
 }
 
 export type ServicoOrderByWithRelationInput = {
@@ -248,6 +249,7 @@ export type ServicoOrderByWithRelationInput = {
   ativo?: Prisma.SortOrder
   preco_visivel_paciente?: Prisma.SortOrder
   profissionais?: Prisma.ProfissionalServicoOrderByRelationAggregateInput
+  agendamentos?: Prisma.AgendamentoServicoOrderByRelationAggregateInput
 }
 
 export type ServicoWhereUniqueInput = Prisma.AtLeast<{
@@ -262,6 +264,7 @@ export type ServicoWhereUniqueInput = Prisma.AtLeast<{
   ativo?: Prisma.BoolFilter<"Servico"> | boolean
   preco_visivel_paciente?: Prisma.BoolFilter<"Servico"> | boolean
   profissionais?: Prisma.ProfissionalServicoListRelationFilter
+  agendamentos?: Prisma.AgendamentoServicoListRelationFilter
 }, "id_servico">
 
 export type ServicoOrderByWithAggregationInput = {
@@ -301,6 +304,7 @@ export type ServicoCreateInput = {
   ativo?: boolean
   preco_visivel_paciente?: boolean
   profissionais?: Prisma.ProfissionalServicoCreateNestedManyWithoutServicoInput
+  agendamentos?: Prisma.AgendamentoServicoCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoUncheckedCreateInput = {
@@ -312,6 +316,7 @@ export type ServicoUncheckedCreateInput = {
   ativo?: boolean
   preco_visivel_paciente?: boolean
   profissionais?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutServicoInput
+  agendamentos?: Prisma.AgendamentoServicoUncheckedCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoUpdateInput = {
@@ -323,6 +328,7 @@ export type ServicoUpdateInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
   profissionais?: Prisma.ProfissionalServicoUpdateManyWithoutServicoNestedInput
+  agendamentos?: Prisma.AgendamentoServicoUpdateManyWithoutServicoNestedInput
 }
 
 export type ServicoUncheckedUpdateInput = {
@@ -334,6 +340,7 @@ export type ServicoUncheckedUpdateInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
   profissionais?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutServicoNestedInput
+  agendamentos?: Prisma.AgendamentoServicoUncheckedUpdateManyWithoutServicoNestedInput
 }
 
 export type ServicoCreateManyInput = {
@@ -425,6 +432,20 @@ export type ServicoUpdateOneRequiredWithoutProfissionaisNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServicoUpdateToOneWithWhereWithoutProfissionaisInput, Prisma.ServicoUpdateWithoutProfissionaisInput>, Prisma.ServicoUncheckedUpdateWithoutProfissionaisInput>
 }
 
+export type ServicoCreateNestedOneWithoutAgendamentosInput = {
+  create?: Prisma.XOR<Prisma.ServicoCreateWithoutAgendamentosInput, Prisma.ServicoUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.ServicoCreateOrConnectWithoutAgendamentosInput
+  connect?: Prisma.ServicoWhereUniqueInput
+}
+
+export type ServicoUpdateOneRequiredWithoutAgendamentosNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicoCreateWithoutAgendamentosInput, Prisma.ServicoUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.ServicoCreateOrConnectWithoutAgendamentosInput
+  upsert?: Prisma.ServicoUpsertWithoutAgendamentosInput
+  connect?: Prisma.ServicoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServicoUpdateToOneWithWhereWithoutAgendamentosInput, Prisma.ServicoUpdateWithoutAgendamentosInput>, Prisma.ServicoUncheckedUpdateWithoutAgendamentosInput>
+}
+
 export type ServicoCreateWithoutProfissionaisInput = {
   id_servico?: string
   nome: string
@@ -433,6 +454,7 @@ export type ServicoCreateWithoutProfissionaisInput = {
   preco: number
   ativo?: boolean
   preco_visivel_paciente?: boolean
+  agendamentos?: Prisma.AgendamentoServicoCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoUncheckedCreateWithoutProfissionaisInput = {
@@ -443,6 +465,7 @@ export type ServicoUncheckedCreateWithoutProfissionaisInput = {
   preco: number
   ativo?: boolean
   preco_visivel_paciente?: boolean
+  agendamentos?: Prisma.AgendamentoServicoUncheckedCreateNestedManyWithoutServicoInput
 }
 
 export type ServicoCreateOrConnectWithoutProfissionaisInput = {
@@ -469,6 +492,7 @@ export type ServicoUpdateWithoutProfissionaisInput = {
   preco?: Prisma.FloatFieldUpdateOperationsInput | number
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  agendamentos?: Prisma.AgendamentoServicoUpdateManyWithoutServicoNestedInput
 }
 
 export type ServicoUncheckedUpdateWithoutProfissionaisInput = {
@@ -479,6 +503,67 @@ export type ServicoUncheckedUpdateWithoutProfissionaisInput = {
   preco?: Prisma.FloatFieldUpdateOperationsInput | number
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  agendamentos?: Prisma.AgendamentoServicoUncheckedUpdateManyWithoutServicoNestedInput
+}
+
+export type ServicoCreateWithoutAgendamentosInput = {
+  id_servico?: string
+  nome: string
+  duracao_estimada: number
+  descricao: string
+  preco: number
+  ativo?: boolean
+  preco_visivel_paciente?: boolean
+  profissionais?: Prisma.ProfissionalServicoCreateNestedManyWithoutServicoInput
+}
+
+export type ServicoUncheckedCreateWithoutAgendamentosInput = {
+  id_servico?: string
+  nome: string
+  duracao_estimada: number
+  descricao: string
+  preco: number
+  ativo?: boolean
+  preco_visivel_paciente?: boolean
+  profissionais?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutServicoInput
+}
+
+export type ServicoCreateOrConnectWithoutAgendamentosInput = {
+  where: Prisma.ServicoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicoCreateWithoutAgendamentosInput, Prisma.ServicoUncheckedCreateWithoutAgendamentosInput>
+}
+
+export type ServicoUpsertWithoutAgendamentosInput = {
+  update: Prisma.XOR<Prisma.ServicoUpdateWithoutAgendamentosInput, Prisma.ServicoUncheckedUpdateWithoutAgendamentosInput>
+  create: Prisma.XOR<Prisma.ServicoCreateWithoutAgendamentosInput, Prisma.ServicoUncheckedCreateWithoutAgendamentosInput>
+  where?: Prisma.ServicoWhereInput
+}
+
+export type ServicoUpdateToOneWithWhereWithoutAgendamentosInput = {
+  where?: Prisma.ServicoWhereInput
+  data: Prisma.XOR<Prisma.ServicoUpdateWithoutAgendamentosInput, Prisma.ServicoUncheckedUpdateWithoutAgendamentosInput>
+}
+
+export type ServicoUpdateWithoutAgendamentosInput = {
+  id_servico?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
+  descricao?: Prisma.StringFieldUpdateOperationsInput | string
+  preco?: Prisma.FloatFieldUpdateOperationsInput | number
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profissionais?: Prisma.ProfissionalServicoUpdateManyWithoutServicoNestedInput
+}
+
+export type ServicoUncheckedUpdateWithoutAgendamentosInput = {
+  id_servico?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  duracao_estimada?: Prisma.IntFieldUpdateOperationsInput | number
+  descricao?: Prisma.StringFieldUpdateOperationsInput | string
+  preco?: Prisma.FloatFieldUpdateOperationsInput | number
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preco_visivel_paciente?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  profissionais?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutServicoNestedInput
 }
 
 
@@ -488,10 +573,12 @@ export type ServicoUncheckedUpdateWithoutProfissionaisInput = {
 
 export type ServicoCountOutputType = {
   profissionais: number
+  agendamentos: number
 }
 
 export type ServicoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profissionais?: boolean | ServicoCountOutputTypeCountProfissionaisArgs
+  agendamentos?: boolean | ServicoCountOutputTypeCountAgendamentosArgs
 }
 
 /**
@@ -511,6 +598,13 @@ export type ServicoCountOutputTypeCountProfissionaisArgs<ExtArgs extends runtime
   where?: Prisma.ProfissionalServicoWhereInput
 }
 
+/**
+ * ServicoCountOutputType without action
+ */
+export type ServicoCountOutputTypeCountAgendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AgendamentoServicoWhereInput
+}
+
 
 export type ServicoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_servico?: boolean
@@ -521,6 +615,7 @@ export type ServicoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   ativo?: boolean
   preco_visivel_paciente?: boolean
   profissionais?: boolean | Prisma.Servico$profissionaisArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Servico$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.ServicoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["servico"]>
 
@@ -557,6 +652,7 @@ export type ServicoSelectScalar = {
 export type ServicoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_servico" | "nome" | "duracao_estimada" | "descricao" | "preco" | "ativo" | "preco_visivel_paciente", ExtArgs["result"]["servico"]>
 export type ServicoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profissionais?: boolean | Prisma.Servico$profissionaisArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Servico$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.ServicoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServicoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -566,6 +662,7 @@ export type $ServicoPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Servico"
   objects: {
     profissionais: Prisma.$ProfissionalServicoPayload<ExtArgs>[]
+    agendamentos: Prisma.$AgendamentoServicoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_servico: string
@@ -970,6 +1067,7 @@ readonly fields: ServicoFieldRefs;
 export interface Prisma__ServicoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   profissionais<T extends Prisma.Servico$profissionaisArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Servico$profissionaisArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfissionalServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  agendamentos<T extends Prisma.Servico$agendamentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Servico$agendamentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgendamentoServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1415,6 +1513,30 @@ export type Servico$profissionaisArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ProfissionalServicoScalarFieldEnum | Prisma.ProfissionalServicoScalarFieldEnum[]
+}
+
+/**
+ * Servico.agendamentos
+ */
+export type Servico$agendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AgendamentoServico
+   */
+  select?: Prisma.AgendamentoServicoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AgendamentoServico
+   */
+  omit?: Prisma.AgendamentoServicoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgendamentoServicoInclude<ExtArgs> | null
+  where?: Prisma.AgendamentoServicoWhereInput
+  orderBy?: Prisma.AgendamentoServicoOrderByWithRelationInput | Prisma.AgendamentoServicoOrderByWithRelationInput[]
+  cursor?: Prisma.AgendamentoServicoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AgendamentoServicoScalarFieldEnum | Prisma.AgendamentoServicoScalarFieldEnum[]
 }
 
 /**

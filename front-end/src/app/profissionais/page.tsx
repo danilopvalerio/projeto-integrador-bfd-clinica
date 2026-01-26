@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faPlus, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faPlus,
+  faSearch,
+  faTimes,
+  faExclamationTriangle,
+} from "@fortawesome/free-solid-svg-icons";
 
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -28,17 +34,13 @@ export default function ProfissionaisPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedProfissionalId, setSelectedProfissionalId] = useState<string | null>(null);
-  const [selectedHorariosProfissionalId, setSelectedHorariosProfissionalId] = useState<string | null>(null);
+  const [selectedProfissionalId, setSelectedProfissionalId] = useState<
+    string | null
+  >(null);
+  const [selectedHorariosProfissionalId, setSelectedHorariosProfissionalId] =
+    useState<string | null>(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) router.push("/login");
-    else fetchProfissionais(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
-
-  const fetchProfissionais = async (page = 1, term = "") => {
+  const fetchProfissionais = useCallback(async (page = 1, term = "") => {
     setLoading(true);
     setError("");
 
@@ -58,7 +60,13 @@ export default function ProfissionaisPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) router.push("/login");
+    else fetchProfissionais(1);
+  }, [router, fetchProfissionais]);
 
   const handleSearch = () => fetchProfissionais(1, searchTerm);
 
@@ -75,9 +83,16 @@ export default function ProfissionaisPage() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ background: "#e9e9e9" }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ background: "#e9e9e9" }}
+    >
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
-        <button className="btn btn-link text-white p-0 me-3" onClick={() => router.push("/menu")}>
+        <button
+          className="btn btn-link text-white p-0 me-3 shadow-none"
+          style={{ boxShadow: "none" }}
+          onClick={() => router.push("/menu")}
+        >
           <FontAwesomeIcon icon={faArrowLeft} className="fs-4" />
         </button>
         <span className="text-white fw-bold fs-5">Módulo de Profissionais</span>
@@ -101,7 +116,8 @@ export default function ProfissionaisPage() {
                     className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
                   />
                   <input
-                    className="form-control ps-5 rounded-pill border-secondary border-opacity-25"
+                    className="form-control ps-5 rounded-pill border-secondary border-opacity-25 shadow-none"
+                    style={{ boxShadow: "none" }}
                     placeholder="Buscar por nome..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -120,7 +136,8 @@ export default function ProfissionaisPage() {
 
               <div className="col-md-2">
                 <button
-                  className="button-dark-grey w-100 w-md-auto rounded-pill px-2 py-2 shadow-sm fw-bold"
+                  className="button-dark-grey w-100 w-md-auto rounded-pill px-2 py-2 shadow-sm fw-bold shadow-none"
+                  style={{ boxShadow: "none" }}
                   onClick={handleSearch}
                 >
                   Pesquisar
@@ -129,7 +146,8 @@ export default function ProfissionaisPage() {
 
               <div className="col-md-4 text-end">
                 <button
-                  className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold"
+                  className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold shadow-none"
+                  style={{ boxShadow: "none" }}
                   onClick={() => setIsAddModalOpen(true)}
                 >
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
@@ -139,26 +157,48 @@ export default function ProfissionaisPage() {
             </div>
 
             {error && (
-              <div className="alert alert-danger text-center border-0 bg-danger bg-opacity-10 text-danger rounded-3">
-                {error}
+              <div className="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm">
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon
+                    icon={faExclamationTriangle}
+                    className="me-2"
+                  />
+                  <div>
+                    <strong>Erro: </strong> {error}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-close shadow-none"
+                  onClick={() => setError("")}
+                />
               </div>
             )}
 
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
-                <p className="text-muted small mt-2">Carregando profissionais...</p>
+                <p className="text-muted small mt-2">
+                  Carregando profissionais...
+                </p>
               </div>
             ) : profissionais.length ? (
               <>
                 <div className="row g-3">
                   {profissionais.map((prof) => (
-                    <div key={prof.id_profissional} className="col-md-6 col-lg-4">
+                    <div
+                      key={prof.id_profissional}
+                      className="col-md-6 col-lg-4"
+                    >
                       <ProfissionalCard
                         profissional={prof}
-                        onOpenDetails={() => setSelectedProfissionalId(prof.id_profissional)}
+                        onOpenDetails={() =>
+                          setSelectedProfissionalId(prof.id_profissional)
+                        }
                         onOpenHorarios={() =>
-                          setSelectedHorariosProfissionalId(prof.id_profissional)
+                          setSelectedHorariosProfissionalId(
+                            prof.id_profissional,
+                          )
                         }
                       />
                     </div>
@@ -167,9 +207,12 @@ export default function ProfissionaisPage() {
 
                 <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
                   <button
-                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold shadow-none"
+                    style={{ boxShadow: "none" }}
                     disabled={currentPage === 1}
-                    onClick={() => fetchProfissionais(currentPage - 1, searchTerm)}
+                    onClick={() =>
+                      fetchProfissionais(currentPage - 1, searchTerm)
+                    }
                   >
                     Anterior
                   </button>
@@ -177,9 +220,12 @@ export default function ProfissionaisPage() {
                     Página {currentPage} de {totalPages}
                   </span>
                   <button
-                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                    className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold shadow-none"
+                    style={{ boxShadow: "none" }}
                     disabled={currentPage === totalPages}
-                    onClick={() => fetchProfissionais(currentPage + 1, searchTerm)}
+                    onClick={() =>
+                      fetchProfissionais(currentPage + 1, searchTerm)
+                    }
                   >
                     Próxima
                   </button>
@@ -187,7 +233,9 @@ export default function ProfissionaisPage() {
               </>
             ) : (
               <div className="text-center py-5 bg-light rounded-3 mt-3">
-                <p className="text-muted fw-bold mb-0">Nenhum profissional encontrado.</p>
+                <p className="text-muted fw-bold mb-0">
+                  Nenhum profissional encontrado.
+                </p>
                 <small className="text-secondary">
                   Tente mudar os termos da busca ou adicione um novo.
                 </small>

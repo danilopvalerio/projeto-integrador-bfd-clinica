@@ -107,3 +107,13 @@ export type ProntuarioArquivo = Prisma.ProntuarioArquivoModel
  * 
  */
 export type Log = Prisma.LogModel
+/**
+ * Model Agendamento
+ * 
+ */
+export type Agendamento = Prisma.AgendamentoModel
+/**
+ * Model AgendamentoServico
+ * 
+ */
+export type AgendamentoServico = Prisma.AgendamentoServicoModel

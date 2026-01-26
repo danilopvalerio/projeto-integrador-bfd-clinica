@@ -57,6 +57,7 @@ export type LogCountAggregateOutputType = {
   user_agent: number
   sucesso: number
   data: number
+  dados: number
   id_usuario: number
   _all: number
 }
@@ -95,6 +96,7 @@ export type LogCountAggregateInputType = {
   user_agent?: true
   sucesso?: true
   data?: true
+  dados?: true
   id_usuario?: true
   _all?: true
 }
@@ -180,6 +182,7 @@ export type LogGroupByOutputType = {
   user_agent: string | null
   sucesso: boolean
   data: Date
+  dados: runtime.JsonValue | null
   id_usuario: string | null
   _count: LogCountAggregateOutputType | null
   _min: LogMinAggregateOutputType | null
@@ -213,6 +216,7 @@ export type LogWhereInput = {
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  dados?: Prisma.JsonNullableFilter<"Log">
   id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }
@@ -226,6 +230,7 @@ export type LogOrderByWithRelationInput = {
   user_agent?: Prisma.SortOrderInput | Prisma.SortOrder
   sucesso?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  dados?: Prisma.SortOrderInput | Prisma.SortOrder
   id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
@@ -242,6 +247,7 @@ export type LogWhereUniqueInput = Prisma.AtLeast<{
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  dados?: Prisma.JsonNullableFilter<"Log">
   id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }, "id">
@@ -255,6 +261,7 @@ export type LogOrderByWithAggregationInput = {
   user_agent?: Prisma.SortOrderInput | Prisma.SortOrder
   sucesso?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  dados?: Prisma.SortOrderInput | Prisma.SortOrder
   id_usuario?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.LogCountOrderByAggregateInput
   _max?: Prisma.LogMaxOrderByAggregateInput
@@ -273,6 +280,7 @@ export type LogScalarWhereWithAggregatesInput = {
   user_agent?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
   sucesso?: Prisma.BoolWithAggregatesFilter<"Log"> | boolean
   data?: Prisma.DateTimeWithAggregatesFilter<"Log"> | Date | string
+  dados?: Prisma.JsonNullableWithAggregatesFilter<"Log">
   id_usuario?: Prisma.StringNullableWithAggregatesFilter<"Log"> | string | null
 }
 
@@ -285,6 +293,7 @@ export type LogCreateInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   usuario?: Prisma.UsuarioCreateNestedOneWithoutLogsInput
 }
 
@@ -297,6 +306,7 @@ export type LogUncheckedCreateInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id_usuario?: string | null
 }
 
@@ -309,6 +319,7 @@ export type LogUpdateInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   usuario?: Prisma.UsuarioUpdateOneWithoutLogsNestedInput
 }
 
@@ -321,6 +332,7 @@ export type LogUncheckedUpdateInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -333,6 +345,7 @@ export type LogCreateManyInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id_usuario?: string | null
 }
 
@@ -345,6 +358,7 @@ export type LogUpdateManyMutationInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogUncheckedUpdateManyInput = {
@@ -356,6 +370,7 @@ export type LogUncheckedUpdateManyInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id_usuario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -378,6 +393,7 @@ export type LogCountOrderByAggregateInput = {
   user_agent?: Prisma.SortOrder
   sucesso?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  dados?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
 }
 
@@ -456,6 +472,7 @@ export type LogCreateWithoutUsuarioInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogUncheckedCreateWithoutUsuarioInput = {
@@ -467,6 +484,7 @@ export type LogUncheckedCreateWithoutUsuarioInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogCreateOrConnectWithoutUsuarioInput = {
@@ -507,6 +525,7 @@ export type LogScalarWhereInput = {
   user_agent?: Prisma.StringNullableFilter<"Log"> | string | null
   sucesso?: Prisma.BoolFilter<"Log"> | boolean
   data?: Prisma.DateTimeFilter<"Log"> | Date | string
+  dados?: Prisma.JsonNullableFilter<"Log">
   id_usuario?: Prisma.StringNullableFilter<"Log"> | string | null
 }
 
@@ -519,6 +538,7 @@ export type LogCreateManyUsuarioInput = {
   user_agent?: string | null
   sucesso: boolean
   data?: Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogUpdateWithoutUsuarioInput = {
@@ -530,6 +550,7 @@ export type LogUpdateWithoutUsuarioInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogUncheckedUpdateWithoutUsuarioInput = {
@@ -541,6 +562,7 @@ export type LogUncheckedUpdateWithoutUsuarioInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type LogUncheckedUpdateManyWithoutUsuarioInput = {
@@ -552,6 +574,7 @@ export type LogUncheckedUpdateManyWithoutUsuarioInput = {
   user_agent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sucesso?: Prisma.BoolFieldUpdateOperationsInput | boolean
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dados?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -565,6 +588,7 @@ export type LogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   user_agent?: boolean
   sucesso?: boolean
   data?: boolean
+  dados?: boolean
   id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
@@ -578,6 +602,7 @@ export type LogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   user_agent?: boolean
   sucesso?: boolean
   data?: boolean
+  dados?: boolean
   id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
@@ -591,6 +616,7 @@ export type LogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   user_agent?: boolean
   sucesso?: boolean
   data?: boolean
+  dados?: boolean
   id_usuario?: boolean
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }, ExtArgs["result"]["log"]>
@@ -604,10 +630,11 @@ export type LogSelectScalar = {
   user_agent?: boolean
   sucesso?: boolean
   data?: boolean
+  dados?: boolean
   id_usuario?: boolean
 }
 
-export type LogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tipo" | "acao" | "descricao" | "ip" | "user_agent" | "sucesso" | "data" | "id_usuario", ExtArgs["result"]["log"]>
+export type LogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tipo" | "acao" | "descricao" | "ip" | "user_agent" | "sucesso" | "data" | "dados" | "id_usuario", ExtArgs["result"]["log"]>
 export type LogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.Log$usuarioArgs<ExtArgs>
 }
@@ -632,6 +659,7 @@ export type $LogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     user_agent: string | null
     sucesso: boolean
     data: Date
+    dados: runtime.JsonValue | null
     id_usuario: string | null
   }, ExtArgs["result"]["log"]>
   composites: {}
@@ -1065,6 +1093,7 @@ export interface LogFieldRefs {
   readonly user_agent: Prisma.FieldRef<"Log", 'String'>
   readonly sucesso: Prisma.FieldRef<"Log", 'Boolean'>
   readonly data: Prisma.FieldRef<"Log", 'DateTime'>
+  readonly dados: Prisma.FieldRef<"Log", 'Json'>
   readonly id_usuario: Prisma.FieldRef<"Log", 'String'>
 }
     

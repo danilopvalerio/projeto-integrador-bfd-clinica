@@ -1,69 +1,71 @@
+// src/app/profissionais/ProfissionalServicosList.tsx
 "use client";
 
-import { useEffect, useState, useCallback } from "react"; // 1. Importe useCallback
+import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faTrash,
   faPlus,
   faSearch,
-  faTimes,
-  faTrash,
-  faBriefcaseMedical,
+  faArrowLeft,
+  faChevronLeft,
+  faChevronRight,
+  faExclamationTriangle,
+  faChevronDown,
+  faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
-
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
-
-import type { PaginatedResponse, ServicoEntityForProfissional } from "./types";
+import { ServicoEntityForProfissional } from "./types";
 
 interface Props {
   profissionalId: string;
 }
 
-const LIMIT = 6;
-
 const ProfissionalServicosList = ({ profissionalId }: Props) => {
-  // ===== Vinculados =====
+  const [viewMode, setViewMode] = useState<"LIST" | "ADD">("LIST");
+  const [showList, setShowList] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false); // Novo estado para saber se já carregou
+
+  // --- LISTA VINCULADOS ---
   const [linked, setLinked] = useState<ServicoEntityForProfissional[]>([]);
-  const [linkedLoading, setLinkedLoading] = useState(true);
-  const [linkedError, setLinkedError] = useState("");
+  const [linkedLoading, setLinkedLoading] = useState(false);
+  const [linkedSearch, setLinkedSearch] = useState("");
   const [linkedPage, setLinkedPage] = useState(1);
   const [linkedTotalPages, setLinkedTotalPages] = useState(1);
-  const [linkedSearch, setLinkedSearch] = useState("");
 
-  // ===== Disponíveis (para selecionar/vincular) =====
-  const [available, setAvailable] = useState<ServicoEntityForProfissional[]>(
+  // --- LISTA CANDIDATOS ---
+  const [candidates, setCandidates] = useState<ServicoEntityForProfissional[]>(
     [],
   );
-  const [availableLoading, setAvailableLoading] = useState(true);
-  const [availableError, setAvailableError] = useState("");
-  const [availablePage, setAvailablePage] = useState(1);
-  const [availableTotalPages, setAvailableTotalPages] = useState(1);
-  const [availableSearch, setAvailableSearch] = useState("");
+  const [loadingCandidates, setLoadingCandidates] = useState(false);
+  const [candidateSearch, setCandidateSearch] = useState("");
+  const [candidatePage, setCandidatePage] = useState(1);
+  const [candidateTotalPages, setCandidateTotalPages] = useState(1);
 
-  // 2. Envolva a função em useCallback
-  // Dependência: profissionalId (pois é usado na URL)
+  // --- MODAL ---
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
+
+  const LIMIT = 5;
+
   const fetchLinked = useCallback(
     async (page = 1, term = "") => {
-      setLinkedLoading(true);
-      setLinkedError("");
-
+      if (!profissionalId) return;
       try {
+        setLinkedLoading(true);
         let url = `/professionals/${profissionalId}/servicos/paginated?page=${page}&limit=${LIMIT}`;
         if (term) {
-          url = `/professionals/${profissionalId}/servicos/search?q=${encodeURIComponent(
-            term,
-          )}&page=${page}&limit=${LIMIT}`;
+          url = `/professionals/${profissionalId}/servicos/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
         }
-
-        const response = await api.get(url);
-        const data =
-          response.data as PaginatedResponse<ServicoEntityForProfissional>;
-
-        setLinked(data.data);
-        setLinkedPage(data.page);
-        setLinkedTotalPages(data.lastPage);
-      } catch (err) {
-        setLinkedError(getErrorMessage(err));
+        const res = await api.get(url);
+        setLinked(res.data.data || []);
+        setLinkedPage(res.data.page);
+        setLinkedTotalPages(res.data.lastPage);
+        setHasLoaded(true); // Marca como carregado
+      } catch (error) {
+        console.error(getErrorMessage(error));
       } finally {
         setLinkedLoading(false);
       }
@@ -71,312 +73,346 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     [profissionalId],
   );
 
-  // 3. Envolva a função em useCallback
-  // Dependência: Nenhuma (api é externa, LIMIT é constante)
-  const fetchAvailable = useCallback(async (page = 1, term = "") => {
-    setAvailableLoading(true);
-    setAvailableError("");
+  const handleToggleList = () => {
+    if (!showList) fetchLinked(1, linkedSearch);
+    setShowList((prev) => !prev);
+  };
 
+  const handleLinkedSearch = () => {
+    fetchLinked(1, linkedSearch);
+  };
+
+  const fetchCandidates = useCallback(async (page = 1, term = "") => {
     try {
+      setLoadingCandidates(true);
       let url = `/services/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
-        url = `/services/search?q=${encodeURIComponent(
-          term,
-        )}&page=${page}&limit=${LIMIT}`;
+        url = `/services/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
-
-      const response = await api.get(url);
-      const data =
-        response.data as PaginatedResponse<ServicoEntityForProfissional>;
-
-      setAvailable(data.data);
-      setAvailablePage(data.page);
-      setAvailableTotalPages(data.lastPage);
-    } catch (err) {
-      setAvailableError(getErrorMessage(err));
+      const res = await api.get(url);
+      setCandidates(res.data.data || []);
+      setCandidatePage(res.data.page);
+      setCandidateTotalPages(res.data.lastPage);
+    } catch (error) {
+      console.error(getErrorMessage(error));
     } finally {
-      setAvailableLoading(false);
+      setLoadingCandidates(false);
     }
   }, []);
 
-  // 4. Atualize o useEffect com as dependências corretas
   useEffect(() => {
-    fetchLinked(1, "");
-    fetchAvailable(1, "");
-  }, [fetchLinked, fetchAvailable]);
+    if (viewMode === "ADD") fetchCandidates(1, "");
+  }, [viewMode, fetchCandidates]);
 
-  const handleLink = async (id_servico: string) => {
+  const handleCandidateSearch = () => {
+    fetchCandidates(1, candidateSearch);
+  };
+
+  const handleAdd = async (idServico: string) => {
     try {
+      setLoadingCandidates(true);
       await api.post(`/professionals/${profissionalId}/servicos`, {
-        id_servico,
+        id_servico: idServico,
       });
-
-      // Atualiza as duas listas mantendo o estado atual de busca/página
-      fetchLinked(linkedPage, linkedSearch);
-      fetchAvailable(availablePage, availableSearch);
-    } catch (err) {
-      alert(getErrorMessage(err));
+      setViewMode("LIST");
+      setLinkedSearch("");
+      setShowList(true);
+      fetchLinked(1, "");
+    } catch (error) {
+      alert(getErrorMessage(error));
+    } finally {
+      setLoadingCandidates(false);
     }
   };
 
-  const handleUnlink = async (id_servico: string) => {
-    const ok = confirm("Desvincular este serviço do profissional?");
-    if (!ok) return;
+  const requestRemove = (id: string) => {
+    setItemToRemove(id);
+    setShowConfirmModal(true);
+  };
 
+  const confirmRemove = async () => {
+    if (!itemToRemove) return;
     try {
+      setRemoving(true);
       await api.delete(`/professionals/${profissionalId}/servicos`, {
-        data: { id_servico },
+        data: { id_servico: itemToRemove },
       });
-
-      fetchLinked(linkedPage, linkedSearch);
-      fetchAvailable(availablePage, availableSearch);
-    } catch (err) {
-      alert(getErrorMessage(err));
+      await fetchLinked(linkedPage, linkedSearch);
+      setShowConfirmModal(false);
+      setItemToRemove(null);
+    } catch (error) {
+      alert(getErrorMessage(error));
+    } finally {
+      setRemoving(false);
     }
   };
+
+  const cancelRemove = () => {
+    setShowConfirmModal(false);
+    setItemToRemove(null);
+  };
+
+  if (viewMode === "ADD") {
+    // ... (Mantém igual ao anterior)
+    return (
+      <div className="bg-light p-3 rounded border">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <button
+            type="button"
+            onClick={() => setViewMode("LIST")}
+            className="btn btn-sm btn-link text-decoration-none text-secondary p-0 fw-bold shadow-none"
+            style={{ boxShadow: "none" }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="me-2" /> Voltar
+          </button>
+          <h6 className="fw-bold text-secondary m-0">Vincular Serviço</h6>
+        </div>
+
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control form-control-sm shadow-none"
+            style={{ boxShadow: "none" }}
+            placeholder="Buscar..."
+            value={candidateSearch}
+            onChange={(e) => setCandidateSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCandidateSearch()}
+          />
+          <button
+            className="btn btn-sm btn-outline-secondary shadow-none"
+            type="button"
+            onClick={handleCandidateSearch}
+            style={{ boxShadow: "none" }}
+          >
+            <FontAwesomeIcon icon={faSearch} />
+          </button>
+        </div>
+
+        {loadingCandidates ? (
+          <div className="text-center py-3">
+            <div className="spinner-border spinner-border-sm text-secondary"></div>
+          </div>
+        ) : (
+          <div className="list-group list-group-flush bg-white rounded shadow-sm">
+            {candidates.length > 0 ? (
+              candidates.map((cand) => (
+                <button
+                  key={cand.id_servico}
+                  type="button"
+                  onClick={() => handleAdd(cand.id_servico)}
+                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-3 py-2 small shadow-none"
+                  style={{ border: "none", outline: "none" }}
+                >
+                  <div>
+                    <div className="fw-bold text-dark">{cand.nome}</div>
+                  </div>
+                  <FontAwesomeIcon icon={faPlus} className="text-primary" />
+                </button>
+              ))
+            ) : (
+              <div className="text-center text-muted small py-2">
+                Nenhum serviço encontrado.
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+            style={{ boxShadow: "none" }}
+            disabled={candidatePage === 1}
+            onClick={() => fetchCandidates(candidatePage - 1, candidateSearch)}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <span className="small text-muted">
+            {candidatePage} / {candidateTotalPages}
+          </span>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+            style={{ boxShadow: "none" }}
+            disabled={candidatePage === candidateTotalPages}
+            onClick={() => fetchCandidates(candidatePage + 1, candidateSearch)}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="animate-fade-in">
-      {/* ===== VINCULADOS ===== */}
-      <div className="d-flex align-items-center justify-content-between mb-2">
-        <div className="d-flex align-items-center gap-2">
-          <FontAwesomeIcon icon={faBriefcaseMedical} />
-          <span className="fw-bold">Serviços vinculados</span>
-        </div>
-      </div>
-
-      <div className="row g-2 mb-3 align-items-end">
-        <div className="col-12">
-          <div className="position-relative">
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
-            />
-            <input
-              className="form-control ps-5 rounded-pill border-secondary border-opacity-25"
-              placeholder="Buscar nos vinculados..."
-              value={linkedSearch}
-              onChange={(e) => setLinkedSearch(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && fetchLinked(1, linkedSearch)
-              }
-            />
-            {linkedSearch && (
-              <span
-                className="position-absolute top-50 end-0 translate-middle-y me-3 text-secondary cursor-pointer"
-                onClick={() => {
-                  setLinkedSearch("");
-                  fetchLinked(1, "");
-                }}
-              >
-                <FontAwesomeIcon icon={faTimes} />
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="col-12 d-flex justify-content-end gap-2">
+    <>
+      <div className="animate-fade-in">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          {/* CORREÇÃO: Só mostra quantidade se já tiver carregado */}
+          <span className="small text-muted">
+            {hasLoaded
+              ? linked.length > 0
+                ? `${linked.length} vinculados`
+                : "Nenhum vinculado"
+              : "Clique para visualizar"}
+          </span>
           <button
-            className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-            onClick={() => fetchLinked(1, linkedSearch)}
+            type="button"
+            className="btn btn-sm button-dark-grey rounded-pill px-3 fw-bold shadow-none"
+            style={{ boxShadow: "none" }}
+            onClick={() => setViewMode("ADD")}
           >
-            Pesquisar
+            <FontAwesomeIcon icon={faPlus} className="me-1" /> Vincular
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={handleToggleList}
+          className="btn btn-link text-decoration-none text-secondary p-0 mb-3 small fw-bold d-flex align-items-center gap-2 shadow-none"
+          style={{ boxShadow: "none" }}
+        >
+          {showList ? (
+            <>
+              <FontAwesomeIcon icon={faChevronUp} /> Ocultar Lista
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faChevronDown} /> Ver Detalhes
+            </>
+          )}
+        </button>
+
+        {showList && (
+          <div className="bg-light p-3 rounded border">
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control form-control-sm shadow-none"
+                style={{ boxShadow: "none", background: "#fff" }}
+                placeholder="Filtrar..."
+                value={linkedSearch}
+                onChange={(e) => setLinkedSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLinkedSearch()}
+              />
+              <button
+                className="btn btn-sm btn-outline-secondary bg-white shadow-none"
+                type="button"
+                onClick={handleLinkedSearch}
+                style={{ boxShadow: "none" }}
+              >
+                <FontAwesomeIcon icon={faSearch} />
+              </button>
+            </div>
+
+            {linkedLoading ? (
+              <div className="text-center py-3">
+                <div className="spinner-border spinner-border-sm text-secondary"></div>
+              </div>
+            ) : (
+              <div className="list-group list-group-flush rounded-3 border-0">
+                {linked.length > 0 ? (
+                  linked.map((item) => (
+                    <div
+                      key={item.id_servico}
+                      className="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0 mb-2 bg-white rounded px-3 border shadow-sm"
+                    >
+                      <span className="fw-bold small text-dark">
+                        {item.nome}
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-link text-danger p-0 opacity-50 hover-opacity-100 shadow-none"
+                        style={{ boxShadow: "none" }}
+                        onClick={() => requestRemove(item.id_servico)}
+                        title="Desvincular"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-muted small py-3 fst-italic">
+                    Nenhum serviço vinculado.
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+                style={{ boxShadow: "none" }}
+                disabled={linkedPage === 1}
+                onClick={() => fetchLinked(linkedPage - 1, linkedSearch)}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+              <span className="small text-muted">
+                {linkedPage} / {linkedTotalPages}
+              </span>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+                style={{ boxShadow: "none" }}
+                disabled={linkedPage === linkedTotalPages}
+                onClick={() => fetchLinked(linkedPage + 1, linkedSearch)}
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {linkedError && (
-        <div className="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-3">
-          {linkedError}
-        </div>
-      )}
-
-      {linkedLoading ? (
-        <div className="text-center py-3">
-          <div className="spinner-border text-secondary spinner-border-sm" />
-          <p className="text-muted small mt-2 mb-0">Carregando vinculados...</p>
-        </div>
-      ) : linked.length ? (
-        <>
-          <div className="list-group mb-2">
-            {linked.map((s) => (
-              <div
-                key={s.id_servico}
-                className="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2"
+      {showConfirmModal && (
+        <div
+          className="modal-backdrop d-flex justify-content-center align-items-center animate-fade-in"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1070 }}
+          onClick={cancelRemove}
+        >
+          <div
+            className="bg-white rounded-4 shadow p-4"
+            style={{ maxWidth: "400px", width: "90%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-4">
+              <div className="mb-3 text-warning">
+                <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
+              </div>
+              <h5 className="fw-bold text-secondary">Desvincular Serviço?</h5>
+              <p className="text-muted small mb-0">
+                O profissional não realizará mais este serviço.
+              </p>
+            </div>
+            <div className="d-flex gap-2 justify-content-center">
+              <button
+                className="btn btn-light text-secondary fw-bold px-4 rounded-pill shadow-none"
+                style={{ boxShadow: "none" }}
+                onClick={cancelRemove}
+                disabled={removing}
               >
-                <div>
-                  <div className="fw-bold">
-                    {s.nome} | {s.duracao_estimada} min
-                  </div>
-                  <div className="fw-bold">
-                    {s.preco.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </div>
-                  <div className="text-muted small">
-                    {s.descricao || "Sem descrição"}
-                  </div>
-                </div>
-
-                <button
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
-                  onClick={() => handleUnlink(s.id_servico)}
-                >
+                Cancelar
+              </button>
+              <button
+                className="btn btn-danger fw-bold px-4 rounded-pill d-flex align-items-center gap-2 shadow-none"
+                style={{ boxShadow: "none" }}
+                onClick={confirmRemove}
+                disabled={removing}
+              >
+                {removing ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
                   <FontAwesomeIcon icon={faTrash} />
-                  Remover
-                </button>
-              </div>
-            ))}
+                )}
+                <span>{removing ? "Removendo..." : "Sim, remover"}</span>
+              </button>
+            </div>
           </div>
-
-          <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
-            <button
-              className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-              disabled={linkedPage === 1}
-              onClick={() => fetchLinked(linkedPage - 1, linkedSearch)}
-            >
-              Anterior
-            </button>
-            <span className="text-secondary small fw-bold">
-              Página {linkedPage} de {linkedTotalPages}
-            </span>
-            <button
-              className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-              disabled={linkedPage === linkedTotalPages}
-              onClick={() => fetchLinked(linkedPage + 1, linkedSearch)}
-            >
-              Próxima
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="text-center text-muted small py-3 fst-italic">
-          Nenhum serviço vinculado.
         </div>
       )}
-
-      <hr className="my-4" />
-
-      {/* ===== DISPONÍVEIS ===== */}
-      <div className="d-flex align-items-center justify-content-between mb-2">
-        <div className="d-flex align-items-center gap-2 ">
-          <FontAwesomeIcon icon={faPlus} />
-          <span className="fw-bold">Vincular novo serviço</span>
-        </div>
-      </div>
-
-      <div className="row g-2 mb-3 align-items-end">
-        <div className="col-12">
-          <div className="position-relative">
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
-            />
-            <input
-              className="form-control ps-5 rounded-pill border-secondary border-opacity-25"
-              placeholder="Buscar no catálogo de serviços..."
-              value={availableSearch}
-              onChange={(e) => setAvailableSearch(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && fetchAvailable(1, availableSearch)
-              }
-            />
-            {availableSearch && (
-              <span
-                className="position-absolute top-50 end-0 translate-middle-y me-3 text-secondary cursor-pointer"
-                onClick={() => {
-                  setAvailableSearch("");
-                  fetchAvailable(1, "");
-                }}
-              >
-                <FontAwesomeIcon icon={faTimes} />
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="col-12 d-flex justify-content-end gap-2">
-          <button
-            className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-            onClick={() => fetchAvailable(1, availableSearch)}
-          >
-            Pesquisar
-          </button>
-        </div>
-      </div>
-
-      {availableError && (
-        <div className="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-3">
-          {availableError}
-        </div>
-      )}
-
-      {availableLoading ? (
-        <div className="text-center py-3">
-          <div className="spinner-border text-secondary spinner-border-sm" />
-          <p className="text-muted small mt-2 mb-0">Carregando catálogo...</p>
-        </div>
-      ) : available.length ? (
-        <>
-          <div className="list-group mb-2">
-            {available.map((s) => (
-              <div
-                key={s.id_servico}
-                className="rounded-4 border p-3 hover mt-2 d-flex justify-content-between align-items-center rounded-3 mb-2"
-              >
-                <div>
-                  <div className="fw-bold">
-                    {s.nome} | {s.duracao_estimada} min
-                  </div>
-                  <div className="fw-bold">
-                    {s.preco.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </div>
-                  <div className="text-muted small">
-                    {s.descricao || "Sem descrição"}
-                  </div>
-                </div>
-
-                <button
-                  className="button-dark-grey btn btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-2 text-nowrap"
-                  onClick={() => handleLink(s.id_servico)}
-                >
-                  <FontAwesomeIcon icon={faPlus} className="" />
-                  Vincular
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
-            <button
-              className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-              disabled={availablePage === 1}
-              onClick={() => fetchAvailable(availablePage - 1, availableSearch)}
-            >
-              Anterior
-            </button>
-            <span className="text-secondary small fw-bold">
-              Página {availablePage} de {availableTotalPages}
-            </span>
-            <button
-              className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
-              disabled={availablePage === availableTotalPages}
-              onClick={() => fetchAvailable(availablePage + 1, availableSearch)}
-            >
-              Próxima
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="text-center text-muted small py-3 fst-italic">
-          Nenhum serviço encontrado no catálogo.
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

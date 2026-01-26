@@ -13,14 +13,7 @@ import {
 
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
-
-type HorarioEntity = {
-  id_horario: string;
-  id_profissional: string;
-  dia_semana: number; // 0..6
-  hora_inicio: string; // ISO string
-  hora_fim: string; // ISO string
-};
+import { HorarioEntity } from "./types"; // Importação do tipo correto
 
 interface Props {
   profissionalId: string;
@@ -56,7 +49,11 @@ function isoFromDayAndTime(dia_semana: number, timeHHMM: string) {
   return d.toISOString();
 }
 
-const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props) => {
+const ProfissionalHorariosModal = ({
+  profissionalId,
+  onClose,
+  onSuccess,
+}: Props) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -87,7 +84,9 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
     setError("");
 
     try {
-      const response = await api.get(`/professionals/${profissionalId}/horarios`);
+      const response = await api.get(
+        `/professionals/${profissionalId}/horarios`,
+      );
       setHorarios(response.data as HorarioEntity[]);
     } catch (err) {
       setError(getErrorMessage(err));
@@ -98,13 +97,15 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
 
   useEffect(() => {
     fetchHorarios();
-   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profissionalId]);
 
   const sortedHorarios = useMemo(() => {
     return [...horarios].sort((a, b) => {
       if (a.dia_semana !== b.dia_semana) return a.dia_semana - b.dia_semana;
-      return timeFromISO(a.hora_inicio).localeCompare(timeFromISO(b.hora_inicio));
+      return timeFromISO(a.hora_inicio).localeCompare(
+        timeFromISO(b.hora_inicio),
+      );
     });
   }, [horarios]);
 
@@ -113,7 +114,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
     setError("");
 
     try {
-      if (!horaInicio || !horaFim) throw new Error("Informe hora início e fim.");
+      if (!horaInicio || !horaFim)
+        throw new Error("Informe hora início e fim.");
 
       await api.post(`/professionals/${profissionalId}/horarios`, {
         dia_semana: diaSemana,
@@ -165,6 +167,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
   };
 
   const handleDelete = async (id_horario: string) => {
+    // Aqui seria bom trocar pelo modal customizado se possível no futuro,
+    // mas por enquanto mantendo funcionalidade focada no layout.
     const ok = confirm("Excluir este horário?");
     if (!ok) return;
 
@@ -201,12 +205,20 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
             <div className="d-flex align-items-center gap-2">
               <FontAwesomeIcon icon={faCalendarDays} />
               <div>
-                <h5 className="modal-title fw-bold mb-0">Horários do Profissional</h5>
-                <small className="opacity-75">Gerencie dias e horários de atendimento</small>
+                <h5 className="modal-title fw-bold mb-0">
+                  Horários do Profissional
+                </h5>
+                <small className="opacity-75">
+                  Gerencie dias e horários de atendimento
+                </small>
               </div>
             </div>
 
-            <button className="btn btn-link text-white" onClick={onClose}>
+            <button
+              className="btn btn-link text-white shadow-none"
+              onClick={onClose}
+              style={{ boxShadow: "none" }}
+            >
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
@@ -227,7 +239,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                 <div className="col-md-4">
                   <label className="form-label fw-bold">Dia da semana</label>
                   <select
-                    className="form-select rounded-pill"
+                    className="form-select rounded-pill shadow-none"
+                    style={{ boxShadow: "none" }}
                     value={diaSemana}
                     onChange={(e) => setDiaSemana(Number(e.target.value))}
                   >
@@ -242,7 +255,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                 <div className="col-md-4">
                   <label className="form-label fw-bold">Hora início</label>
                   <input
-                    className="form-control rounded-pill"
+                    className="form-control rounded-pill shadow-none"
+                    style={{ boxShadow: "none" }}
                     type="time"
                     value={horaInicio}
                     onChange={(e) => setHoraInicio(e.target.value)}
@@ -252,7 +266,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                 <div className="col-md-4">
                   <label className="form-label fw-bold">Hora fim</label>
                   <input
-                    className="form-control rounded-pill"
+                    className="form-control rounded-pill shadow-none"
+                    style={{ boxShadow: "none" }}
                     type="time"
                     value={horaFim}
                     onChange={(e) => setHoraFim(e.target.value)}
@@ -261,7 +276,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
 
                 <div className="col-12 d-flex justify-content-end">
                   <button
-                    className="button-dark-grey btn btn-sm rounded-pill px-4 fw-bold shadow-sm"
+                    className="button-dark-grey btn btn-sm rounded-pill px-4 fw-bold shadow-sm shadow-none"
+                    style={{ boxShadow: "none" }}
                     onClick={handleCreate}
                     disabled={saving}
                   >
@@ -279,7 +295,9 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
               {loading ? (
                 <div className="text-center py-4">
                   <div className="spinner-border text-secondary spinner-border-sm" />
-                  <p className="text-muted small mt-2 mb-0">Carregando horários...</p>
+                  <p className="text-muted small mt-2 mb-0">
+                    Carregando horários...
+                  </p>
                 </div>
               ) : sortedHorarios.length ? (
                 <div className="list-group">
@@ -287,32 +305,44 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                     const isEditing = editingId === h.id_horario;
 
                     return (
-                      <div key={h.id_horario} className="list-group-item rounded-3 mb-2">
+                      <div
+                        key={h.id_horario}
+                        className="list-group-item rounded-3 mb-2"
+                      >
                         {!isEditing ? (
                           <div className="d-flex justify-content-between align-items-center gap-3">
                             <div>
                               <div className="fw-bold">
-                                {diasSemanaLabel[h.dia_semana]} • {timeFromISO(h.hora_inicio)} -{" "}
+                                {diasSemanaLabel[h.dia_semana]} •{" "}
+                                {timeFromISO(h.hora_inicio)} -{" "}
                                 {timeFromISO(h.hora_fim)}
                               </div>
                             </div>
 
                             <div className="d-flex gap-2">
                               <button
-                                className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                                className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold shadow-none"
+                                style={{ boxShadow: "none" }}
                                 onClick={() => startEdit(h)}
                                 disabled={saving}
                               >
-                                <FontAwesomeIcon icon={faPen} className="me-2" />
+                                <FontAwesomeIcon
+                                  icon={faPen}
+                                  className="me-2"
+                                />
                                 Editar
                               </button>
 
                               <button
-                                className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold"
+                                className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold shadow-none"
+                                style={{ boxShadow: "none" }}
                                 onClick={() => handleDelete(h.id_horario)}
                                 disabled={saving}
                               >
-                                <FontAwesomeIcon icon={faTrash} className="me-2" />
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  className="me-2"
+                                />
                                 Excluir
                               </button>
                             </div>
@@ -322,32 +352,43 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                             <div className="col-md-4">
                               <label className="form-label fw-bold">Dia</label>
                               <select
-                                className="form-select rounded-pill"
+                                className="form-select rounded-pill shadow-none"
+                                style={{ boxShadow: "none" }}
                                 value={editDiaSemana}
-                                onChange={(e) => setEditDiaSemana(Number(e.target.value))}
+                                onChange={(e) =>
+                                  setEditDiaSemana(Number(e.target.value))
+                                }
                               >
-                                {Object.entries(diasSemanaLabel).map(([k, v]) => (
-                                  <option key={k} value={Number(k)}>
-                                    {v}
-                                  </option>
-                                ))}
+                                {Object.entries(diasSemanaLabel).map(
+                                  ([k, v]) => (
+                                    <option key={k} value={Number(k)}>
+                                      {v}
+                                    </option>
+                                  ),
+                                )}
                               </select>
                             </div>
 
                             <div className="col-md-3">
-                              <label className="form-label fw-bold">Início</label>
+                              <label className="form-label fw-bold">
+                                Início
+                              </label>
                               <input
-                                className="form-control rounded-pill"
+                                className="form-control rounded-pill shadow-none"
+                                style={{ boxShadow: "none" }}
                                 type="time"
                                 value={editHoraInicio}
-                                onChange={(e) => setEditHoraInicio(e.target.value)}
+                                onChange={(e) =>
+                                  setEditHoraInicio(e.target.value)
+                                }
                               />
                             </div>
 
                             <div className="col-md-3">
                               <label className="form-label fw-bold">Fim</label>
                               <input
-                                className="form-control rounded-pill"
+                                className="form-control rounded-pill shadow-none"
+                                style={{ boxShadow: "none" }}
                                 type="time"
                                 value={editHoraFim}
                                 onChange={(e) => setEditHoraFim(e.target.value)}
@@ -356,7 +397,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
 
                             <div className="col-md-2 d-flex gap-2 justify-content-end">
                               <button
-                                className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
+                                className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold shadow-none"
+                                style={{ boxShadow: "none" }}
                                 onClick={cancelEdit}
                                 disabled={saving}
                               >
@@ -364,11 +406,15 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
                               </button>
 
                               <button
-                                className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                                className="button-dark-grey btn btn-sm rounded-pill px-3 fw-bold shadow-sm shadow-none"
+                                style={{ boxShadow: "none" }}
                                 onClick={handleUpdate}
                                 disabled={saving}
                               >
-                                <FontAwesomeIcon icon={faSave} className="me-2" />
+                                <FontAwesomeIcon
+                                  icon={faSave}
+                                  className="me-2"
+                                />
                                 Salvar
                               </button>
                             </div>
@@ -389,7 +435,8 @@ const ProfissionalHorariosModal = ({ profissionalId, onClose, onSuccess }: Props
           {/* Footer */}
           <div className="modal-footer border-0 p-4 pt-0">
             <button
-              className="btn btn-outline-secondary rounded-pill px-4 fw-bold"
+              className="btn btn-outline-secondary rounded-pill px-4 fw-bold shadow-none"
+              style={{ boxShadow: "none" }}
               onClick={onClose}
             >
               Fechar

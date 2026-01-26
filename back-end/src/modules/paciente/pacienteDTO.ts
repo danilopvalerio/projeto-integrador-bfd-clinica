@@ -136,6 +136,10 @@ export interface UpdatePacienteDTO {
     estado?: string;
     cep?: string;
   };
+  usuario?: {
+    email?: string;
+    senha?: string; // A nova senha (se quiser trocar)
+  };
 }
 
 // --- NOVOS ENUMS ---

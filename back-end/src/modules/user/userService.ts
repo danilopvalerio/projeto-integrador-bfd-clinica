@@ -28,13 +28,11 @@ export class UserService {
     const emailExiste = await this.userRepository.findByEmail(data.email);
     if (emailExiste) throw new AppError("E-mail já cadastrado", 409);
 
-    // --- AQUI A MÁGICA ---
-    // Transforma "123456" em "$2b$10$..."
     const senhaHash = await hashPassword(data.senha_hash);
 
     const user = await this.userRepository.create({
       ...data,
-      senha_hash: senhaHash, // Salva o hash, não o texto
+      senha_hash: senhaHash,
     });
 
     return this.mapToResponse(user);
@@ -52,7 +50,29 @@ export class UserService {
       throw new AppError("Usuário não encontrado", 404);
     }
 
-    const updatedUser = await this.userRepository.update(id, data);
+    // Prepara o objeto para o repositório
+    const updateData: any = {};
+
+    if (data.email) {
+      // Se mudou o email, verifica se já existe outro igual (opcional, mas recomendado)
+      if (data.email !== user.email) {
+        const emailExists = await this.userRepository.findByEmail(data.email);
+        if (emailExists) throw new AppError("E-mail já está em uso", 409);
+      }
+      updateData.email = data.email;
+    }
+
+    // Se veio senha nova, faz o hash e atribui a 'senha_hash'
+    if (data.senha_hash) {
+      updateData.senha_hash = await hashPassword(data.senha_hash);
+    }
+
+    if (data.tipo_usuario) updateData.tipo_usuario = data.tipo_usuario;
+    if (data.ativo !== undefined) updateData.ativo = data.ativo;
+
+    // Chama o repositório com os dados corretos (senha_hash)
+    const updatedUser = await this.userRepository.update(id, updateData);
+
     return this.mapToResponse(updatedUser);
   }
 
@@ -82,7 +102,7 @@ export class UserService {
   }: PaginatedQueryDTO): Promise<PaginatedResult<UserResponseDTO>> {
     const { data, total } = await this.userRepository.findPaginated(
       page,
-      limit
+      limit,
     );
 
     return {
@@ -105,7 +125,7 @@ export class UserService {
     const { data, total } = await this.userRepository.searchPaginated(
       query,
       page,
-      limit
+      limit,
     );
 
     return {

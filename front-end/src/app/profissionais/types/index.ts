@@ -6,7 +6,6 @@ export interface ProfissionalSummary {
   id_usuario: string;
 }
 
-
 export type ProfissionalDetail = ProfissionalSummary;
 
 export interface CreateProfissionalPayload {
@@ -17,7 +16,6 @@ export interface CreateProfissionalPayload {
   // legado (opcional agora)
   id_usuario?: string;
 
-  
   usuario?: {
     email: string;
     senha: string;
@@ -38,6 +36,27 @@ export interface UpdateTelefonePayload {
   principal?: boolean;
 }
 
+export enum UserType {
+  GERENTE = "GERENTE",
+  RECEPCIONISTA = "RECEPCIONISTA",
+  PROFISSIONAL = "PROFISSIONAL",
+  CLIENTE = "CLIENTE",
+}
+export interface UserEntity {
+  id_usuario: string;
+  email: string;
+  senha_hash: string;
+  tipo_usuario: UserType;
+  ativo: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface CreateUserDTO {
+  email: string;
+  senha_hash: string;
+  tipo_usuario: UserType;
+}
 export interface UpdateHorarioPayload {
   dia_semana?: number;
   hora_inicio?: Date;
@@ -87,11 +106,15 @@ export interface ProfissionalFormData {
   nome?: string;
   cpf?: string;
   registro_conselho?: string;
-
- 
   email?: string;
   senha?: string;
-
-  
   id_usuario?: string;
 }
+
+export type HorarioEntity = {
+  id_horario: string;
+  id_profissional: string;
+  dia_semana: number; // 0..6
+  hora_inicio: string; // ISO string
+  hora_fim: string; // ISO string
+};

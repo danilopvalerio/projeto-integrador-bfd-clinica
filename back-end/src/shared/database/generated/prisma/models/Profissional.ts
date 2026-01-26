@@ -188,6 +188,7 @@ export type ProfissionalWhereInput = {
   especialidades?: Prisma.Profissional_EspecialidadeListRelationFilter
   servicos?: Prisma.ProfissionalServicoListRelationFilter
   prontuarios?: Prisma.ProntuarioEntradaListRelationFilter
+  agendamentos?: Prisma.AgendamentoListRelationFilter
 }
 
 export type ProfissionalOrderByWithRelationInput = {
@@ -202,6 +203,7 @@ export type ProfissionalOrderByWithRelationInput = {
   especialidades?: Prisma.Profissional_EspecialidadeOrderByRelationAggregateInput
   servicos?: Prisma.ProfissionalServicoOrderByRelationAggregateInput
   prontuarios?: Prisma.ProntuarioEntradaOrderByRelationAggregateInput
+  agendamentos?: Prisma.AgendamentoOrderByRelationAggregateInput
 }
 
 export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
@@ -219,6 +221,7 @@ export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
   especialidades?: Prisma.Profissional_EspecialidadeListRelationFilter
   servicos?: Prisma.ProfissionalServicoListRelationFilter
   prontuarios?: Prisma.ProntuarioEntradaListRelationFilter
+  agendamentos?: Prisma.AgendamentoListRelationFilter
 }, "id_profissional" | "cpf" | "id_usuario">
 
 export type ProfissionalOrderByWithAggregationInput = {
@@ -254,6 +257,7 @@ export type ProfissionalCreateInput = {
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateInput = {
@@ -267,6 +271,7 @@ export type ProfissionalUncheckedCreateInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUpdateInput = {
@@ -280,6 +285,7 @@ export type ProfissionalUpdateInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateInput = {
@@ -293,6 +299,7 @@ export type ProfissionalUncheckedUpdateInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateManyInput = {
@@ -456,6 +463,20 @@ export type ProfissionalUpdateOneWithoutProntuariosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfissionalUpdateToOneWithWhereWithoutProntuariosInput, Prisma.ProfissionalUpdateWithoutProntuariosInput>, Prisma.ProfissionalUncheckedUpdateWithoutProntuariosInput>
 }
 
+export type ProfissionalCreateNestedOneWithoutAgendamentosInput = {
+  create?: Prisma.XOR<Prisma.ProfissionalCreateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.ProfissionalCreateOrConnectWithoutAgendamentosInput
+  connect?: Prisma.ProfissionalWhereUniqueInput
+}
+
+export type ProfissionalUpdateOneRequiredWithoutAgendamentosNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfissionalCreateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedCreateWithoutAgendamentosInput>
+  connectOrCreate?: Prisma.ProfissionalCreateOrConnectWithoutAgendamentosInput
+  upsert?: Prisma.ProfissionalUpsertWithoutAgendamentosInput
+  connect?: Prisma.ProfissionalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfissionalUpdateToOneWithWhereWithoutAgendamentosInput, Prisma.ProfissionalUpdateWithoutAgendamentosInput>, Prisma.ProfissionalUncheckedUpdateWithoutAgendamentosInput>
+}
+
 export type ProfissionalCreateWithoutUsuarioInput = {
   id_profissional?: string
   nome: string
@@ -466,6 +487,7 @@ export type ProfissionalCreateWithoutUsuarioInput = {
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutUsuarioInput = {
@@ -478,6 +500,7 @@ export type ProfissionalUncheckedCreateWithoutUsuarioInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutUsuarioInput = {
@@ -506,6 +529,7 @@ export type ProfissionalUpdateWithoutUsuarioInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
@@ -518,6 +542,7 @@ export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutHorariosInput = {
@@ -530,6 +555,7 @@ export type ProfissionalCreateWithoutHorariosInput = {
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutHorariosInput = {
@@ -542,6 +568,7 @@ export type ProfissionalUncheckedCreateWithoutHorariosInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutHorariosInput = {
@@ -570,6 +597,7 @@ export type ProfissionalUpdateWithoutHorariosInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
@@ -582,6 +610,7 @@ export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutTelefonesInput = {
@@ -594,6 +623,7 @@ export type ProfissionalCreateWithoutTelefonesInput = {
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutTelefonesInput = {
@@ -606,6 +636,7 @@ export type ProfissionalUncheckedCreateWithoutTelefonesInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutTelefonesInput = {
@@ -634,6 +665,7 @@ export type ProfissionalUpdateWithoutTelefonesInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
@@ -646,6 +678,7 @@ export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutEspecialidadesInput = {
@@ -658,6 +691,7 @@ export type ProfissionalCreateWithoutEspecialidadesInput = {
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutEspecialidadesInput = {
@@ -670,6 +704,7 @@ export type ProfissionalUncheckedCreateWithoutEspecialidadesInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutEspecialidadesInput = {
@@ -698,6 +733,7 @@ export type ProfissionalUpdateWithoutEspecialidadesInput = {
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutEspecialidadesInput = {
@@ -710,6 +746,7 @@ export type ProfissionalUncheckedUpdateWithoutEspecialidadesInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutServicosInput = {
@@ -722,6 +759,7 @@ export type ProfissionalCreateWithoutServicosInput = {
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutServicosInput = {
@@ -734,6 +772,7 @@ export type ProfissionalUncheckedCreateWithoutServicosInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutServicosInput = {
@@ -762,6 +801,7 @@ export type ProfissionalUpdateWithoutServicosInput = {
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutServicosInput = {
@@ -774,6 +814,7 @@ export type ProfissionalUncheckedUpdateWithoutServicosInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalCreateWithoutProntuariosInput = {
@@ -786,6 +827,7 @@ export type ProfissionalCreateWithoutProntuariosInput = {
   telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
   especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalUncheckedCreateWithoutProntuariosInput = {
@@ -798,6 +840,7 @@ export type ProfissionalUncheckedCreateWithoutProntuariosInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
   servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
+  agendamentos?: Prisma.AgendamentoUncheckedCreateNestedManyWithoutProfissionalInput
 }
 
 export type ProfissionalCreateOrConnectWithoutProntuariosInput = {
@@ -826,6 +869,7 @@ export type ProfissionalUpdateWithoutProntuariosInput = {
   telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
   especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUpdateManyWithoutProfissionalNestedInput
 }
 
 export type ProfissionalUncheckedUpdateWithoutProntuariosInput = {
@@ -838,6 +882,75 @@ export type ProfissionalUncheckedUpdateWithoutProntuariosInput = {
   telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
   especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
   servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
+  agendamentos?: Prisma.AgendamentoUncheckedUpdateManyWithoutProfissionalNestedInput
+}
+
+export type ProfissionalCreateWithoutAgendamentosInput = {
+  id_profissional?: string
+  nome: string
+  cpf: string
+  registro_conselho: string
+  usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
+  horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
+  telefones?: Prisma.Profissional_telefoneCreateNestedManyWithoutProfissionalInput
+  especialidades?: Prisma.Profissional_EspecialidadeCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoCreateNestedManyWithoutProfissionalInput
+  prontuarios?: Prisma.ProntuarioEntradaCreateNestedManyWithoutProfissionalInput
+}
+
+export type ProfissionalUncheckedCreateWithoutAgendamentosInput = {
+  id_profissional?: string
+  nome: string
+  cpf: string
+  registro_conselho: string
+  id_usuario: string
+  horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
+  telefones?: Prisma.Profissional_telefoneUncheckedCreateNestedManyWithoutProfissionalInput
+  especialidades?: Prisma.Profissional_EspecialidadeUncheckedCreateNestedManyWithoutProfissionalInput
+  servicos?: Prisma.ProfissionalServicoUncheckedCreateNestedManyWithoutProfissionalInput
+  prontuarios?: Prisma.ProntuarioEntradaUncheckedCreateNestedManyWithoutProfissionalInput
+}
+
+export type ProfissionalCreateOrConnectWithoutAgendamentosInput = {
+  where: Prisma.ProfissionalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfissionalCreateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedCreateWithoutAgendamentosInput>
+}
+
+export type ProfissionalUpsertWithoutAgendamentosInput = {
+  update: Prisma.XOR<Prisma.ProfissionalUpdateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedUpdateWithoutAgendamentosInput>
+  create: Prisma.XOR<Prisma.ProfissionalCreateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedCreateWithoutAgendamentosInput>
+  where?: Prisma.ProfissionalWhereInput
+}
+
+export type ProfissionalUpdateToOneWithWhereWithoutAgendamentosInput = {
+  where?: Prisma.ProfissionalWhereInput
+  data: Prisma.XOR<Prisma.ProfissionalUpdateWithoutAgendamentosInput, Prisma.ProfissionalUncheckedUpdateWithoutAgendamentosInput>
+}
+
+export type ProfissionalUpdateWithoutAgendamentosInput = {
+  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
+  horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
+  telefones?: Prisma.Profissional_telefoneUpdateManyWithoutProfissionalNestedInput
+  especialidades?: Prisma.Profissional_EspecialidadeUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUpdateManyWithoutProfissionalNestedInput
+  prontuarios?: Prisma.ProntuarioEntradaUpdateManyWithoutProfissionalNestedInput
+}
+
+export type ProfissionalUncheckedUpdateWithoutAgendamentosInput = {
+  id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  cpf?: Prisma.StringFieldUpdateOperationsInput | string
+  registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
+  telefones?: Prisma.Profissional_telefoneUncheckedUpdateManyWithoutProfissionalNestedInput
+  especialidades?: Prisma.Profissional_EspecialidadeUncheckedUpdateManyWithoutProfissionalNestedInput
+  servicos?: Prisma.ProfissionalServicoUncheckedUpdateManyWithoutProfissionalNestedInput
+  prontuarios?: Prisma.ProntuarioEntradaUncheckedUpdateManyWithoutProfissionalNestedInput
 }
 
 
@@ -851,6 +964,7 @@ export type ProfissionalCountOutputType = {
   especialidades: number
   servicos: number
   prontuarios: number
+  agendamentos: number
 }
 
 export type ProfissionalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -859,6 +973,7 @@ export type ProfissionalCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   especialidades?: boolean | ProfissionalCountOutputTypeCountEspecialidadesArgs
   servicos?: boolean | ProfissionalCountOutputTypeCountServicosArgs
   prontuarios?: boolean | ProfissionalCountOutputTypeCountProntuariosArgs
+  agendamentos?: boolean | ProfissionalCountOutputTypeCountAgendamentosArgs
 }
 
 /**
@@ -906,6 +1021,13 @@ export type ProfissionalCountOutputTypeCountProntuariosArgs<ExtArgs extends runt
   where?: Prisma.ProntuarioEntradaWhereInput
 }
 
+/**
+ * ProfissionalCountOutputType without action
+ */
+export type ProfissionalCountOutputTypeCountAgendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AgendamentoWhereInput
+}
+
 
 export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_profissional?: boolean
@@ -919,6 +1041,7 @@ export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.Internal
   especialidades?: boolean | Prisma.Profissional$especialidadesArgs<ExtArgs>
   servicos?: boolean | Prisma.Profissional$servicosArgs<ExtArgs>
   prontuarios?: boolean | Prisma.Profissional$prontuariosArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Profissional$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.ProfissionalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profissional"]>
 
@@ -956,6 +1079,7 @@ export type ProfissionalInclude<ExtArgs extends runtime.Types.Extensions.Interna
   especialidades?: boolean | Prisma.Profissional$especialidadesArgs<ExtArgs>
   servicos?: boolean | Prisma.Profissional$servicosArgs<ExtArgs>
   prontuarios?: boolean | Prisma.Profissional$prontuariosArgs<ExtArgs>
+  agendamentos?: boolean | Prisma.Profissional$agendamentosArgs<ExtArgs>
   _count?: boolean | Prisma.ProfissionalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProfissionalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -974,6 +1098,7 @@ export type $ProfissionalPayload<ExtArgs extends runtime.Types.Extensions.Intern
     especialidades: Prisma.$Profissional_EspecialidadePayload<ExtArgs>[]
     servicos: Prisma.$ProfissionalServicoPayload<ExtArgs>[]
     prontuarios: Prisma.$ProntuarioEntradaPayload<ExtArgs>[]
+    agendamentos: Prisma.$AgendamentoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_profissional: string
@@ -1381,6 +1506,7 @@ export interface Prisma__ProfissionalClient<T, Null = never, ExtArgs extends run
   especialidades<T extends Prisma.Profissional$especialidadesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$especialidadesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$Profissional_EspecialidadePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   servicos<T extends Prisma.Profissional$servicosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$servicosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProfissionalServicoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   prontuarios<T extends Prisma.Profissional$prontuariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$prontuariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProntuarioEntradaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  agendamentos<T extends Prisma.Profissional$agendamentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profissional$agendamentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgendamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1928,6 +2054,30 @@ export type Profissional$prontuariosArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ProntuarioEntradaScalarFieldEnum | Prisma.ProntuarioEntradaScalarFieldEnum[]
+}
+
+/**
+ * Profissional.agendamentos
+ */
+export type Profissional$agendamentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Agendamento
+   */
+  select?: Prisma.AgendamentoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Agendamento
+   */
+  omit?: Prisma.AgendamentoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgendamentoInclude<ExtArgs> | null
+  where?: Prisma.AgendamentoWhereInput
+  orderBy?: Prisma.AgendamentoOrderByWithRelationInput | Prisma.AgendamentoOrderByWithRelationInput[]
+  cursor?: Prisma.AgendamentoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AgendamentoScalarFieldEnum | Prisma.AgendamentoScalarFieldEnum[]
 }
 
 /**

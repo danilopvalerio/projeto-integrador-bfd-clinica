@@ -31,12 +31,12 @@ export default function LoginForm() {
         id: "mock-id-123",
         nome: "Ana Beatriz Oliveira",
         email: "paciente@teste.com",
-        role: "PACIENTE" // Isso garante que o router.push vá para /meu-perfil
+        role: "PACIENTE", // Isso garante que o router.push vá para /meu-perfil
       };
 
       localStorage.setItem("accessToken", "token-ficticio-valido");
       localStorage.setItem("user", JSON.stringify(mockUser));
-      
+
       router.push("/meu-perfil");
       setLoading(false);
       return; // Interrompe aqui para não tentar chamar a API real
@@ -54,7 +54,7 @@ export default function LoginForm() {
         localStorage.setItem("user", JSON.stringify(user));
         api.defaults.headers.Authorization = `Bearer ${accessToken}`;
         if (user.role === "PACIENTE") {
-          router.push("/meu-perfil"); 
+          router.push("/meu-perfil");
         } else {
           router.push("/menu");
         }

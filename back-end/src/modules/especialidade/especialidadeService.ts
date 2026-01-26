@@ -19,13 +19,66 @@ export class EspecialidadeService {
   constructor(private especialidadeRepository: IEspecialidadeRepository) {}
 
   private mapToResponse(
-    especialidade: EspecialidadeEntity
+    especialidade: EspecialidadeEntity,
   ): EspecialidadeResponseDTO {
     return especialidade;
   }
+  async listProfissionaisPaginated(
+    id_especialidade: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<ProfissionalVinculadoDTO>> {
+    // Valida se a especialidade existe
+    const especialidade =
+      await this.especialidadeRepository.findById(id_especialidade);
+    if (!especialidade) {
+      throw new AppError("Especialidade não encontrada", 404);
+    }
 
+    const { data, total } =
+      await this.especialidadeRepository.listProfissionaisPaginated(
+        id_especialidade,
+        page,
+        limit,
+      );
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit) || 1,
+    };
+  }
+
+  async searchProfissionaisPaginated(
+    id_especialidade: string,
+    query: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<ProfissionalVinculadoDTO>> {
+    const especialidade =
+      await this.especialidadeRepository.findById(id_especialidade);
+    if (!especialidade) {
+      throw new AppError("Especialidade não encontrada", 404);
+    }
+
+    const { data, total } =
+      await this.especialidadeRepository.searchProfissionaisPaginated(
+        id_especialidade,
+        query,
+        page,
+        limit,
+      );
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit) || 1,
+    };
+  }
   async create(
-    data: CreateEspecialidadeDTO
+    data: CreateEspecialidadeDTO,
   ): Promise<EspecialidadeResponseDTO> {
     if (!data?.nome || !data.nome.trim()) {
       throw new AppError("Nome da especialidade é obrigatório", 400);
@@ -48,7 +101,7 @@ export class EspecialidadeService {
 
   async update(
     id: string,
-    data: UpdateEspecialidadeDTO
+    data: UpdateEspecialidadeDTO,
   ): Promise<EspecialidadeResponseDTO> {
     const especialidade = await this.especialidadeRepository.findById(id);
 
@@ -58,7 +111,7 @@ export class EspecialidadeService {
 
     if (data?.nome && data.nome.trim()) {
       const nomeExiste = await this.especialidadeRepository.findByNome(
-        data.nome
+        data.nome,
       );
 
       if (nomeExiste && nomeExiste.id_especialidade !== id) {
@@ -96,7 +149,7 @@ export class EspecialidadeService {
   }: PaginatedQueryDTO): Promise<PaginatedResult<EspecialidadeResponseDTO>> {
     const { data, total } = await this.especialidadeRepository.findPaginated(
       page,
-      limit
+      limit,
     );
 
     return {
@@ -121,7 +174,7 @@ export class EspecialidadeService {
     const { data, total } = await this.especialidadeRepository.searchPaginated(
       query,
       page,
-      limit
+      limit,
     );
 
     return {
@@ -134,7 +187,7 @@ export class EspecialidadeService {
 
   //profissionais
   async listProfissionais(
-    idEspecialidade: string
+    idEspecialidade: string,
   ): Promise<ProfissionalVinculadoDTO[]> {
     const especialidade =
       await this.especialidadeRepository.findById(idEspecialidade);
@@ -148,7 +201,7 @@ export class EspecialidadeService {
 
   async addProfissional(
     idEspecialidade: string,
-    idProfissional: string
+    idProfissional: string,
   ): Promise<void> {
     if (!idProfissional) {
       throw new AppError("Profissional não informado", 400);
@@ -163,13 +216,13 @@ export class EspecialidadeService {
 
     await this.especialidadeRepository.addProfissional(
       idEspecialidade,
-      idProfissional
+      idProfissional,
     );
   }
 
   async removeProfissional(
     idEspecialidade: string,
-    idProfissional: string
+    idProfissional: string,
   ): Promise<void> {
     const especialidade =
       await this.especialidadeRepository.findById(idEspecialidade);
@@ -180,7 +233,7 @@ export class EspecialidadeService {
 
     await this.especialidadeRepository.removeProfissional(
       idEspecialidade,
-      idProfissional
+      idProfissional,
     );
   }
 }

@@ -47,3 +47,14 @@ export const TipoArquivoProntuario = {
 } as const
 
 export type TipoArquivoProntuario = (typeof TipoArquivoProntuario)[keyof typeof TipoArquivoProntuario]
+
+
+export const StatusAgendamento = {
+  CONFIRMADO: 'CONFIRMADO',
+  PENDENTE: 'PENDENTE',
+  CANCELADO: 'CANCELADO',
+  CONCLUIDO: 'CONCLUIDO',
+  NAO_COMPARECEU: 'NAO_COMPARECEU'
+} as const
+
+export type StatusAgendamento = (typeof StatusAgendamento)[keyof typeof StatusAgendamento]

@@ -9,7 +9,7 @@ const especialidadeRoutes = Router();
 const especialidadeRepository = new EspecialidadeRepository();
 const especialidadeService = new EspecialidadeService(especialidadeRepository);
 const especialidadeController = new EspecialidadeController(
-  especialidadeService
+  especialidadeService,
 );
 
 // Rotas
@@ -20,21 +20,29 @@ especialidadeRoutes.get("/", especialidadeController.findAll); // Cuidado com co
 especialidadeRoutes.get("/search", especialidadeController.searchPaginated);
 especialidadeRoutes.get("/paginated", especialidadeController.listPaginated);
 
-
 //profissionais
 especialidadeRoutes.get(
   "/:id/profissionais",
-  especialidadeController.listProfissionais
+  especialidadeController.listProfissionais,
 );
 
+especialidadeRoutes.get(
+  "/:id/profissionais/paginated",
+  especialidadeController.listProfissionaisPaginated,
+);
+
+especialidadeRoutes.get(
+  "/:id/profissionais/search",
+  especialidadeController.searchProfissionaisPaginated,
+);
 especialidadeRoutes.post(
   "/:id/profissionais",
-  especialidadeController.addProfissional
+  especialidadeController.addProfissional,
 );
 
 especialidadeRoutes.delete(
   "/:id/profissionais",
-  especialidadeController.removeProfissional
+  especialidadeController.removeProfissional,
 );
 
 // Rotas com ID

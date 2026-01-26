@@ -1,14 +1,18 @@
-// src/app/patient/[id]/types.ts
-
-// --- SEU CÓDIGO ORIGINAL ---
-
-// Espelho dos Enums do Backend
+// --- ENUMS ---
 export enum Sexo {
   MASCULINO = "MASCULINO",
   FEMININO = "FEMININO",
 }
 
-// Entidade de Endereço
+export enum UserType {
+  GERENTE = "GERENTE",
+  RECEPCIONISTA = "RECEPCIONISTA",
+  PROFISSIONAL = "PROFISSIONAL",
+  PACIENTE = "PACIENTE", // Ajuste conforme seu backend (CLIENTE ou PACIENTE)
+}
+
+// --- ENTIDADES AUXILIARES ---
+
 export interface Endereco {
   id_endereco: string;
   rua: string;
@@ -17,7 +21,6 @@ export interface Endereco {
   estado: string;
 }
 
-// Entidade de Telefone
 export interface PacienteTelefone {
   id_telefone: string;
   telefone: string;
@@ -25,25 +28,46 @@ export interface PacienteTelefone {
   id_paciente: string;
 }
 
-// Entidade Principal de Paciente (Leitura)
+// --- ENTIDADES DE USUÁRIO (NECESSÁRIAS PARA O UserCredentialsForm) ---
+
+export interface UserEntity {
+  id_usuario: string;
+  email: string;
+  senha_hash: string;
+  tipo_usuario: UserType;
+  ativo: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+// --- ENTIDADE PRINCIPAL DE PACIENTE ---
+
 export interface PacienteSummary {
   id_paciente: string;
   nome: string;
   sexo: Sexo;
   cpf: string;
-  data_nascimento: string; // JSON retorna data como string
+  data_nascimento: string;
+
+  // ID do usuário vinculado (fica na raiz do paciente no seu modelo)
   id_usuario: string;
   id_endereco?: string | null;
 
   // Relations
   endereco?: Endereco;
   telefones?: PacienteTelefone[];
+
+  // CORREÇÃO: O objeto usuário retornado pelo backend geralmente traz o id e email
+  usuario?: {
+    id_usuario: string; // Adicionado para corrigir o erro de acesso
+    email: string;
+  };
 }
 
-// Para o Detail (se houver campos extras no futuro, estende o Summary)
 export type PacienteDetail = PacienteSummary;
 
-// Payload de Criação (Entrada) - ATUALIZADO
+// --- PAYLOADS DE CRIAÇÃO/ATUALIZAÇÃO ---
+
 export interface CreatePacientePayload {
   nome: string;
   sexo: Sexo;
@@ -57,7 +81,6 @@ export interface CreatePacientePayload {
     tipo_usuario?: string;
   };
 
-  // Opcionais aninhados
   endereco?: {
     rua: string;
     numero?: string;
@@ -68,7 +91,6 @@ export interface CreatePacientePayload {
   telefones?: { telefone: string; principal: boolean }[];
 }
 
-// Payload de Atualização (Restrito conforme seu backend)
 export interface UpdatePacientePayload {
   nome?: string;
   sexo?: Sexo;
@@ -80,6 +102,11 @@ export interface UpdatePacientePayload {
     numero: string;
     cidade: string;
     estado: string;
+  };
+  // usuario?: ... removido pois usamos rota específica agora
+  usuario?: {
+    email?: string;
+    senha?: string;
   };
 }
 
@@ -100,7 +127,6 @@ export enum TipoArquivoProntuario {
   OUTRO = "OUTRO",
 }
 
-// Mock para a aba de Débitos
 export interface DebitoData {
   id_debito: string;
   data_vencimento: string;
@@ -117,8 +143,6 @@ export enum TipoEntradaProntuario {
   DIAGNOSTICO = "DIAGNOSTICO",
   OBSERVACAO_GERAL = "OBSERVACAO_GERAL",
 }
-
-// --- ENTIDADES DE PRONTUÁRIO (Respostas da API) ---
 
 export interface ProntuarioEntity {
   id_prontuario: string;
@@ -146,15 +170,12 @@ export interface ProntuarioEntrada {
   criado_em: string;
   atualizado_em: string;
 
-  // Relations (opcionais dependendo do include do prisma)
   profissional?: {
     nome: string;
     registro_conselho: string;
   };
   arquivos?: ProntuarioArquivo[];
 }
-
-// --- PAYLOADS (Envio para API) ---
 
 export interface CreateEntradaPayload {
   tipo: TipoEntradaProntuario;

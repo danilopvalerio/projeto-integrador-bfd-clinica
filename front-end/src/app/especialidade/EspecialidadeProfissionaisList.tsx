@@ -7,326 +7,423 @@ import {
   faPlus,
   faUserMd,
   faSearch,
-  faTimes,
+  faArrowLeft,
   faChevronLeft,
   faChevronRight,
-  faCheck,
+  faExclamationTriangle,
+  faChevronDown,
+  faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
+import { ProfissionalSummary } from "../profissionais/types"; // Importe a tipagem correta
 
-// IMPORTANTE: Ajuste o caminho abaixo para onde está o seu arquivo 'types.ts' do módulo de profissionais
-import type {
-  ProfissionalSummary,
-  PaginatedResponse,
-} from "../profissionais/types";
+interface ProfessionalCandidate {
+  id_profissional: string;
+  nome: string;
+  cargo: string;
+}
 
 interface Props {
   especialidadeId: string;
 }
 
-const SEARCH_LIMIT = 5;
-
 const EspecialidadeProfissionaisList = ({ especialidadeId }: Props) => {
-  // --- Estados da Lista de Vinculados ---
-  // Agora tipado corretamente como ProfissionalSummary[]
+  const [viewMode, setViewMode] = useState<"LIST" | "ADD">("LIST");
+  const [showList, setShowList] = useState(false);
+
+  // --- LISTA VINCULADOS ---
   const [profissionais, setProfissionais] = useState<ProfissionalSummary[]>([]);
-  const [loadingList, setLoadingList] = useState(false);
+  const [loadingVinculados, setLoadingVinculados] = useState(false);
+  const [linkedSearch, setLinkedSearch] = useState("");
+  const [linkedPage, setLinkedPage] = useState(1);
+  const [linkedTotalPages, setLinkedTotalPages] = useState(1);
 
-  // --- Estados da Busca (Candidatos) ---
-  const [candidates, setCandidates] = useState<ProfissionalSummary[]>([]);
-  const [loadingSearch, setLoadingSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  // --- LISTA CANDIDATOS ---
+  const [candidates, setCandidates] = useState<ProfessionalCandidate[]>([]);
+  const [loadingCandidates, setLoadingCandidates] = useState(false);
+  const [candidateSearch, setCandidateSearch] = useState("");
+  const [candidatePage, setCandidatePage] = useState(1);
+  const [candidateTotalPages, setCandidateTotalPages] = useState(1);
 
-  // Paginação da busca
-  const [searchPage, setSearchPage] = useState(1);
-  const [searchTotalPages, setSearchTotalPages] = useState(0);
-  const [searchError, setSearchError] = useState("");
+  // --- MODAL ---
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [profToRemove, setProfToRemove] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
 
-  // 1. Busca os profissionais JÁ vinculados à especialidade
-  const fetchLinkedProfissionais = useCallback(async () => {
-    if (!especialidadeId) return;
+  const LIMIT = 5;
 
+  const fetchVinculados = useCallback(
+    async (page = 1, term = "") => {
+      if (!especialidadeId) return;
+      try {
+        setLoadingVinculados(true);
+        let url = `/specialities/${especialidadeId}/profissionais/paginated?page=${page}&limit=${LIMIT}`;
+        if (term) {
+          url = `/specialities/${especialidadeId}/profissionais/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
+        }
+        const res = await api.get(url);
+        setProfissionais(res.data.data || []);
+        setLinkedPage(res.data.page);
+        setLinkedTotalPages(res.data.lastPage);
+      } catch (error) {
+        console.error(getErrorMessage(error));
+      } finally {
+        setLoadingVinculados(false);
+      }
+    },
+    [especialidadeId],
+  );
+
+  const handleToggleList = () => {
+    if (!showList) fetchVinculados(1, linkedSearch);
+    setShowList((prev) => !prev);
+  };
+
+  const handleLinkedSearch = () => {
+    fetchVinculados(1, linkedSearch);
+  };
+
+  const fetchCandidates = useCallback(async (page = 1, term = "") => {
     try {
-      setLoadingList(true);
-      // Assumindo que essa rota retorna ProfissionalSummary[]
-      const res = await api.get<ProfissionalSummary[]>(
-        `/specialities/${especialidadeId}/profissionais`,
-      );
-      setProfissionais(res.data);
+      setLoadingCandidates(true);
+      let url = `/professionals/paginated?page=${page}&limit=${LIMIT}`;
+      if (term) {
+        url = `/professionals/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
+      }
+      const res = await api.get(url);
+      setCandidates(res.data.data || []);
+      setCandidatePage(res.data.page);
+      setCandidateTotalPages(res.data.lastPage);
     } catch (error) {
       console.error(getErrorMessage(error));
     } finally {
-      setLoadingList(false);
+      setLoadingCandidates(false);
     }
-  }, [especialidadeId]);
+  }, []);
 
   useEffect(() => {
-    fetchLinkedProfissionais();
-  }, [fetchLinkedProfissionais]);
+    if (viewMode === "ADD") fetchCandidates(1, "");
+  }, [viewMode, fetchCandidates]);
 
-  // 2. Busca profissionais no banco geral (com paginação)
-  const fetchCandidates = async (page = 1, term = "") => {
-    setLoadingSearch(true);
-    setSearchError("");
-
-    try {
-      let url = `/professionals/paginated?page=${page}&limit=${SEARCH_LIMIT}`;
-
-      if (term) {
-        url = `/professionals/search?q=${encodeURIComponent(term)}&page=${page}&limit=${SEARCH_LIMIT}`;
-      }
-
-      // Tipando o retorno da API usando o Generics que você definiu: PaginatedResponse<ProfissionalSummary>
-      const response =
-        await api.get<PaginatedResponse<ProfissionalSummary>>(url);
-
-      setCandidates(response.data.data);
-      setSearchPage(response.data.page);
-      setSearchTotalPages(response.data.lastPage);
-    } catch (err) {
-      setSearchError(getErrorMessage(err));
-    } finally {
-      setLoadingSearch(false);
-    }
+  const handleCandidateSearch = () => {
+    fetchCandidates(1, candidateSearch);
   };
 
-  const handleSearch = () => fetchCandidates(1, searchTerm);
-
-  const handleClearSearch = () => {
-    setSearchTerm("");
-    setCandidates([]);
-    setSearchTotalPages(0);
-    setSearchPage(1);
-  };
-
-  // 3. Ação de Vincular (POST)
-  const handleAdd = async (profId: string) => {
-    // Verificação visual para evitar request desnecessário
-    if (profissionais.some((p) => p.id_profissional === profId)) {
-      return;
-    }
-
+  const handleAdd = async (idProfissional: string) => {
+    if (!idProfissional) return alert("Erro: ID inválido.");
     try {
+      setLoadingCandidates(true);
       await api.post(`/specialities/${especialidadeId}/profissionais`, {
-        id_profissional: profId,
+        id_profissional: idProfissional,
       });
-
-      // Atualiza a lista de cima
-      fetchLinkedProfissionais();
+      setViewMode("LIST");
+      setLinkedSearch("");
+      setShowList(true);
+      fetchVinculados(1, "");
     } catch (error) {
       alert(getErrorMessage(error));
+    } finally {
+      setLoadingCandidates(false);
     }
   };
 
-  // 4. Ação de Desvincular (DELETE)
-  const handleRemove = async (profId: string) => {
-    if (!confirm("Desvincular profissional dessa especialidade?")) return;
+  const requestRemove = (profId: string) => {
+    setProfToRemove(profId);
+    setShowConfirmModal(true);
+  };
 
+  const confirmRemove = async () => {
+    if (!profToRemove) return;
     try {
-      // DELETE com body precisa da propriedade 'data' no axios
+      setRemoving(true);
       await api.delete(`/specialities/${especialidadeId}/profissionais`, {
-        data: { id_profissional: profId },
+        data: { id_profissional: profToRemove },
       });
-
-      fetchLinkedProfissionais();
+      await fetchVinculados(linkedPage, linkedSearch);
+      setShowConfirmModal(false);
+      setProfToRemove(null);
     } catch (error) {
       alert(getErrorMessage(error));
+    } finally {
+      setRemoving(false);
     }
   };
+
+  const cancelRemove = () => {
+    setShowConfirmModal(false);
+    setProfToRemove(null);
+  };
+
+  if (viewMode === "ADD") {
+    return (
+      <div className="mt-4 pt-3 border-top animate-fade-in bg-light p-3 rounded border">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <button
+            type="button"
+            onClick={() => setViewMode("LIST")}
+            className="btn btn-sm btn-link text-decoration-none text-secondary p-0 fw-bold shadow-none"
+            style={{ boxShadow: "none" }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} className="me-2" /> Voltar
+          </button>
+          <h6 className="fw-bold text-secondary m-0">Vincular Profissional</h6>
+        </div>
+
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control form-control-sm shadow-none"
+            style={{ boxShadow: "none" }}
+            placeholder="Buscar candidato..."
+            value={candidateSearch}
+            onChange={(e) => setCandidateSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCandidateSearch()}
+            autoFocus
+          />
+          <button
+            className="btn btn-sm btn-outline-secondary shadow-none"
+            type="button"
+            onClick={handleCandidateSearch}
+          >
+            <FontAwesomeIcon icon={faSearch} />
+          </button>
+        </div>
+
+        {loadingCandidates ? (
+          <div className="text-center py-3">
+            <div className="spinner-border spinner-border-sm text-secondary"></div>
+          </div>
+        ) : (
+          <div className="list-group list-group-flush bg-white rounded shadow-sm">
+            {candidates.length > 0 ? (
+              candidates.map((cand) => (
+                <button
+                  key={cand.id_profissional}
+                  type="button"
+                  onClick={() => handleAdd(cand.id_profissional)}
+                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-3 py-2 small shadow-none"
+                  style={{ border: "none", outline: "none" }}
+                >
+                  <div>
+                    <div className="fw-bold text-dark">{cand.nome}</div>
+                    <div className="text-muted" style={{ fontSize: "0.75rem" }}>
+                      {cand.cargo}
+                    </div>
+                  </div>
+                  <FontAwesomeIcon icon={faPlus} className="text-primary" />
+                </button>
+              ))
+            ) : (
+              <div className="text-center text-muted small py-2">
+                Nenhum candidato encontrado.
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+            disabled={candidatePage === 1}
+            onClick={() => fetchCandidates(candidatePage - 1, candidateSearch)}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <span className="small text-muted">
+            {candidatePage} / {candidateTotalPages}
+          </span>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+            disabled={candidatePage === candidateTotalPages}
+            onClick={() => fetchCandidates(candidatePage + 1, candidateSearch)}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-4 pt-3 border-top animate-fade-in">
-      {/* === LISTA DE PROFISSIONAIS JÁ VINCULADOS === */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h6 className="fw-bold text-secondary m-0">
-          Profissionais Especializados
-        </h6>
-        <span className="badge bg-secondary bg-opacity-10 text-secondary">
-          {profissionais.length}
-        </span>
-      </div>
-
-      {loadingList ? (
-        <div className="text-center py-3">
-          <div className="spinner-border spinner-border-sm text-secondary"></div>
-        </div>
-      ) : (
-        <div className="list-group list-group-flush rounded-3 border-0 mb-4">
-          {profissionais.length > 0 ? (
-            profissionais.map((prof) => (
-              <div
-                key={prof.id_profissional}
-                className="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0 mb-2 bg-light rounded px-3"
-              >
-                <div className="d-flex align-items-center gap-2">
-                  <div
-                    className="bg-white rounded-circle d-flex align-items-center justify-content-center text-secondary shadow-sm"
-                    style={{ width: "32px", height: "32px" }}
-                  >
-                    <FontAwesomeIcon icon={faUserMd} className="small" />
-                  </div>
-                  <div className="d-flex flex-column">
-                    <span className="fw-bold small text-dark">{prof.nome}</span>
-                    <span
-                      className="text-muted"
-                      style={{ fontSize: "0.75rem" }}
-                    >
-                      {/* Usando o campo correto 'registro_conselho' */}
-                      {prof.registro_conselho || "S/ registro"}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  className="btn btn-link text-danger p-0 opacity-50 hover-opacity-100"
-                  onClick={() => handleRemove(prof.id_profissional)}
-                  title="Desvincular"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-muted small py-2 fst-italic">
-              Nenhum profissional vinculado a esta especialidade.
-            </div>
-          )}
-        </div>
-      )}
-
-      <hr className="text-secondary opacity-25 my-4" />
-
-      {/* === ÁREA DE BUSCA E VINCULAÇÃO === */}
-      <h6 className="fw-bold text-secondary mb-3">
-        Vincular Novo Profissional
-      </h6>
-
-      {/* Input de Busca */}
-      <div className="position-relative mb-3">
-        <input
-          type="text"
-          className="form-control form-control-sm rounded-pill ps-4"
-          placeholder="Buscar por nome ou CPF..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-        />
-        <FontAwesomeIcon
-          icon={faSearch}
-          className="position-absolute top-50 start-0 translate-middle-y ms-2 text-secondary small"
-        />
-        {searchTerm && (
-          <span
-            className="position-absolute top-50 end-0 translate-middle-y me-2 cursor-pointer p-1"
-            onClick={handleClearSearch}
-            style={{ cursor: "pointer" }}
+    <>
+      <div className="mt-4 pt-3 border-top animate-fade-in">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <h6 className="fw-bold text-secondary m-0">
+            Profissionais Especializados
+          </h6>
+          <button
+            type="button"
+            className="btn btn-sm button-dark-grey rounded-pill px-3 fw-bold shadow-none"
+            style={{ boxShadow: "none" }}
+            onClick={() => setViewMode("ADD")}
           >
-            <FontAwesomeIcon icon={faTimes} className="text-secondary small" />
-          </span>
+            <FontAwesomeIcon icon={faPlus} className="me-1" /> Vincular
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggleList}
+          className="btn btn-link text-decoration-none text-secondary p-0 mb-3 small fw-bold d-flex align-items-center gap-2 shadow-none"
+          style={{ boxShadow: "none" }}
+        >
+          {showList ? (
+            <>
+              <FontAwesomeIcon icon={faChevronUp} /> Ocultar Lista
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faChevronDown} /> Ver Profissionais
+            </>
+          )}
+        </button>
+
+        {showList && (
+          <div className="animate-fade-in bg-light p-3 rounded border">
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control form-control-sm shadow-none"
+                style={{ boxShadow: "none", background: "#fff" }}
+                placeholder="Filtrar vinculados..."
+                value={linkedSearch}
+                onChange={(e) => setLinkedSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLinkedSearch()}
+              />
+              <button
+                className="btn btn-sm btn-outline-secondary bg-white shadow-none"
+                type="button"
+                onClick={handleLinkedSearch}
+              >
+                <FontAwesomeIcon icon={faSearch} />
+              </button>
+            </div>
+
+            {loadingVinculados ? (
+              <div className="text-center py-3">
+                <div className="spinner-border spinner-border-sm text-secondary"></div>
+              </div>
+            ) : (
+              <div className="list-group list-group-flush rounded-3 border-0">
+                {profissionais.length > 0 ? (
+                  profissionais.map((prof) => (
+                    <div
+                      key={prof.id_profissional}
+                      className="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0 mb-2 bg-white rounded px-3 border shadow-sm"
+                    >
+                      <div className="d-flex align-items-center gap-2">
+                        <div
+                          className="bg-light rounded-circle d-flex align-items-center justify-content-center text-secondary"
+                          style={{ width: "32px", height: "32px" }}
+                        >
+                          <FontAwesomeIcon icon={faUserMd} className="small" />
+                        </div>
+                        <div className="d-flex flex-column">
+                          <span className="fw-bold small text-dark">
+                            {prof.nome}
+                          </span>
+                          <span
+                            className="text-muted"
+                            style={{ fontSize: "0.75rem" }}
+                          >
+                            {prof.registro_conselho || "S/ Reg"}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-link text-danger p-0 opacity-50 hover-opacity-100 shadow-none"
+                        style={{ boxShadow: "none" }}
+                        onClick={() => requestRemove(prof.id_profissional)}
+                        title="Desvincular"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-muted small py-3 fst-italic">
+                    Nenhum profissional encontrado.
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+                disabled={linkedPage === 1}
+                onClick={() => fetchVinculados(linkedPage - 1, linkedSearch)}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+              <span className="small text-muted">
+                {linkedPage} / {linkedTotalPages}
+              </span>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary py-0 shadow-none"
+                disabled={linkedPage === linkedTotalPages}
+                onClick={() => fetchVinculados(linkedPage + 1, linkedSearch)}
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="d-grid mb-3">
-        <button
-          className="btn btn-sm btn-outline-secondary rounded-pill"
-          onClick={handleSearch}
-          disabled={loadingSearch}
+      {showConfirmModal && (
+        <div
+          className="modal-backdrop d-flex justify-content-center align-items-center animate-fade-in"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1070 }}
+          onClick={cancelRemove}
         >
-          {loadingSearch ? "Buscando..." : "Pesquisar Candidatos"}
-        </button>
-      </div>
-
-      {/* Mensagens de Erro da Busca */}
-      {searchError && (
-        <div className="alert alert-danger py-1 px-2 small mb-2 rounded-3">
-          {searchError}
+          <div
+            className="bg-white rounded-4 shadow p-4"
+            style={{ maxWidth: "400px", width: "90%" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-4">
+              <div className="mb-3 text-warning">
+                <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
+              </div>
+              <h5 className="fw-bold text-secondary">
+                Desvincular Profissional?
+              </h5>
+              <p className="text-muted small mb-0">
+                O profissional não aparecerá mais nesta especialidade.
+              </p>
+            </div>
+            <div className="d-flex gap-2 justify-content-center">
+              <button
+                className="btn btn-light text-secondary fw-bold px-4 rounded-pill shadow-none"
+                onClick={cancelRemove}
+                disabled={removing}
+              >
+                Cancelar
+              </button>
+              <button
+                className="btn btn-danger fw-bold px-4 rounded-pill d-flex align-items-center gap-2 shadow-none"
+                onClick={confirmRemove}
+                disabled={removing}
+              >
+                {removing ? (
+                  <span className="spinner-border spinner-border-sm" />
+                ) : (
+                  <FontAwesomeIcon icon={faTrash} />
+                )}
+                <span>{removing ? "Removendo..." : "Sim, remover"}</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Resultados da Busca */}
-      {loadingSearch ? (
-        <div className="text-center py-3">
-          <div className="spinner-border spinner-border-sm text-secondary"></div>
-        </div>
-      ) : candidates.length > 0 ? (
-        <div className="animate-fade-in">
-          <div className="list-group list-group-flush small">
-            {candidates.map((cand) => {
-              // Verifica se o ID já existe na lista de cima
-              const isAlreadyLinked = profissionais.some(
-                (p) => p.id_profissional === cand.id_profissional,
-              );
-
-              return (
-                <div
-                  key={cand.id_profissional}
-                  className="list-group-item d-flex justify-content-between align-items-center bg-white border mb-1 rounded"
-                >
-                  <div className="text-truncate me-2">
-                    <div className="fw-bold text-dark">{cand.nome}</div>
-                    <div
-                      className="d-flex gap-2 text-muted"
-                      style={{ fontSize: "0.7rem" }}
-                    >
-                      <span>Reg: {cand.registro_conselho || "N/A"}</span>
-                      <span>•</span>
-                      <span>CPF: {cand.cpf}</span>
-                    </div>
-                  </div>
-
-                  {isAlreadyLinked ? (
-                    <span className="badge bg-light text-success border border-success">
-                      <FontAwesomeIcon icon={faCheck} className="me-1" />
-                      Vinculado
-                    </span>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-success rounded-circle shadow-sm"
-                      style={{ width: "30px", height: "30px", padding: 0 }}
-                      onClick={() => handleAdd(cand.id_profissional)}
-                      title="Adicionar à especialidade"
-                    >
-                      <FontAwesomeIcon icon={faPlus} className="small" />
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Paginação da Busca */}
-          <div className="d-flex justify-content-center align-items-center gap-2 mt-3">
-            <button
-              className="btn btn-light btn-sm border rounded-circle"
-              disabled={searchPage === 1}
-              onClick={() => fetchCandidates(searchPage - 1, searchTerm)}
-              style={{ width: "30px", height: "30px", padding: 0 }}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} className="small" />
-            </button>
-            <span className="small text-muted fw-bold">
-              {searchPage} de {searchTotalPages}
-            </span>
-            <button
-              className="btn btn-light btn-sm border rounded-circle"
-              disabled={searchPage === searchTotalPages}
-              onClick={() => fetchCandidates(searchPage + 1, searchTerm)}
-              style={{ width: "30px", height: "30px", padding: 0 }}
-            >
-              <FontAwesomeIcon icon={faChevronRight} className="small" />
-            </button>
-          </div>
-        </div>
-      ) : (
-        searchTerm &&
-        !loadingSearch &&
-        !searchError && (
-          <div className="text-center text-muted small py-2">
-            Nenhum candidato encontrado.
-          </div>
-        )
-      )}
-    </div>
+    </>
   );
 };
 

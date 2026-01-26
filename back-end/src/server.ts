@@ -3,6 +3,14 @@ import { prisma } from "./shared/database/prisma";
 import app from "./app";
 import { hashPassword } from "./shared/utils/hash"; // Importamos para a senha funcionar no login
 
+process.on("unhandledRejection", (reason) => {
+  console.error("🔥 UNHANDLED REJECTION:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("🔥 UNCAUGHT EXCEPTION:", err);
+});
+
 async function resetDatabaseHard() {
   if (process.env.NODE_ENV === "production") {
     throw new Error("🚫 Reset bloqueado em produção");
@@ -80,6 +88,13 @@ async function limparLinksArquivos() {
     `✅ ${resultado.count} registros de arquivos removidos com sucesso!`,
   );
 }
+async function clearLogs() {
+  if (process.env.NODE_ENV === "production") return;
+
+  console.log("🧹 Esvaziando tabela de Logs...");
+  await prisma.log.deleteMany({});
+  console.log("✅ Logs removidos com sucesso!");
+}
 
 const PORT = process.env.PORT || 3333;
 
@@ -88,8 +103,6 @@ async function startServer() {
     console.log("\nIniciando conexão persistente com o banco de dados...");
     await prisma.$connect();
     console.log("✅ Banco de dados e Prisma conectados com sucesso!");
-
-    //await resetDatabaseHard();
 
     // 1. Garante que o admin existe
     await criaAdmin();

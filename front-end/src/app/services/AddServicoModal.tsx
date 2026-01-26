@@ -1,4 +1,4 @@
-//src/app/services/AddServicoModal.tsx
+// src/app/services/AddServicoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,10 +12,10 @@ interface Props {
   onSuccess: () => void;
 }
 
-// Define o formato do estado local
-// (permitindo string temporariamente nos inputs numéricos para UX melhor)
-interface LocalFormData
-  extends Omit<CreateServicoPayload, "preco" | "duracao_estimada"> {
+interface LocalFormData extends Omit<
+  CreateServicoPayload,
+  "preco" | "duracao_estimada"
+> {
   preco: string | number;
   duracao_estimada: string | number;
 }
@@ -24,7 +24,6 @@ const AddServicoModal = ({ onClose, onSuccess }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // REMOVIDO: id_especialidade do estado inicial
   const [formData, setFormData] = useState<LocalFormData>({
     nome: "",
     descricao: "",
@@ -44,7 +43,7 @@ const AddServicoModal = ({ onClose, onSuccess }: Props) => {
 
   const handleChange = (
     field: keyof LocalFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -55,14 +54,12 @@ const AddServicoModal = ({ onClose, onSuccess }: Props) => {
     setError("");
 
     try {
-      // Conversão segura antes de enviar
       const payload: CreateServicoPayload = {
         ...formData,
         preco: Number(formData.preco),
         duracao_estimada: Number(formData.duracao_estimada),
       };
 
-      // Rota ajustada para o inglês conforme combinamos
       await api.post("/services", payload);
       onSuccess();
     } catch (err) {
@@ -101,10 +98,6 @@ const AddServicoModal = ({ onClose, onSuccess }: Props) => {
             )}
 
             <form onSubmit={handleSubmit}>
-              {/* IMPORTANTE: Você precisa abrir o arquivo 
-                  ServicoGeneralForm.tsx e remover o input/select 
-                  de especialidade lá dentro também!
-              */}
               <ServicoGeneralForm
                 data={formData}
                 onChange={handleChange}

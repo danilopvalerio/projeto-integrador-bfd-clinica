@@ -29,7 +29,6 @@ const EspecialidadeCard = ({ especialidade, onClick }: Props) => {
     >
       <div className="card-body p-4 d-flex flex-column h-100">
         <div className="d-flex align-items-center mb-3">
-          {/* Ícone / Letra inicial */}
           <div
             className="rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5 me-3 bg-gradient-vl text-white"
             style={{ width: "48px", height: "48px", minWidth: "48px" }}

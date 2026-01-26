@@ -27,7 +27,6 @@ const EspecialidadeGeneralForm = ({
         </h6>
       </div>
 
-      {/* Nome */}
       <div className="col-12">
         <label className="form-label small text-muted fw-bold">
           Nome da Especialidade
@@ -38,7 +37,8 @@ const EspecialidadeGeneralForm = ({
             className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
           />
           <input
-            className="p-2 ps-5 w-100 form-control-underline"
+            className="p-2 ps-5 w-100 form-control-underline shadow-none"
+            style={{ boxShadow: "none" }}
             placeholder="Ex: Ortodontia"
             value={data.nome}
             onChange={(e) => onChange("nome", e.target.value)}
@@ -48,18 +48,16 @@ const EspecialidadeGeneralForm = ({
         </div>
       </div>
 
-      {/* Descrição */}
       <div className="col-12">
-        <label className="form-label small text-muted fw-bold">
-          Descrição
-        </label>
+        <label className="form-label small text-muted fw-bold">Descrição</label>
         <div className="position-relative">
           <FontAwesomeIcon
             icon={faAlignLeft}
             className="position-absolute top-20 start-0 mt-3 ms-3 text-secondary"
           />
           <textarea
-            className="p-2 ps-5 w-100 form-control-underline"
+            className="p-2 ps-5 w-100 form-control-underline shadow-none"
+            style={{ boxShadow: "none" }}
             rows={3}
             placeholder="Detalhes sobre a especialidade..."
             value={data.descricao}

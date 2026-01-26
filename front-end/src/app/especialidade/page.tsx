@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,7 +15,6 @@ import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { EspecialidadeResponse } from "./types";
 
-// Componentes
 import EspecialidadeCard from "./EspecialidadeCard";
 import AddEspecialidadeModal from "./AddEspecialidadeModal";
 import EspecialidadeDetailModal from "./EspecialidadeDetailModal";
@@ -25,46 +24,32 @@ const LIMIT = 6;
 const EspecialidadesPage = () => {
   const router = useRouter();
 
-  // Dados
   const [especialidades, setEspecialidades] = useState<EspecialidadeResponse[]>(
     [],
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Paginação + busca
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedEspecialidadeId, setSelectedEspecialidadeId] = useState<
     string | null
   >(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      router.push("/login");
-    } else {
-      fetchEspecialidades(1);
-    }
-  }, [router]);
-
-  const fetchEspecialidades = async (page = 1, term = "") => {
+  const fetchEspecialidades = useCallback(async (page = 1, term = "") => {
     setLoading(true);
-    setError(""); // Limpa o erro ao iniciar uma nova busca
+    setError("");
 
     try {
       let url = `/specialities/paginated?page=${page}&limit=${LIMIT}`;
-
       if (term) {
         url = `/specialities/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
 
       const response = await api.get(url);
-
       setEspecialidades(response.data.data);
       setCurrentPage(response.data.page);
       setTotalPages(response.data.lastPage);
@@ -73,7 +58,16 @@ const EspecialidadesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      router.push("/login");
+    } else {
+      fetchEspecialidades(1);
+    }
+  }, [router, fetchEspecialidades]);
 
   const handleSearch = () => fetchEspecialidades(1, searchTerm);
 
@@ -93,10 +87,10 @@ const EspecialidadesPage = () => {
       className="d-flex flex-column min-vh-100"
       style={{ background: "#e9e9e9" }}
     >
-      {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
         <button
-          className="btn btn-link text-white p-0 me-3"
+          className="btn btn-link text-white p-0 me-3 shadow-none"
+          style={{ boxShadow: "none" }}
           onClick={() => router.push("/menu")}
         >
           <FontAwesomeIcon icon={faArrowLeft} className="fs-4" />
@@ -108,7 +102,6 @@ const EspecialidadesPage = () => {
 
       <div className="container my-5 flex-grow-1">
         <div className="bg-white border rounded-4 shadow-sm overflow-hidden">
-          {/* Banner */}
           <div className="bg-gradient-vl p-4 text-center text-white">
             <h3 className="fw-bold m-0">Catálogo de Especialidades</h3>
             <p className="opacity-75 small m-0 mt-1">
@@ -117,7 +110,6 @@ const EspecialidadesPage = () => {
           </div>
 
           <div className="p-4">
-            {/* Toolbar */}
             <div className="row g-3 mb-4 align-items-end">
               <div className="col-md-6">
                 <div className="position-relative">
@@ -126,7 +118,8 @@ const EspecialidadesPage = () => {
                     className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
                   />
                   <input
-                    className="form-control ps-5 rounded-pill"
+                    className="form-control ps-5 rounded-pill shadow-none"
+                    style={{ boxShadow: "none" }}
                     placeholder="Buscar especialidade..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -134,8 +127,7 @@ const EspecialidadesPage = () => {
                   />
                   {searchTerm && (
                     <span
-                      className="position-absolute top-50 end-0 translate-middle-y me-3"
-                      style={{ cursor: "pointer" }}
+                      className="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer"
                       onClick={handleClearSearch}
                     >
                       <FontAwesomeIcon icon={faTimes} />
@@ -146,7 +138,8 @@ const EspecialidadesPage = () => {
 
               <div className="col-md-2">
                 <button
-                  className="button-dark-grey w-100 rounded-pill"
+                  className="button-dark-grey w-100 rounded-pill shadow-none"
+                  style={{ boxShadow: "none" }}
                   onClick={handleSearch}
                 >
                   Pesquisar
@@ -155,7 +148,8 @@ const EspecialidadesPage = () => {
 
               <div className="col-md-4 text-end">
                 <button
-                  className="button-dark-grey rounded-pill px-4"
+                  className="button-dark-grey rounded-pill px-4 shadow-none"
+                  style={{ boxShadow: "none" }}
                   onClick={() => setIsAddModalOpen(true)}
                 >
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
@@ -164,12 +158,8 @@ const EspecialidadesPage = () => {
               </div>
             </div>
 
-            {/* Mensagem de Erro */}
             {error && (
-              <div
-                className="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm"
-                role="alert"
-              >
+              <div className="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm">
                 <div className="d-flex align-items-center">
                   <FontAwesomeIcon
                     icon={faExclamationTriangle}
@@ -181,14 +171,12 @@ const EspecialidadesPage = () => {
                 </div>
                 <button
                   type="button"
-                  className="btn-close"
+                  className="btn-close shadow-none"
                   onClick={() => setError("")}
-                  aria-label="Close"
-                ></button>
+                />
               </div>
             )}
 
-            {/* Conteúdo */}
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
@@ -214,10 +202,10 @@ const EspecialidadesPage = () => {
                       ))}
                     </div>
 
-                    {/* Paginação */}
                     <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
                       <button
-                        className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                        className="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-none"
+                        style={{ boxShadow: "none" }}
                         disabled={currentPage === 1}
                         onClick={() =>
                           fetchEspecialidades(currentPage - 1, searchTerm)
@@ -225,13 +213,12 @@ const EspecialidadesPage = () => {
                       >
                         Anterior
                       </button>
-
                       <span className="small fw-bold">
                         Página {currentPage} de {totalPages}
                       </span>
-
                       <button
-                        className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                        className="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-none"
+                        style={{ boxShadow: "none" }}
                         disabled={currentPage === totalPages}
                         onClick={() =>
                           fetchEspecialidades(currentPage + 1, searchTerm)
@@ -245,7 +232,7 @@ const EspecialidadesPage = () => {
                   !error && (
                     <div className="text-center py-5">
                       <p className="text-muted m-0">
-                        Nenhuma especialidade encontrada para sua busca.
+                        Nenhuma especialidade encontrada.
                       </p>
                     </div>
                   )
@@ -256,7 +243,6 @@ const EspecialidadesPage = () => {
         </div>
       </div>
 
-      {/* Modais */}
       {isAddModalOpen && (
         <AddEspecialidadeModal
           onClose={() => setIsAddModalOpen(false)}
