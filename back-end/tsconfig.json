@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "baseUrl": "./src",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
-    "ignoreDeprecations": "5.0",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["./src/*"]
     }
   }
 }
