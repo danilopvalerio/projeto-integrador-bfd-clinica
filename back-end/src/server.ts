@@ -84,7 +84,7 @@ async function clearLogs() {
   console.log("✅ Logs removidos com sucesso!");
 }
 
-const PORT = process.env.PORT || 3333;
+const PORT = process.env.PORT || 10000;
 
 async function startServer() {
   try {
@@ -94,7 +94,7 @@ async function startServer() {
 
     // 1. Garante que o admin existe
 
-    await criaAdmin();
+    // await criaAdmin();
     /*
     // 2. 📋 LISTA TODOS OS USUÁRIOS (Conforme solicitado)
     console.log("\n🔎 Buscando todos os usuários cadastrados...");

@@ -43,7 +43,6 @@ export interface AgendamentoCalendarDTO {
 }
 
 export interface AgendamentoDetailDTO extends AgendamentoCalendarDTO {
-  observacoes?: string;
   servicos: ServicoSummary[];
 }
 
@@ -84,7 +83,6 @@ export interface CreateAgendamentoPayload {
   ids_servicos: string[];
   data_hora_inicio: string;
   data_hora_fim?: string;
-  observacoes?: string;
 }
 
 export interface UpdateAgendamentoPayload {
@@ -93,5 +91,4 @@ export interface UpdateAgendamentoPayload {
   data_hora_inicio?: string;
   data_hora_fim?: string;
   status?: StatusAgendamento;
-  observacoes?: string;
 }

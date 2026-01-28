@@ -55,7 +55,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
   const [status, setStatus] = useState<StatusAgendamento>(
     StatusAgendamento.PENDENTE,
   );
-  const [obs, setObs] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [selectedServices, setSelectedServices] = useState<ServicoSummary[]>(
@@ -83,7 +82,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
         const ag = resAgendamento.data;
         setOriginalData(ag);
         setStatus(ag.status);
-        setObs(ag.observacoes || "");
         setStart(toInputFormat(ag.start));
         setEnd(toInputFormat(ag.end));
         setIdProfissional(ag.profissional.id_profissional);
@@ -126,7 +124,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
     try {
       const payload: UpdateAgendamentoPayload = {
         status,
-        observacoes: obs,
         ids_servicos: selectedServices.map((s) => s.id_servico),
         data_hora_inicio: new Date(start).toISOString(),
         data_hora_fim: end ? new Date(end).toISOString() : undefined,
@@ -369,19 +366,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
                       </option>
                     ))}
                   </select>
-                </div>
-                <div className="col-md-8">
-                  <label className="form-label fw-bold small text-secondary">
-                    Observações
-                  </label>
-                  <textarea
-                    className="form-control form-control-sm shadow-none rounded-3"
-                    style={{ resize: "none" }}
-                    rows={1}
-                    value={obs}
-                    onChange={(e) => setObs(e.target.value)}
-                    placeholder="..."
-                  />
                 </div>
               </div>
 

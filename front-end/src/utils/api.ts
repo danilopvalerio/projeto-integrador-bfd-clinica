@@ -19,7 +19,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
 };
 
 const api = axios.create({
-  baseURL: "http://localhost:3333/api",
+  baseURL: "http://localhost:10000/api",
   withCredentials: true,
 });
 

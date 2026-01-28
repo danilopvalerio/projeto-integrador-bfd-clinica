@@ -10,7 +10,7 @@ import {
 // Função para verificar se o back-end está vivo
 async function checkHealth() {
   try {
-    const res = await fetch("http://localhost:3333/api/health", {
+    const res = await fetch("http://localhost:10000/api/health", {
       cache: "no-store", // Garante que não use cache
       next: { revalidate: 0 }, // Força a requisição a cada acesso
     });
@@ -98,16 +98,6 @@ export default async function LoginPage() {
             Faça seu login para gerenciar seus agendamentos e acessar seus
             resultados.
           </p>
-
-          <p className="mb-2 small">Não tem uma conta?</p>
-
-          <Link
-            href="/register"
-            className="btn btn-outline-light rounded-pill px-4 py-2 fw-bold text-decoration-none"
-            style={{ fontSize: "0.9rem" }}
-          >
-            Criar Conta
-          </Link>
         </div>
 
         {/* === FORM PANEL (Direita) === */}

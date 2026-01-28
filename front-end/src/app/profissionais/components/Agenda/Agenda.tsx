@@ -54,6 +54,7 @@ function timeFromISO(iso: string) {
 }
 
 function isoFromDayAndTime(dia_semana: number, timeHHMM: string) {
+  // Data base arbitrária para calcular apenas a hora/minuto
   const base = new Date("2026-01-04T00:00:00.000Z");
   const [hh, mm] = timeHHMM.split(":").map((x) => Number(x));
   const d = new Date(base);
@@ -101,6 +102,8 @@ interface DayColumnProps {
     originalStartMinutes: number;
   } | null;
 
+  processingIds: string[]; // IDs que estão carregando (optimistic UI)
+
   onMouseDown: (dayIndex: number, e: React.MouseEvent) => void;
   onMouseMove: (dayIndex: number, e: React.MouseEvent) => void;
   onEdit: (h: HorarioEntity) => void;
@@ -117,6 +120,7 @@ const DayColumn = React.memo(
     dragCurrentMinutes,
     resizingState,
     movingState,
+    processingIds,
     onMouseDown,
     onMouseMove,
     onEdit,
@@ -141,11 +145,13 @@ const DayColumn = React.memo(
         onMouseMove={(e) => onMouseMove(dayIndex, e)}
       >
         {events.map((ev) => {
+          // Se estiver movendo este evento, não renderiza o original (mostra o Ghost)
           if (movingState?.eventId === ev.id_horario) return null;
 
           const isResizingThis = resizingState?.eventId === ev.id_horario;
           let tempEndTime = null;
 
+          // Se estiver redimensionando, calcula o tempo final visual
           if (isResizingThis && resizingState) {
             tempEndTime = isoFromDayAndTime(
               dayIndex,
@@ -153,12 +159,15 @@ const DayColumn = React.memo(
             );
           }
 
+          const isProcessing = processingIds.includes(ev.id_horario);
+
           return (
             <ScheduleEventCard
               key={ev.id_horario}
               event={ev}
               pixelsPorHora={PIXELS_POR_HORA}
               tempEndTime={tempEndTime}
+              isProcessing={isProcessing} // Passamos o estado de loading
               onEdit={onEdit}
               onDelete={onDelete}
               onResizeStart={onResizeStart}
@@ -167,13 +176,19 @@ const DayColumn = React.memo(
           );
         })}
 
-        {/* Ghost Create */}
+        {/* Ghost Create (Visual enquanto arrasta para criar) */}
         {isCreatingHere && dragCurrentMinutes !== null && dragStart && (
           <div
             className="position-absolute rounded-1 bg-success bg-opacity-50 border border-success pe-none shadow-sm d-flex flex-column justify-content-center overflow-hidden px-2"
             style={{
-              top: `${(Math.min(dragStart.minutes, dragCurrentMinutes) / 60) * PIXELS_POR_HORA}px`,
-              height: `${(Math.abs(dragCurrentMinutes - dragStart.minutes) / 60) * PIXELS_POR_HORA}px`,
+              top: `${
+                (Math.min(dragStart.minutes, dragCurrentMinutes) / 60) *
+                PIXELS_POR_HORA
+              }px`,
+              height: `${
+                (Math.abs(dragCurrentMinutes - dragStart.minutes) / 60) *
+                PIXELS_POR_HORA
+              }px`,
               left: "2px",
               right: "2px",
               zIndex: 20,
@@ -192,7 +207,7 @@ const DayColumn = React.memo(
           </div>
         )}
 
-        {/* Ghost Moving */}
+        {/* Ghost Moving (Visual enquanto arrasta para mover) */}
         {movingState && movingState.newDayIndex === dayIndex && (
           <div
             className="position-absolute rounded-1 bg-primary bg-opacity-50 border border-primary pe-none shadow-lg d-flex flex-column justify-content-center overflow-hidden px-2"
@@ -235,9 +250,12 @@ const ProfissionalHorariosModal = ({
   onSuccess,
 }: Props) => {
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false); // Global saving (para manual/delete)
   const [error, setError] = useState("");
   const [horarios, setHorarios] = useState<HorarioEntity[]>([]);
+
+  // Estado para controlar quais eventos estão salvando individualmente (spinner no card)
+  const [processingIds, setProcessingIds] = useState<string[]>([]);
 
   // STATES: Drag & Drop
   const [isDragging, setIsDragging] = useState(false);
@@ -266,7 +284,7 @@ const ProfissionalHorariosModal = ({
     newStartMinutes: number;
   } | null>(null);
 
-  // STATE: Confirmation Modal
+  // Demais states (Confirmation, ManualForm)...
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -274,7 +292,6 @@ const ProfissionalHorariosModal = ({
     onConfirm: () => void;
   } | null>(null);
 
-  // STATE: Manual Form
   const [showManualForm, setShowManualForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [manualFormValues, setManualFormValues] = useState({
@@ -295,7 +312,8 @@ const ProfissionalHorariosModal = ({
   }, [onClose, error, showManualForm, confirmationModal]);
 
   const fetchHorarios = useCallback(async () => {
-    setLoading(true);
+    // Evita loading full screen se for apenas um refresh
+    if (horarios.length === 0) setLoading(true);
     try {
       const response = await api.get(
         `/professionals/${profissionalId}/horarios`,
@@ -306,24 +324,26 @@ const ProfissionalHorariosModal = ({
     } finally {
       setLoading(false);
     }
-  }, [profissionalId]);
+  }, [profissionalId, horarios.length]);
 
   useEffect(() => {
     fetchHorarios();
-  }, [fetchHorarios]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Mantemos vazio para executar apenas no mount
 
   // --- ACTIONS ---
 
-  // CORREÇÃO: Envolvido em useCallback para ser dependência estável
   const executeDelete = useCallback(
     async (id_horario: string) => {
       setSaving(true);
       try {
         await api.delete(`/professionals/horarios/${id_horario}`);
-        await fetchHorarios();
+        setHorarios((prev) => prev.filter((h) => h.id_horario !== id_horario));
         onSuccess();
       } catch (err) {
         setError(getErrorMessage(err));
+        // Se falhar, recarrega
+        fetchHorarios();
       } finally {
         setSaving(false);
         setConfirmationModal(null);
@@ -341,7 +361,7 @@ const ProfissionalHorariosModal = ({
         onConfirm: () => executeDelete(id_horario),
       });
     },
-    [executeDelete], // Dependência adicionada corretamente
+    [executeDelete],
   );
 
   const handleSaveManual = async (data: {
@@ -349,12 +369,10 @@ const ProfissionalHorariosModal = ({
     inicio: string;
     fim: string;
   }) => {
-    // CORREÇÃO: Substituído alert por setError
     if (!data.inicio || !data.fim) {
       setError("Por favor, preencha os horários de início e fim.");
       return;
     }
-
     setSaving(true);
     try {
       const payload = {
@@ -377,7 +395,7 @@ const ProfissionalHorariosModal = ({
     }
   };
 
-  // --- DRAG HANDLERS (Create, Resize, Move) ---
+  // --- DRAG HANDLERS OPTIMISTIC ---
 
   const handleMouseDown = useCallback(
     (dayIndex: number, e: React.MouseEvent) => {
@@ -411,37 +429,63 @@ const ProfissionalHorariosModal = ({
   );
 
   const handleSaveCreateDrag = useCallback(async () => {
-    if (!dragStart || dragCurrentMinutes === null) return;
-    const min = Math.min(dragStart.minutes, dragCurrentMinutes);
-    const max = Math.max(dragStart.minutes, dragCurrentMinutes);
-    if (min === max) {
-      setIsDragging(false);
-      setDragStart(null);
-      return;
-    }
+    // 1. Snapshot dos dados
+    const currentDragStart = dragStart;
+    const currentDragMinutes = dragCurrentMinutes;
 
-    setSaving(true);
+    // 2. LIMPEZA IMEDIATA DO ESTADO (Destrava o mouse)
+    setIsDragging(false);
+    setDragStart(null);
+    setDragCurrentMinutes(null);
+
+    if (!currentDragStart || currentDragMinutes === null) return;
+
+    const min = Math.min(currentDragStart.minutes, currentDragMinutes);
+    const max = Math.max(currentDragStart.minutes, currentDragMinutes);
+    if (min === max) return;
+
+    // 3. UI Otimista: Cria evento temporário
+    const tempId = `temp-${Date.now()}`;
+    const newEvent: HorarioEntity = {
+      id_horario: tempId,
+      id_profissional: profissionalId,
+      dia_semana: currentDragStart.dayIndex,
+      hora_inicio: isoFromDayAndTime(
+        currentDragStart.dayIndex,
+        minutesToHHMM(min),
+      ),
+      hora_fim: isoFromDayAndTime(
+        currentDragStart.dayIndex,
+        minutesToHHMM(max),
+      ),
+      // Removidos campos criado_em/atualizado_em
+    };
+
+    setHorarios((prev) => [...prev, newEvent]);
+    setProcessingIds((prev) => [...prev, tempId]); // Ativa spinner neste card
+
+    // 4. Chamada API
     try {
       await api.post(`/professionals/${profissionalId}/horarios`, {
-        dia_semana: dragStart.dayIndex,
-        hora_inicio: isoFromDayAndTime(dragStart.dayIndex, minutesToHHMM(min)),
-        hora_fim: isoFromDayAndTime(dragStart.dayIndex, minutesToHHMM(max)),
+        dia_semana: newEvent.dia_semana,
+        hora_inicio: newEvent.hora_inicio,
+        hora_fim: newEvent.hora_fim,
       });
+      // Sucesso: Sincroniza ID real
       await fetchHorarios();
       onSuccess();
     } catch (err) {
+      // Erro: Rollback (remove o temporário)
+      setHorarios((prev) => prev.filter((h) => h.id_horario !== tempId));
       setError(getErrorMessage(err));
     } finally {
-      setSaving(false);
-      setIsDragging(false);
-      setDragStart(null);
-      setDragCurrentMinutes(null);
+      setProcessingIds((prev) => prev.filter((id) => id !== tempId));
     }
   }, [dragStart, dragCurrentMinutes, profissionalId, fetchHorarios, onSuccess]);
 
   const handleResizeStart = useCallback(
     (ev: HorarioEntity) => {
-      if (saving || loading) return;
+      if (saving || loading || processingIds.includes(ev.id_horario)) return;
       const startD = new Date(ev.hora_inicio);
       const startMinutes = startD.getUTCHours() * 60 + startD.getUTCMinutes();
       const endD = new Date(ev.hora_fim);
@@ -455,46 +499,65 @@ const ProfissionalHorariosModal = ({
         newEndMinutes: endMinutes,
       });
     },
-    [saving, loading],
+    [saving, loading, processingIds],
   );
 
   const handleSaveResize = useCallback(async () => {
-    if (!resizingState) return;
-    if (resizingState.newEndMinutes === resizingState.originalEndMinutes) {
-      setResizingState(null);
-      return;
-    }
-    if (resizingState.newEndMinutes <= resizingState.startMinutes) {
-      setResizingState(null);
-      return;
-    }
+    // 1. Snapshot
+    const state = resizingState;
 
-    setSaving(true);
+    // 2. LIMPEZA IMEDIATA
+    setResizingState(null);
+
+    if (!state) return;
+    if (state.newEndMinutes === state.originalEndMinutes) return;
+    if (state.newEndMinutes <= state.startMinutes) return;
+
+    const previousHorarios = [...horarios]; // Backup
+
+    // 3. UI Otimista
+    setHorarios((prev) =>
+      prev.map((h) =>
+        h.id_horario === state.eventId
+          ? {
+              ...h,
+              hora_fim: isoFromDayAndTime(
+                state.dayIndex,
+                minutesToHHMM(state.newEndMinutes),
+              ),
+            }
+          : h,
+      ),
+    );
+    setProcessingIds((prev) => [...prev, state.eventId]);
+
+    // 4. API Call
     try {
-      await api.patch(`/professionals/horarios/${resizingState.eventId}`, {
-        dia_semana: resizingState.dayIndex,
+      await api.patch(`/professionals/horarios/${state.eventId}`, {
+        dia_semana: state.dayIndex,
         hora_inicio: isoFromDayAndTime(
-          resizingState.dayIndex,
-          minutesToHHMM(resizingState.startMinutes),
+          state.dayIndex,
+          minutesToHHMM(state.startMinutes),
         ),
         hora_fim: isoFromDayAndTime(
-          resizingState.dayIndex,
-          minutesToHHMM(resizingState.newEndMinutes),
+          state.dayIndex,
+          minutesToHHMM(state.newEndMinutes),
         ),
       });
       await fetchHorarios();
       onSuccess();
     } catch (err) {
+      // Rollback
+      setHorarios(previousHorarios);
       setError(getErrorMessage(err));
     } finally {
-      setSaving(false);
-      setResizingState(null);
+      setProcessingIds((prev) => prev.filter((id) => id !== state.eventId));
     }
-  }, [resizingState, fetchHorarios, onSuccess]);
+  }, [resizingState, horarios, fetchHorarios, onSuccess]);
 
   const handleMoveStart = useCallback(
     (ev: HorarioEntity) => {
-      if (saving || loading) return;
+      if (saving || loading || processingIds.includes(ev.id_horario)) return;
       const startD = new Date(ev.hora_inicio);
       const startMinutes = startD.getUTCHours() * 60 + startD.getUTCMinutes();
       const endD = new Date(ev.hora_fim);
@@ -510,45 +573,75 @@ const ProfissionalHorariosModal = ({
         newStartMinutes: startMinutes,
       });
     },
-    [saving, loading],
+    [saving, loading, processingIds],
   );
 
   const handleSaveMove = useCallback(async () => {
-    if (!movingState) return;
-    if (
-      movingState.newDayIndex === movingState.originalDayIndex &&
-      movingState.newStartMinutes === movingState.originalStartMinutes
-    ) {
-      setMovingState(null);
-      return;
-    }
+    // 1. Snapshot
+    const state = movingState;
 
-    setSaving(true);
+    // 2. LIMPEZA IMEDIATA
+    setMovingState(null);
+
+    if (!state) return;
+    if (
+      state.newDayIndex === state.originalDayIndex &&
+      state.newStartMinutes === state.originalStartMinutes
+    )
+      return;
+
+    const previousHorarios = [...horarios]; // Backup
+
+    // 3. UI Otimista
+    setHorarios((prev) =>
+      prev.map((h) =>
+        h.id_horario === state.eventId
+          ? {
+              ...h,
+              dia_semana: state.newDayIndex,
+              hora_inicio: isoFromDayAndTime(
+                state.newDayIndex,
+                minutesToHHMM(state.newStartMinutes),
+              ),
+              hora_fim: isoFromDayAndTime(
+                state.newDayIndex,
+                minutesToHHMM(state.newStartMinutes + state.duration),
+              ),
+            }
+          : h,
+      ),
+    );
+    setProcessingIds((prev) => [...prev, state.eventId]);
+
+    // 4. API Call
     try {
-      await api.patch(`/professionals/horarios/${movingState.eventId}`, {
-        dia_semana: movingState.newDayIndex,
+      await api.patch(`/professionals/horarios/${state.eventId}`, {
+        dia_semana: state.newDayIndex,
         hora_inicio: isoFromDayAndTime(
-          movingState.newDayIndex,
-          minutesToHHMM(movingState.newStartMinutes),
+          state.newDayIndex,
+          minutesToHHMM(state.newStartMinutes),
         ),
         hora_fim: isoFromDayAndTime(
-          movingState.newDayIndex,
-          minutesToHHMM(movingState.newStartMinutes + movingState.duration),
+          state.newDayIndex,
+          minutesToHHMM(state.newStartMinutes + state.duration),
         ),
       });
       await fetchHorarios();
       onSuccess();
     } catch (err) {
+      // Rollback
+      setHorarios(previousHorarios);
       setError(getErrorMessage(err));
     } finally {
-      setSaving(false);
-      setMovingState(null);
+      setProcessingIds((prev) => prev.filter((id) => id !== state.eventId));
     }
-  }, [movingState, fetchHorarios, onSuccess]);
+  }, [movingState, horarios, fetchHorarios, onSuccess]);
 
   const handleMouseMove = useCallback(
     (dayIndex: number, e: React.MouseEvent) => {
+      // Não faz nada se não estiver em modo de interação
       if (!isDragging && !resizingState && !movingState) return;
+
       const target = e.currentTarget as HTMLDivElement;
       const rect = target.getBoundingClientRect();
       const offsetY = e.clientY - rect.top;
@@ -587,6 +680,7 @@ const ProfissionalHorariosModal = ({
   );
 
   const handleMouseUp = useCallback(() => {
+    // Dispara a função de salvar correspondente ao estado atual
     if (isDragging) handleSaveCreateDrag();
     if (resizingState) handleSaveResize();
     if (movingState) handleSaveMove();
@@ -663,7 +757,7 @@ const ProfissionalHorariosModal = ({
                 <button
                   className="btn btn-sm btn-light text-primary fw-bold rounded-pill shadow-none"
                   onClick={() => openEditForm()}
-                  disabled={!!error}
+                  disabled={!!error || saving}
                 >
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
                   Manual
@@ -682,11 +776,11 @@ const ProfissionalHorariosModal = ({
               className="modal-body p-0 overflow-auto bg-white custom-scrollbar position-relative"
               ref={containerRef}
               onMouseUp={handleMouseUp}
+              // Segurança: Se o mouse sair do container enquanto arrasta, cancela ou finaliza
               onMouseLeave={() => {
-                if (isDragging) {
-                  setIsDragging(false);
-                  setDragStart(null);
-                }
+                if (isDragging) handleSaveCreateDrag();
+                if (movingState) handleSaveMove();
+                if (resizingState) handleSaveResize();
               }}
             >
               {loading && (
@@ -751,6 +845,7 @@ const ProfissionalHorariosModal = ({
                     dragCurrentMinutes={dragCurrentMinutes}
                     resizingState={resizingState}
                     movingState={movingState}
+                    processingIds={processingIds} // PASSADO PROPS NOVO
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onEdit={openEditForm}
@@ -799,7 +894,7 @@ const ProfissionalHorariosModal = ({
         />
       )}
 
-      {/* --- ERROR MODAL (Simples) --- */}
+      {/* --- ERROR MODAL --- */}
       {error && (
         <div
           className="modal fade show d-block"

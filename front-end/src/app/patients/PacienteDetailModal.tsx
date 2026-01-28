@@ -240,8 +240,6 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
             {/* --- BLOCO 1: DADOS PESSOAIS --- */}
             <form onSubmit={handleUpdate} className="mb-4">
               <div className="bg-white border rounded-4 p-4 shadow-sm">
-                <h6 className="fw-bold mb-3 text-secondary">Dados Pessoais</h6>
-
                 <PacienteGeneralForm
                   data={formData}
                   onChange={handleChange}
