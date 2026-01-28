@@ -9,19 +9,27 @@ import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 import { StatusAgendamento } from "../../shared/database/generated/prisma/client";
 
 export class AgendamentoRepository implements IAgendamentoRepository {
-  // Include padrão para trazer as relações necessárias
+  // Include padrão ATUALIZADO para buscar nomes em Usuario
   private defaultInclude = {
     paciente: {
-      select: { id_paciente: true, nome: true, cpf: true, sexo: true },
+      select: {
+        id_paciente: true,
+        cpf: true,
+        sexo: true,
+        usuario: { select: { nome: true } }, // <--- Include do nome aqui
+      },
     },
     profissional: {
-      include: {
+      select: {
+        id_profissional: true,
+        registro_conselho: true,
+        usuario: { select: { nome: true } }, // <--- Include do nome aqui
         especialidades: { include: { especialidade: true } },
       },
     },
     servicos: {
       include: {
-        servico: true, // Traz detalhes do serviço (nome, duração) além dos dados da pivô
+        servico: true,
       },
       orderBy: {
         ordem: "asc" as const,
@@ -29,7 +37,7 @@ export class AgendamentoRepository implements IAgendamentoRepository {
     },
   };
 
-  // --- CREATE COM LOGICA DE SNAPSHOT DE PREÇO ---
+  // --- CREATE ---
   async createWithServices(
     data: CreateAgendamentoDTO,
     servicosData: { id_servico: string; preco: number }[],
@@ -46,11 +54,10 @@ export class AgendamentoRepository implements IAgendamentoRepository {
         observacoes: data.observacoes,
         status: StatusAgendamento.PENDENTE,
 
-        // Criação na tabela Pivô (AgendamentoServico)
         servicos: {
           create: servicosData.map((s, index) => ({
             id_servico: s.id_servico,
-            preco_cobrado: s.preco, // Salva o preço ATUAL como histórico
+            preco_cobrado: s.preco,
             ordem: index,
           })),
         },
@@ -61,14 +68,13 @@ export class AgendamentoRepository implements IAgendamentoRepository {
     return result as unknown as AgendamentoEntity;
   }
 
-  // Override do create padrão para forçar o uso do createWithServices
   async create(data: CreateAgendamentoDTO): Promise<AgendamentoEntity> {
     throw new Error(
       "Utilize createWithServices para garantir a integridade dos preços.",
     );
   }
 
-  // --- UPDATE COM LOGICA DE N:N ---
+  // --- UPDATE ---
   async updateWithServices(
     id: string,
     data: UpdateAgendamentoDTO,
@@ -82,13 +88,12 @@ export class AgendamentoRepository implements IAgendamentoRepository {
       observacoes: data.observacoes,
     };
 
-    // Se houve alteração nos serviços, substitui as relações na tabela pivô
     if (novosServicosData) {
       updateData.servicos = {
-        deleteMany: {}, // Remove vínculos antigos
+        deleteMany: {},
         create: novosServicosData.map((s, index) => ({
           id_servico: s.id_servico,
-          preco_cobrado: s.preco, // Atualiza com o preço vigente
+          preco_cobrado: s.preco,
           ordem: index,
         })),
       };
@@ -121,7 +126,7 @@ export class AgendamentoRepository implements IAgendamentoRepository {
     await prisma.agendamento.delete({ where: { id_agendamento: id } });
   }
 
-  // --- PAGINAÇÃO (Usando RepositoryPaginatedResult) ---
+  // --- PAGINAÇÃO ---
 
   async findPaginated(
     page: number,
@@ -139,7 +144,6 @@ export class AgendamentoRepository implements IAgendamentoRepository {
       prisma.agendamento.count(),
     ]);
 
-    // Retorno estritamente tipado
     return {
       data: data as unknown as AgendamentoEntity[],
       total,
@@ -153,14 +157,21 @@ export class AgendamentoRepository implements IAgendamentoRepository {
   ): Promise<RepositoryPaginatedResult<AgendamentoEntity>> {
     const skip = (page - 1) * limit;
 
+    // ATUALIZADO: Busca nome dentro de usuario
     const where = {
       OR: [
         {
-          paciente: { nome: { contains: query, mode: "insensitive" as const } },
+          paciente: {
+            usuario: {
+              nome: { contains: query, mode: "insensitive" as const },
+            },
+          },
         },
         {
           profissional: {
-            nome: { contains: query, mode: "insensitive" as const },
+            usuario: {
+              nome: { contains: query, mode: "insensitive" as const },
+            },
           },
         },
       ],
@@ -194,12 +205,11 @@ export class AgendamentoRepository implements IAgendamentoRepository {
     const conflito = await prisma.agendamento.findFirst({
       where: {
         id_profissional,
-        status: { not: StatusAgendamento.CANCELADO }, // Ignora cancelados
+        status: { not: StatusAgendamento.CANCELADO },
         AND: [
-          { data_hora_inicio: { lt: fim } }, // Começa antes do novo terminar
-          { data_hora_fim: { gt: inicio } }, // Termina depois do novo começar
+          { data_hora_inicio: { lt: fim } },
+          { data_hora_fim: { gt: inicio } },
         ],
-        // Se for update, exclui o próprio ID da verificação
         ...(excludeAgendamentoId
           ? { id_agendamento: { not: excludeAgendamentoId } }
           : {}),
@@ -207,6 +217,7 @@ export class AgendamentoRepository implements IAgendamentoRepository {
     });
     return !conflito;
   }
+
   async findByPersonPaginated(
     filter: { id_paciente?: string; id_profissional?: string },
     page: number,
@@ -214,7 +225,6 @@ export class AgendamentoRepository implements IAgendamentoRepository {
   ): Promise<RepositoryPaginatedResult<AgendamentoEntity>> {
     const skip = (page - 1) * limit;
 
-    // Constrói o where dinamicamente
     const where: any = {};
     if (filter.id_paciente) where.id_paciente = filter.id_paciente;
     if (filter.id_profissional) where.id_profissional = filter.id_profissional;
@@ -224,7 +234,6 @@ export class AgendamentoRepository implements IAgendamentoRepository {
         where,
         skip,
         take: limit,
-        // Garante ordenação decrescente (mais recente primeiro)
         orderBy: { data_hora_inicio: "desc" },
         include: this.defaultInclude,
       }),
@@ -236,6 +245,7 @@ export class AgendamentoRepository implements IAgendamentoRepository {
       total,
     };
   }
+
   async findByDateRange(
     inicio: Date,
     fim: Date,

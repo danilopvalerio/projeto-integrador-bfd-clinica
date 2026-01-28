@@ -26,7 +26,6 @@ export type AggregateProfissional = {
 
 export type ProfissionalMinAggregateOutputType = {
   id_profissional: string | null
-  nome: string | null
   cpf: string | null
   registro_conselho: string | null
   id_usuario: string | null
@@ -34,7 +33,6 @@ export type ProfissionalMinAggregateOutputType = {
 
 export type ProfissionalMaxAggregateOutputType = {
   id_profissional: string | null
-  nome: string | null
   cpf: string | null
   registro_conselho: string | null
   id_usuario: string | null
@@ -42,7 +40,6 @@ export type ProfissionalMaxAggregateOutputType = {
 
 export type ProfissionalCountAggregateOutputType = {
   id_profissional: number
-  nome: number
   cpf: number
   registro_conselho: number
   id_usuario: number
@@ -52,7 +49,6 @@ export type ProfissionalCountAggregateOutputType = {
 
 export type ProfissionalMinAggregateInputType = {
   id_profissional?: true
-  nome?: true
   cpf?: true
   registro_conselho?: true
   id_usuario?: true
@@ -60,7 +56,6 @@ export type ProfissionalMinAggregateInputType = {
 
 export type ProfissionalMaxAggregateInputType = {
   id_profissional?: true
-  nome?: true
   cpf?: true
   registro_conselho?: true
   id_usuario?: true
@@ -68,7 +63,6 @@ export type ProfissionalMaxAggregateInputType = {
 
 export type ProfissionalCountAggregateInputType = {
   id_profissional?: true
-  nome?: true
   cpf?: true
   registro_conselho?: true
   id_usuario?: true
@@ -149,7 +143,6 @@ export type ProfissionalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type ProfissionalGroupByOutputType = {
   id_profissional: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -178,7 +171,6 @@ export type ProfissionalWhereInput = {
   OR?: Prisma.ProfissionalWhereInput[]
   NOT?: Prisma.ProfissionalWhereInput | Prisma.ProfissionalWhereInput[]
   id_profissional?: Prisma.StringFilter<"Profissional"> | string
-  nome?: Prisma.StringFilter<"Profissional"> | string
   cpf?: Prisma.StringFilter<"Profissional"> | string
   registro_conselho?: Prisma.StringFilter<"Profissional"> | string
   id_usuario?: Prisma.StringFilter<"Profissional"> | string
@@ -193,7 +185,6 @@ export type ProfissionalWhereInput = {
 
 export type ProfissionalOrderByWithRelationInput = {
   id_profissional?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   registro_conselho?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
@@ -213,7 +204,6 @@ export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ProfissionalWhereInput | Prisma.ProfissionalWhereInput[]
   OR?: Prisma.ProfissionalWhereInput[]
   NOT?: Prisma.ProfissionalWhereInput | Prisma.ProfissionalWhereInput[]
-  nome?: Prisma.StringFilter<"Profissional"> | string
   registro_conselho?: Prisma.StringFilter<"Profissional"> | string
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   horarios?: Prisma.Horario_TrabalhoListRelationFilter
@@ -226,7 +216,6 @@ export type ProfissionalWhereUniqueInput = Prisma.AtLeast<{
 
 export type ProfissionalOrderByWithAggregationInput = {
   id_profissional?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   registro_conselho?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
@@ -240,7 +229,6 @@ export type ProfissionalScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProfissionalScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProfissionalScalarWhereWithAggregatesInput | Prisma.ProfissionalScalarWhereWithAggregatesInput[]
   id_profissional?: Prisma.StringWithAggregatesFilter<"Profissional"> | string
-  nome?: Prisma.StringWithAggregatesFilter<"Profissional"> | string
   cpf?: Prisma.StringWithAggregatesFilter<"Profissional"> | string
   registro_conselho?: Prisma.StringWithAggregatesFilter<"Profissional"> | string
   id_usuario?: Prisma.StringWithAggregatesFilter<"Profissional"> | string
@@ -248,7 +236,6 @@ export type ProfissionalScalarWhereWithAggregatesInput = {
 
 export type ProfissionalCreateInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -262,7 +249,6 @@ export type ProfissionalCreateInput = {
 
 export type ProfissionalUncheckedCreateInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -276,7 +262,6 @@ export type ProfissionalUncheckedCreateInput = {
 
 export type ProfissionalUpdateInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -290,7 +275,6 @@ export type ProfissionalUpdateInput = {
 
 export type ProfissionalUncheckedUpdateInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -304,7 +288,6 @@ export type ProfissionalUncheckedUpdateInput = {
 
 export type ProfissionalCreateManyInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -312,14 +295,12 @@ export type ProfissionalCreateManyInput = {
 
 export type ProfissionalUpdateManyMutationInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProfissionalUncheckedUpdateManyInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -332,7 +313,6 @@ export type ProfissionalNullableScalarRelationFilter = {
 
 export type ProfissionalCountOrderByAggregateInput = {
   id_profissional?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   registro_conselho?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
@@ -340,7 +320,6 @@ export type ProfissionalCountOrderByAggregateInput = {
 
 export type ProfissionalMaxOrderByAggregateInput = {
   id_profissional?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   registro_conselho?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
@@ -348,7 +327,6 @@ export type ProfissionalMaxOrderByAggregateInput = {
 
 export type ProfissionalMinOrderByAggregateInput = {
   id_profissional?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   registro_conselho?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
@@ -479,7 +457,6 @@ export type ProfissionalUpdateOneRequiredWithoutAgendamentosNestedInput = {
 
 export type ProfissionalCreateWithoutUsuarioInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   horarios?: Prisma.Horario_TrabalhoCreateNestedManyWithoutProfissionalInput
@@ -492,7 +469,6 @@ export type ProfissionalCreateWithoutUsuarioInput = {
 
 export type ProfissionalUncheckedCreateWithoutUsuarioInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   horarios?: Prisma.Horario_TrabalhoUncheckedCreateNestedManyWithoutProfissionalInput
@@ -521,7 +497,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutUsuarioInput = {
 
 export type ProfissionalUpdateWithoutUsuarioInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUpdateManyWithoutProfissionalNestedInput
@@ -534,7 +509,6 @@ export type ProfissionalUpdateWithoutUsuarioInput = {
 
 export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   horarios?: Prisma.Horario_TrabalhoUncheckedUpdateManyWithoutProfissionalNestedInput
@@ -547,7 +521,6 @@ export type ProfissionalUncheckedUpdateWithoutUsuarioInput = {
 
 export type ProfissionalCreateWithoutHorariosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -560,7 +533,6 @@ export type ProfissionalCreateWithoutHorariosInput = {
 
 export type ProfissionalUncheckedCreateWithoutHorariosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -589,7 +561,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutHorariosInput = {
 
 export type ProfissionalUpdateWithoutHorariosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -602,7 +573,6 @@ export type ProfissionalUpdateWithoutHorariosInput = {
 
 export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -615,7 +585,6 @@ export type ProfissionalUncheckedUpdateWithoutHorariosInput = {
 
 export type ProfissionalCreateWithoutTelefonesInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -628,7 +597,6 @@ export type ProfissionalCreateWithoutTelefonesInput = {
 
 export type ProfissionalUncheckedCreateWithoutTelefonesInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -657,7 +625,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutTelefonesInput = {
 
 export type ProfissionalUpdateWithoutTelefonesInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -670,7 +637,6 @@ export type ProfissionalUpdateWithoutTelefonesInput = {
 
 export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -683,7 +649,6 @@ export type ProfissionalUncheckedUpdateWithoutTelefonesInput = {
 
 export type ProfissionalCreateWithoutEspecialidadesInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -696,7 +661,6 @@ export type ProfissionalCreateWithoutEspecialidadesInput = {
 
 export type ProfissionalUncheckedCreateWithoutEspecialidadesInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -725,7 +689,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutEspecialidadesInput = {
 
 export type ProfissionalUpdateWithoutEspecialidadesInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -738,7 +701,6 @@ export type ProfissionalUpdateWithoutEspecialidadesInput = {
 
 export type ProfissionalUncheckedUpdateWithoutEspecialidadesInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -751,7 +713,6 @@ export type ProfissionalUncheckedUpdateWithoutEspecialidadesInput = {
 
 export type ProfissionalCreateWithoutServicosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -764,7 +725,6 @@ export type ProfissionalCreateWithoutServicosInput = {
 
 export type ProfissionalUncheckedCreateWithoutServicosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -793,7 +753,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutServicosInput = {
 
 export type ProfissionalUpdateWithoutServicosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -806,7 +765,6 @@ export type ProfissionalUpdateWithoutServicosInput = {
 
 export type ProfissionalUncheckedUpdateWithoutServicosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -819,7 +777,6 @@ export type ProfissionalUncheckedUpdateWithoutServicosInput = {
 
 export type ProfissionalCreateWithoutProntuariosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -832,7 +789,6 @@ export type ProfissionalCreateWithoutProntuariosInput = {
 
 export type ProfissionalUncheckedCreateWithoutProntuariosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -861,7 +817,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutProntuariosInput = {
 
 export type ProfissionalUpdateWithoutProntuariosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -874,7 +829,6 @@ export type ProfissionalUpdateWithoutProntuariosInput = {
 
 export type ProfissionalUncheckedUpdateWithoutProntuariosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -887,7 +841,6 @@ export type ProfissionalUncheckedUpdateWithoutProntuariosInput = {
 
 export type ProfissionalCreateWithoutAgendamentosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   usuario: Prisma.UsuarioCreateNestedOneWithoutProfissionalInput
@@ -900,7 +853,6 @@ export type ProfissionalCreateWithoutAgendamentosInput = {
 
 export type ProfissionalUncheckedCreateWithoutAgendamentosInput = {
   id_profissional?: string
-  nome: string
   cpf: string
   registro_conselho: string
   id_usuario: string
@@ -929,7 +881,6 @@ export type ProfissionalUpdateToOneWithWhereWithoutAgendamentosInput = {
 
 export type ProfissionalUpdateWithoutAgendamentosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutProfissionalNestedInput
@@ -942,7 +893,6 @@ export type ProfissionalUpdateWithoutAgendamentosInput = {
 
 export type ProfissionalUncheckedUpdateWithoutAgendamentosInput = {
   id_profissional?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   registro_conselho?: Prisma.StringFieldUpdateOperationsInput | string
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1031,7 +981,6 @@ export type ProfissionalCountOutputTypeCountAgendamentosArgs<ExtArgs extends run
 
 export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_profissional?: boolean
-  nome?: boolean
   cpf?: boolean
   registro_conselho?: boolean
   id_usuario?: boolean
@@ -1047,7 +996,6 @@ export type ProfissionalSelect<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ProfissionalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_profissional?: boolean
-  nome?: boolean
   cpf?: boolean
   registro_conselho?: boolean
   id_usuario?: boolean
@@ -1056,7 +1004,6 @@ export type ProfissionalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type ProfissionalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_profissional?: boolean
-  nome?: boolean
   cpf?: boolean
   registro_conselho?: boolean
   id_usuario?: boolean
@@ -1065,13 +1012,12 @@ export type ProfissionalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type ProfissionalSelectScalar = {
   id_profissional?: boolean
-  nome?: boolean
   cpf?: boolean
   registro_conselho?: boolean
   id_usuario?: boolean
 }
 
-export type ProfissionalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_profissional" | "nome" | "cpf" | "registro_conselho" | "id_usuario", ExtArgs["result"]["profissional"]>
+export type ProfissionalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_profissional" | "cpf" | "registro_conselho" | "id_usuario", ExtArgs["result"]["profissional"]>
 export type ProfissionalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   horarios?: boolean | Prisma.Profissional$horariosArgs<ExtArgs>
@@ -1102,7 +1048,6 @@ export type $ProfissionalPayload<ExtArgs extends runtime.Types.Extensions.Intern
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_profissional: string
-    nome: string
     cpf: string
     registro_conselho: string
     id_usuario: string
@@ -1537,7 +1482,6 @@ export interface Prisma__ProfissionalClient<T, Null = never, ExtArgs extends run
  */
 export interface ProfissionalFieldRefs {
   readonly id_profissional: Prisma.FieldRef<"Profissional", 'String'>
-  readonly nome: Prisma.FieldRef<"Profissional", 'String'>
   readonly cpf: Prisma.FieldRef<"Profissional", 'String'>
   readonly registro_conselho: Prisma.FieldRef<"Profissional", 'String'>
   readonly id_usuario: Prisma.FieldRef<"Profissional", 'String'>

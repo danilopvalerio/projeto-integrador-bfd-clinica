@@ -1944,6 +1944,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UsuarioScalarFieldEnum = {
   id_usuario: 'id_usuario',
+  nome: 'nome',
   email: 'email',
   senha_hash: 'senha_hash',
   tipo_usuario: 'tipo_usuario',
@@ -1955,7 +1956,6 @@ export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeo
 
 export const PacienteScalarFieldEnum = {
   id_paciente: 'id_paciente',
-  nome: 'nome',
   sexo: 'sexo',
   cpf: 'cpf',
   data_nascimento: 'data_nascimento',
@@ -2001,7 +2001,6 @@ export type PacienteDebitoScalarFieldEnum = (typeof PacienteDebitoScalarFieldEnu
 
 export const ProfissionalScalarFieldEnum = {
   id_profissional: 'id_profissional',
-  nome: 'nome',
   cpf: 'cpf',
   registro_conselho: 'registro_conselho',
   id_usuario: 'id_usuario'

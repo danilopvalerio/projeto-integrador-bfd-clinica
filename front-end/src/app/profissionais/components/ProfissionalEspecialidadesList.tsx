@@ -1,4 +1,4 @@
-// src/app/profissionais/ProfissionalServicosList.tsx
+// src/app/profissionais/ProfissionalEspecialidadesList.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -7,63 +7,67 @@ import {
   faTrash,
   faPlus,
   faSearch,
-  faArrowLeft,
   faChevronLeft,
   faChevronRight,
   faExclamationTriangle,
   faChevronDown,
   faChevronUp,
+  faArrowLeft,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import api from "../../utils/api";
-import { getErrorMessage } from "../../utils/errorUtils";
-import { ServicoEntityForProfissional } from "./types";
+import api from "../../../utils/api";
+import { getErrorMessage } from "../../../utils/errorUtils";
+import { EspecialidadeEntityForProfissional } from "../types";
 
 interface Props {
   profissionalId: string;
 }
 
-const ProfissionalServicosList = ({ profissionalId }: Props) => {
+const ProfissionalEspecialidadesList = ({ profissionalId }: Props) => {
   const [viewMode, setViewMode] = useState<"LIST" | "ADD">("LIST");
-  const [showList, setShowList] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false); // Novo estado para saber se já carregou
+  const [showList, setShowList] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // --- LISTA VINCULADOS ---
-  const [linked, setLinked] = useState<ServicoEntityForProfissional[]>([]);
+  // --- LISTA VINCULADOS (Principal) ---
+  const [linked, setLinked] = useState<EspecialidadeEntityForProfissional[]>(
+    [],
+  );
   const [linkedLoading, setLinkedLoading] = useState(false);
   const [linkedSearch, setLinkedSearch] = useState("");
   const [linkedPage, setLinkedPage] = useState(1);
   const [linkedTotalPages, setLinkedTotalPages] = useState(1);
 
-  // --- LISTA CANDIDATOS ---
-  const [candidates, setCandidates] = useState<ServicoEntityForProfissional[]>(
-    [],
-  );
+  // --- LISTA CANDIDATOS (Para adicionar) ---
+  const [candidates, setCandidates] = useState<
+    EspecialidadeEntityForProfissional[]
+  >([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [candidateSearch, setCandidateSearch] = useState("");
   const [candidatePage, setCandidatePage] = useState(1);
   const [candidateTotalPages, setCandidateTotalPages] = useState(1);
 
-  // --- MODAL ---
+  // --- MODAL / REMOÇÃO ---
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
 
   const LIMIT = 5;
 
+  // Busca vinculados
   const fetchLinked = useCallback(
     async (page = 1, term = "") => {
       if (!profissionalId) return;
       try {
         setLinkedLoading(true);
-        let url = `/professionals/${profissionalId}/servicos/paginated?page=${page}&limit=${LIMIT}`;
+        let url = `/professionals/${profissionalId}/especialidades/paginated?page=${page}&limit=${LIMIT}`;
         if (term) {
-          url = `/professionals/${profissionalId}/servicos/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
+          url = `/professionals/${profissionalId}/especialidades/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
         }
         const res = await api.get(url);
         setLinked(res.data.data || []);
         setLinkedPage(res.data.page);
         setLinkedTotalPages(res.data.lastPage);
-        setHasLoaded(true); // Marca como carregado
+        setHasLoaded(true);
       } catch (error) {
         console.error(getErrorMessage(error));
       } finally {
@@ -73,8 +77,12 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     [profissionalId],
   );
 
+  // Carrega ao montar
+  useEffect(() => {
+    fetchLinked(1, "");
+  }, [fetchLinked]);
+
   const handleToggleList = () => {
-    if (!showList) fetchLinked(1, linkedSearch);
     setShowList((prev) => !prev);
   };
 
@@ -82,12 +90,13 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     fetchLinked(1, linkedSearch);
   };
 
+  // Busca candidatos
   const fetchCandidates = useCallback(async (page = 1, term = "") => {
     try {
       setLoadingCandidates(true);
-      let url = `/services/paginated?page=${page}&limit=${LIMIT}`;
+      let url = `/specialities/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
-        url = `/services/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
+        url = `/specialities/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
       const res = await api.get(url);
       setCandidates(res.data.data || []);
@@ -108,16 +117,23 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     fetchCandidates(1, candidateSearch);
   };
 
-  const handleAdd = async (idServico: string) => {
+  // --- AÇÃO PRINCIPAL: VINCULAR ---
+  const handleAdd = async (idEspecialidade: string) => {
     try {
       setLoadingCandidates(true);
-      await api.post(`/professionals/${profissionalId}/servicos`, {
-        id_servico: idServico,
+
+      // 1. Vincula
+      await api.post(`/professionals/${profissionalId}/especialidades`, {
+        id_especialidade: idEspecialidade,
       });
-      setViewMode("LIST");
+
+      // 2. Atualiza a lista principal IMEDIATAMENTE
+      await fetchLinked(1, "");
+
+      // 3. Retorna para a visualização principal
       setLinkedSearch("");
       setShowList(true);
-      fetchLinked(1, "");
+      setViewMode("LIST");
     } catch (error) {
       alert(getErrorMessage(error));
     } finally {
@@ -125,6 +141,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     }
   };
 
+  // --- AÇÃO: REMOVER ---
   const requestRemove = (id: string) => {
     setItemToRemove(id);
     setShowConfirmModal(true);
@@ -134,8 +151,8 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     if (!itemToRemove) return;
     try {
       setRemoving(true);
-      await api.delete(`/professionals/${profissionalId}/servicos`, {
-        data: { id_servico: itemToRemove },
+      await api.delete(`/professionals/${profissionalId}/especialidades`, {
+        data: { id_especialidade: itemToRemove },
       });
       await fetchLinked(linkedPage, linkedSearch);
       setShowConfirmModal(false);
@@ -152,10 +169,10 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     setItemToRemove(null);
   };
 
+  // --- RENDERIZAÇÃO: MODO ADICIONAR ---
   if (viewMode === "ADD") {
-    // ... (Mantém igual ao anterior)
     return (
-      <div className="bg-light p-3 rounded border">
+      <div className="bg-light p-3 rounded border animate-fade-in">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <button
             type="button"
@@ -165,15 +182,16 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
           >
             <FontAwesomeIcon icon={faArrowLeft} className="me-2" /> Voltar
           </button>
-          <h6 className="fw-bold text-secondary m-0">Vincular Serviço</h6>
+          <h6 className="fw-bold text-secondary m-0">Vincular Especialidade</h6>
         </div>
 
         <div className="input-group mb-3">
           <input
             type="text"
+            autoFocus
             className="form-control form-control-sm shadow-none"
             style={{ boxShadow: "none" }}
-            placeholder="Buscar..."
+            placeholder="Buscar especialidade..."
             value={candidateSearch}
             onChange={(e) => setCandidateSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCandidateSearch()}
@@ -195,23 +213,42 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
         ) : (
           <div className="list-group list-group-flush bg-white rounded shadow-sm">
             {candidates.length > 0 ? (
-              candidates.map((cand) => (
-                <button
-                  key={cand.id_servico}
-                  type="button"
-                  onClick={() => handleAdd(cand.id_servico)}
-                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-3 py-2 small shadow-none"
-                  style={{ border: "none", outline: "none" }}
-                >
-                  <div>
-                    <div className="fw-bold text-dark">{cand.nome}</div>
-                  </div>
-                  <FontAwesomeIcon icon={faPlus} className="text-primary" />
-                </button>
-              ))
+              candidates.map((cand) => {
+                // Checagem de duplicação local
+                const isLinked = linked.some(
+                  (l) => l.id_especialidade === cand.id_especialidade,
+                );
+
+                return (
+                  <button
+                    key={cand.id_especialidade}
+                    type="button"
+                    disabled={isLinked}
+                    onClick={() =>
+                      !isLinked && handleAdd(cand.id_especialidade)
+                    }
+                    className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center px-3 py-2 small shadow-none ${
+                      isLinked ? "bg-light text-muted" : ""
+                    }`}
+                    style={{ border: "none", outline: "none" }}
+                  >
+                    <div>
+                      <div className="fw-bold">{cand.nome}</div>
+                    </div>
+                    {isLinked ? (
+                      <span className="badge bg-secondary opacity-50 fw-normal">
+                        <FontAwesomeIcon icon={faCheck} className="me-1" />
+                        Já vinculada
+                      </span>
+                    ) : (
+                      <FontAwesomeIcon icon={faPlus} className="text-primary" />
+                    )}
+                  </button>
+                );
+              })
             ) : (
               <div className="text-center text-muted small py-2">
-                Nenhum serviço encontrado.
+                Nenhuma especialidade encontrada.
               </div>
             )}
           </div>
@@ -244,17 +281,17 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
     );
   }
 
+  // --- RENDERIZAÇÃO: MODO LISTA ---
   return (
     <>
       <div className="animate-fade-in">
         <div className="d-flex justify-content-between align-items-center mb-2">
-          {/* CORREÇÃO: Só mostra quantidade se já tiver carregado */}
           <span className="small text-muted">
             {hasLoaded
               ? linked.length > 0
-                ? `${linked.length} vinculados`
-                : "Nenhum vinculado"
-              : "Clique para visualizar"}
+                ? `${linked.length} especialidades vinculadas`
+                : "Nenhuma especialidade vinculada"
+              : "Carregando..."}
           </span>
           <button
             type="button"
@@ -290,7 +327,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                 type="text"
                 className="form-control form-control-sm shadow-none"
                 style={{ boxShadow: "none", background: "#fff" }}
-                placeholder="Filtrar..."
+                placeholder="Filtrar vinculadas..."
                 value={linkedSearch}
                 onChange={(e) => setLinkedSearch(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleLinkedSearch()}
@@ -314,7 +351,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                 {linked.length > 0 ? (
                   linked.map((item) => (
                     <div
-                      key={item.id_servico}
+                      key={item.id_especialidade}
                       className="list-group-item d-flex justify-content-between align-items-center px-0 border-bottom-0 mb-2 bg-white rounded px-3 border shadow-sm"
                     >
                       <span className="fw-bold small text-dark">
@@ -324,7 +361,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                         type="button"
                         className="btn btn-link text-danger p-0 opacity-50 hover-opacity-100 shadow-none"
                         style={{ boxShadow: "none" }}
-                        onClick={() => requestRemove(item.id_servico)}
+                        onClick={() => requestRemove(item.id_especialidade)}
                         title="Desvincular"
                       >
                         <FontAwesomeIcon icon={faTrash} />
@@ -333,7 +370,7 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
                   ))
                 ) : (
                   <div className="text-center text-muted small py-3 fst-italic">
-                    Nenhum serviço vinculado.
+                    Nenhuma especialidade vinculada.
                   </div>
                 )}
               </div>
@@ -381,9 +418,11 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
               <div className="mb-3 text-warning">
                 <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
               </div>
-              <h5 className="fw-bold text-secondary">Desvincular Serviço?</h5>
+              <h5 className="fw-bold text-secondary">
+                Desvincular Especialidade?
+              </h5>
               <p className="text-muted small mb-0">
-                O profissional não realizará mais este serviço.
+                O profissional deixará de ter essa especialidade.
               </p>
             </div>
             <div className="d-flex gap-2 justify-content-center">
@@ -416,4 +455,4 @@ const ProfissionalServicosList = ({ profissionalId }: Props) => {
   );
 };
 
-export default ProfissionalServicosList;
+export default ProfissionalEspecialidadesList;

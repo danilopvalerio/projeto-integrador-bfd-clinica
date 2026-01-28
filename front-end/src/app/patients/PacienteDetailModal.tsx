@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { PacienteDetail, UpdatePacientePayload, Sexo } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import PacienteGeneralForm, { PacienteFormData } from "./PacienteGeneralForm";
-
-// IMPORT DO SEU COMPONENTE REUTILIZÁVEL PRONTO
 import UserCredentialsForm from "../../components/UserCredentialsForm";
 
 interface Props {
@@ -23,10 +21,12 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  // 1. REF para o container que tem scroll
+  const modalBodyRef = useRef<HTMLDivElement>(null);
+
   // Estado apenas para o ID do usuário (necessário para o componente filho)
   const [usuarioId, setUsuarioId] = useState<string | null>(null);
 
-  // O formData agora só cuida dos dados PESSOAIS (sem email/senha)
   const [formData, setFormData] = useState<PacienteFormData>({
     nome: "",
     cpf: "",
@@ -38,10 +38,8 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
     estado: "",
     telefonePrincipal: "",
     telefoneSecundario: "",
-    // email e senha REMOVIDOS daqui, pois o UserCredentialsForm cuida disso
   });
 
-  // Fecha no ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -50,7 +48,6 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Carrega dados do Paciente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,17 +66,14 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
           (t) => t.principal === false,
         );
 
-        // Captura o ID do usuário vinculado para passar pro componente filho
-        // ATENÇÃO: Certifique-se que o type PacienteDetail tem usuario.id_usuario
         if (data.usuario?.id_usuario) {
           setUsuarioId(data.usuario.id_usuario);
         } else if (data.id_usuario) {
-          // Fallback se estiver na raiz
           setUsuarioId(data.id_usuario);
         }
 
         setFormData({
-          nome: data.nome,
+          nome: data.usuario?.nome || "",
           cpf: data.cpf,
           sexo: data.sexo,
           data_nascimento: dateFormatted,
@@ -99,11 +93,20 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
     if (pacienteId) fetchData();
   }, [pacienteId]);
 
+  // 2. Função de Scroll para o topo
+  const scrollToTop = () => {
+    if (modalBodyRef.current) {
+      modalBodyRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleChange = (field: keyof PacienteFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Salva APENAS dados pessoais (o componente filho salva o acesso sozinho)
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -118,7 +121,6 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
         telefonesToSend.push(formData.telefoneSecundario);
 
       const payload: UpdatePacientePayload = {
-        nome: formData.nome,
         sexo: formData.sexo as Sexo,
         cpf: formData.cpf,
         data_nascimento: formData.data_nascimento,
@@ -129,14 +131,25 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
           cidade: formData.cidade,
           estado: formData.estado,
         },
+        usuario: {
+          nome: formData.nome,
+        },
       };
 
       await api.patch(`/patients/${pacienteId}`, payload);
 
-      setSuccessMsg("Dados pessoais atualizados com sucesso!");
-      setTimeout(() => onSuccess(), 1000);
+      setSuccessMsg("Dados atualizados com sucesso!");
+      scrollToTop(); // <--- Rola para cima para ver a mensagem
+
+      // Chama o onSuccess para atualizar a lista de fundo,
+      // mas removemos o setTimeout que fechava o modal para o usuário ver a mensagem.
+      onSuccess();
+
+      // Opcional: Limpa a mensagem após 4 segundos
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       setError(getErrorMessage(err));
+      scrollToTop(); // Rola para cima se der erro também
     } finally {
       setSaving(false);
     }
@@ -147,10 +160,12 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
     try {
       setSaving(true);
       await api.delete(`/patients/${pacienteId}`);
-      onSuccess();
+      onSuccess(); // Aqui pode fechar (pois deletou)
+      onClose(); // Força fechamento se onSuccess não fechar
     } catch (err) {
       setError(getErrorMessage(err));
       setSaving(false);
+      scrollToTop();
     }
   };
 
@@ -201,20 +216,24 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
             ></button>
           </div>
 
-          {/* BODY SCROLLABLE */}
+          {/* BODY SCROLLABLE - REF AQUI */}
           <div
+            ref={modalBodyRef}
             className="modal-body p-4 pt-2 overflow-auto"
             style={{ backgroundColor: "#f8f9fa" }}
           >
-            {/* ALERTAS */}
+            {/* Mensagem de Sucesso */}
+            {successMsg && (
+              <div className="alert alert-success border-0 bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center mb-3 animate-fade-in">
+                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                <div>{successMsg}</div>
+              </div>
+            )}
+
+            {/* Mensagem de Erro */}
             {error && (
               <div className="alert alert-danger small py-2 rounded-3 border-0 bg-danger bg-opacity-10 text-danger mb-3">
                 {error}
-              </div>
-            )}
-            {successMsg && (
-              <div className="alert alert-success small py-2 rounded-3 border-0 bg-success bg-opacity-10 text-success mb-3">
-                {successMsg}
               </div>
             )}
 
@@ -242,8 +261,7 @@ const PacienteDetailModal = ({ pacienteId, onClose, onSuccess }: Props) => {
               </div>
             </form>
 
-            {/* --- BLOCO 2: DADOS DE ACESSO (UserCredentialsForm) --- */}
-            {/* Aqui usamos o componente pronto. Ele vai buscar o email e gerenciar a senha sozinho usando o usuarioId */}
+            {/* --- BLOCO 2: DADOS DE ACESSO --- */}
             {usuarioId && (
               <div className="mb-4">
                 <UserCredentialsForm

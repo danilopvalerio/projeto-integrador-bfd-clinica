@@ -75,9 +75,10 @@ export function LogDetailsModal({ log, onClose }: Props) {
                   <div className="col-md-6 d-flex align-items-center gap-2">
                     <FontAwesomeIcon icon={faUser} className="opacity-50" />
                     <span>
-                      {log.usuario?.email ||
-                        log.usuario?.nome ||
-                        "Usuário do Sistema / Visitante"}
+                      {/* AJUSTE AQUI: Nome direto */}
+                      {log.usuario
+                        ? `${log.usuario.nome} (${log.usuario.email})`
+                        : "Usuário do Sistema / Visitante"}
                     </span>
                   </div>
                   <div className="col-md-6 d-flex align-items-center gap-2">

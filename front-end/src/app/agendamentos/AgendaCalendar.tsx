@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import api from "../../utils/api";
 import { AgendamentoCalendarDTO } from "./types";
 import AppointmentCard from "./AppointmentCard";
@@ -27,7 +27,7 @@ interface Props {
 
 const DIAS_SEMANA = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = Array.from({ length: 19 }, (_, i) => i + 5); // 05:00 a 23:00
-const HOUR_HEIGHT = 120; // Altura base para cálculo
+const HOUR_HEIGHT = 120; // Altura base (Acomoda aprox. 3 cards)
 
 // --- TOAST ---
 const ToastNotification = ({
@@ -83,6 +83,10 @@ const AgendaCalendar: React.FC<Props> = ({
     agendamento: AgendamentoCalendarDTO;
   } | null>(null);
 
+  // Refs para Sincronizar Scroll
+  const topScrollRef = useRef<HTMLDivElement>(null);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+
   // UI States
   const [isSavingMove, setIsSavingMove] = useState(false);
   const [toast, setToast] = useState<{
@@ -92,51 +96,29 @@ const AgendaCalendar: React.FC<Props> = ({
   const [selectedDayForModal, setSelectedDayForModal] = useState<Date | null>(
     null,
   );
+
+  // State para o dia expandido no Mobile
   const [mobileExpandedDay, setMobileExpandedDay] = useState<string | null>(
     null,
   );
 
-  // --- ESTADO PARA O "HOVER GHOST" (O bloco sombreado na grade) ---
   const [dropPreview, setDropPreview] = useState<{
-    key: string; // Identifica qual célula (Data|Hora)
-    minutes: number; // Minutos exatos (0, 10, 20...)
-    timeStr: string; // Texto "08:20"
+    key: string;
+    minutes: number;
+    timeStr: string;
   } | null>(null);
 
-  // Ghost Drag State (Tooltip que segue o mouse)
   const [dragTooltip, setDragTooltip] = useState<{
     x: number;
     y: number;
     visible: boolean;
   }>({ x: 0, y: 0, visible: false });
 
-  const showToast = (msg: string, type: "error" | "success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 4000);
-  };
-
-  const appointmentsMap = useMemo(() => {
-    const map = new Map<string, AgendamentoCalendarDTO[]>();
-    agendamentos.forEach((ag) => {
-      const datePart = ag.start.split("T")[0];
-      const startHour = new Date(ag.start).getHours();
-      const key = `${datePart}|${startHour}`;
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)?.push(ag);
-    });
-    // Ordena
-    map.forEach((lista) => {
-      lista.sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-      );
-    });
-    return map;
-  }, [agendamentos]);
-
+  // --- HELPER FUNCTIONS ---
   const getWeekDates = (startStr: string) => {
     const dates = [];
     const start = new Date(startStr);
-    start.setHours(12, 0, 0, 0);
+    start.setHours(12, 0, 0, 0); // Evita problemas de fuso/horário de verão
     for (let i = 0; i < 7; i++) {
       const date = new Date(start);
       date.setDate(start.getDate() + i);
@@ -148,6 +130,7 @@ const AgendaCalendar: React.FC<Props> = ({
   const formatDateISO = (date: Date) => date.toISOString().split("T")[0];
   const formatDisplayDate = (date: Date) =>
     `${date.getDate()}/${date.getMonth() + 1}`;
+
   const isToday = (date: Date) => {
     const today = new Date();
     return (
@@ -157,17 +140,54 @@ const AgendaCalendar: React.FC<Props> = ({
     );
   };
 
+  // --- MEMOS & EFFECTS ---
+
   const weekDates = useMemo(() => getWeekDates(startDate), [startDate]);
 
-  useState(() => {
+  // CORREÇÃO: useEffect para atualizar a visualização mobile quando a semana muda
+  useEffect(() => {
     const today = weekDates.find((d) => isToday(d));
+    // Se hoje estiver na semana, expande hoje. Senão, expande o primeiro dia.
     setMobileExpandedDay(
       today ? formatDateISO(today) : formatDateISO(weekDates[0]),
     );
-  });
+  }, [weekDates]);
 
-  // --- LÓGICA DE DRAG & DROP ---
+  const appointmentsMap = useMemo(() => {
+    const map = new Map<string, AgendamentoCalendarDTO[]>();
+    agendamentos.forEach((ag) => {
+      const datePart = ag.start.split("T")[0];
+      const startHour = new Date(ag.start).getHours();
+      const key = `${datePart}|${startHour}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)?.push(ag);
+    });
+    // Ordena por horário
+    map.forEach((lista) => {
+      lista.sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      );
+    });
+    return map;
+  }, [agendamentos]);
 
+  // --- SCROLL SYNC ---
+  const handleSyncScroll = (source: "top" | "table") => {
+    if (!topScrollRef.current || !tableScrollRef.current) return;
+
+    if (source === "top") {
+      tableScrollRef.current.scrollLeft = topScrollRef.current.scrollLeft;
+    } else {
+      topScrollRef.current.scrollLeft = tableScrollRef.current.scrollLeft;
+    }
+  };
+
+  const showToast = (msg: string, type: "error" | "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  // --- DRAG & DROP LOGIC ---
   const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedId(id);
     e.dataTransfer.effectAllowed = "move";
@@ -180,12 +200,8 @@ const AgendaCalendar: React.FC<Props> = ({
   const calculateDropPosition = (e: React.DragEvent, baseHour: number) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const offsetY = e.clientY - rect.top;
-
-    // Cálculo percentual
     const percentage = Math.max(0, Math.min(1, offsetY / rect.height));
     const minutesRaw = percentage * 60;
-
-    // Arredonda para 10 min
     const minutesRounded = Math.round(minutesRaw / 10) * 10;
     const finalMinutes = Math.min(50, minutesRounded);
 
@@ -202,13 +218,8 @@ const AgendaCalendar: React.FC<Props> = ({
   ) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-
     const { minutes, timeStr } = calculateDropPosition(e, baseHour);
-
-    // Atualiza Tooltip
     setDragTooltip({ x: e.clientX, y: e.clientY, visible: true });
-
-    // Atualiza Sombra (Preview na Grid)
     setDropPreview({
       key: `${dateStr}|${baseHour}`,
       minutes: minutes,
@@ -216,10 +227,7 @@ const AgendaCalendar: React.FC<Props> = ({
     });
   };
 
-  const handleDragLeave = () => {
-    // Opcional: Limpar preview se sair completamente da tabela
-    // setDropPreview(null);
-  };
+  const handleDragLeave = () => {};
 
   const handleDrop = async (
     e: React.DragEvent,
@@ -228,12 +236,12 @@ const AgendaCalendar: React.FC<Props> = ({
   ) => {
     e.preventDefault();
     setDragTooltip((prev) => ({ ...prev, visible: false }));
-    setDropPreview(null); // Limpa a sombra
+    setDropPreview(null);
 
     if (!draggedId) return;
 
     const { timeStr } = calculateDropPosition(e, baseHour);
-    const targetTime = timeStr; // Já formatado 00:00
+    const targetTime = timeStr;
 
     const agendamento = agendamentos.find(
       (a) => a.id_agendamento === draggedId,
@@ -267,7 +275,6 @@ const AgendaCalendar: React.FC<Props> = ({
   };
 
   // --- ACTIONS ---
-
   const confirmMove = async () => {
     if (!pendingMove) return;
     setIsSavingMove(true);
@@ -316,21 +323,27 @@ const AgendaCalendar: React.FC<Props> = ({
         />
       )}
 
+      {/* ESTILOS GLOBAIS DE SCROLLBAR */}
       <style jsx global>{`
-        .custom-scroll::-webkit-scrollbar {
-          height: 4px;
-          width: 4px;
+        /* Scrollbar Personalizada e VISÍVEL */
+        .visible-scrollbar::-webkit-scrollbar {
+          height: 14px; /* Mais grossa horizontalmente */
+          width: 8px; /* Vertical (nos cards) */
         }
-        .custom-scroll::-webkit-scrollbar-track {
-          background: transparent;
+        .visible-scrollbar::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 6px;
         }
-        .custom-scroll::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 4px;
+        .visible-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #94a3b8; /* Cinza médio para visibilidade */
+          border-radius: 6px;
+          border: 3px solid #f1f5f9; /* Borda para efeito flutuante */
         }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
+        .visible-scrollbar::-webkit-scrollbar-thumb:hover {
+          background-color: #64748b; /* Mais escuro no hover */
         }
+
+        /* Classes auxiliares */
         .header-day-hover:hover {
           filter: brightness(0.95);
           cursor: pointer;
@@ -341,11 +354,11 @@ const AgendaCalendar: React.FC<Props> = ({
             #f8f9fa 1px,
             transparent 1px
           );
-          background-size: 100% 33.33%; /* Linhas a cada 20 minutos */
+          background-size: 100% 33.33%;
         }
       `}</style>
 
-      {/* --- DRAG TOOLTIP (Segue o mouse) --- */}
+      {/* --- DRAG TOOLTIP --- */}
       {dragTooltip.visible && dropPreview && (
         <div
           style={{
@@ -372,158 +385,178 @@ const AgendaCalendar: React.FC<Props> = ({
       )}
 
       {/* DESKTOP */}
-      <div
-        className="d-none d-lg-block bg-white rounded-4 shadow-sm overflow-hidden"
-        style={{ minWidth: "100%" }}
-      >
-        <div style={{ minWidth: "1000px" }}>
-          {/* Header */}
+      <div className="d-none d-lg-block">
+        {/* BARRA DE SCROLL SUPERIOR (Fake - Sincronizada) */}
+        <div
+          ref={topScrollRef}
+          className="visible-scrollbar mb-2 overflow-auto"
+          style={{ width: "100%" }}
+          onScroll={() => handleSyncScroll("top")}
+        >
+          {/* Div interna para forçar a largura e gerar scroll (1600px para colunas largas) */}
+          <div style={{ width: "1600px", height: "1px" }}></div>
+        </div>
+
+        {/* CONTAINER DA TABELA */}
+        <div
+          className="bg-white rounded-4 shadow-sm overflow-hidden"
+          style={{ width: "100%" }}
+        >
+          {/* Scroll real da tabela (escondido ou sincronizado, mas funcional) */}
           <div
-            className="d-grid sticky-top bg-white"
-            style={{ gridTemplateColumns: "80px repeat(7, 1fr)", zIndex: 20 }}
+            ref={tableScrollRef}
+            className="overflow-auto visible-scrollbar"
+            onScroll={() => handleSyncScroll("table")}
           >
-            <div className="bg-gradient-vl text-white p-3 border-end border-white border-opacity-25 fw-bold text-center rounded-tl-4">
-              Horário
-            </div>
-            {weekDates.map((date) => (
+            <div style={{ minWidth: "1600px" }}>
+              {/* Header */}
               <div
-                key={date.toString()}
-                className={`text-white p-3 border-end border-white border-opacity-25 text-center header-day-hover position-relative group ${
-                  isToday(date)
-                    ? "bg-warning bg-gradient text-dark"
-                    : "bg-gradient-vl"
-                }`}
-                onClick={() => setSelectedDayForModal(date)}
+                className="d-grid sticky-top bg-white"
+                style={{
+                  gridTemplateColumns: "80px repeat(7, 1fr)",
+                  zIndex: 20,
+                }}
               >
-                <div
-                  className="fw-bold text-uppercase"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  {DIAS_SEMANA[date.getDay()]}
+                <div className="bg-gradient-vl text-white p-3 border-end border-white border-opacity-25 fw-bold text-center rounded-tl-4">
+                  Horário
                 </div>
-                <div className="fs-5 fw-bold">
-                  {formatDisplayDate(date).split("/")[0]}
-                </div>
-                <div className="position-absolute top-0 end-0 p-1 opacity-50 small">
-                  <FontAwesomeIcon icon={faEye} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="position-relative">
-            {loading && (
-              <div
-                className="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-50 d-flex justify-content-center align-items-center"
-                style={{ zIndex: 10 }}
-              >
-                <div className="spinner-border text-secondary"></div>
-              </div>
-            )}
-
-            {HORARIOS.map((hour) => {
-              const hourStr = `${hour.toString().padStart(2, "0")}:00`;
-              return (
-                <div
-                  key={hour}
-                  className="d-grid border-bottom"
-                  style={{ gridTemplateColumns: "80px repeat(7, 1fr)" }}
-                >
+                {weekDates.map((date) => (
                   <div
-                    className="bg-light border-end text-center fw-bold text-secondary small pt-2"
-                    style={{ minHeight: `${HOUR_HEIGHT}px` }}
+                    key={date.toString()}
+                    className={`text-white p-3 border-end border-white border-opacity-25 text-center header-day-hover position-relative group ${
+                      isToday(date)
+                        ? "bg-warning bg-gradient text-dark"
+                        : "bg-gradient-vl"
+                    }`}
+                    onClick={() => setSelectedDayForModal(date)}
                   >
-                    {hourStr}
+                    <div
+                      className="fw-bold text-uppercase"
+                      style={{ fontSize: "0.8rem" }}
+                    >
+                      {DIAS_SEMANA[date.getDay()]}
+                    </div>
+                    <div className="fs-5 fw-bold">
+                      {formatDisplayDate(date).split("/")[0]}
+                    </div>
+                    <div className="position-absolute top-0 end-0 p-1 opacity-50 small">
+                      <FontAwesomeIcon icon={faEye} />
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  {weekDates.map((date) => {
-                    const dateStr = formatDateISO(date);
-                    const key = `${dateStr}|${hour}`;
-                    const cellApps = appointmentsMap.get(key) || [];
+              {/* Corpo da Tabela */}
+              <div className="position-relative">
+                {loading && (
+                  <div
+                    className="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-50 d-flex justify-content-center align-items-center"
+                    style={{ zIndex: 10 }}
+                  >
+                    <div className="spinner-border text-secondary"></div>
+                  </div>
+                )}
 
-                    // Verifica se esta célula deve mostrar o preview de drop
-                    const isHovering = dropPreview && dropPreview.key === key;
-
-                    return (
+                {HORARIOS.map((hour) => {
+                  const hourStr = `${hour.toString().padStart(2, "0")}:00`;
+                  return (
+                    <div
+                      key={hour}
+                      className="d-grid border-bottom"
+                      style={{ gridTemplateColumns: "80px repeat(7, 1fr)" }}
+                    >
                       <div
-                        key={key}
-                        className={`border-end p-1 position-relative hour-grid-bg ${isToday(date) ? "bg-light bg-opacity-25" : ""}`}
-                        style={{
-                          minHeight: `${HOUR_HEIGHT}px`, // Altura mínima
-                          zIndex: 1,
-                        }}
-                        onDragOver={(e) => handleDragOver(e, dateStr, hour)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, dateStr, hour)}
-                        onDragEnd={handleDragEnd}
+                        className="bg-light border-end text-center fw-bold text-secondary small pt-2"
+                        style={{ minHeight: `${HOUR_HEIGHT}px` }}
                       >
-                        {/* --- PREVIEW DO DROP (A "SOMBRA" DO CARD) --- */}
-                        {isHovering && (
-                          <div
-                            className="position-absolute rounded-3 fade-in"
-                            style={{
-                              top: `${(dropPreview.minutes / 60) * 100}%`, // Posição exata dos minutos
-                              left: "4px",
-                              right: "4px",
-                              height: "94px", // Altura simulando o card
-                              backgroundColor: "rgba(13, 110, 253, 0.1)", // Azul bem clarinho
-                              border: "2px dashed rgba(13, 110, 253, 0.4)", // Borda tracejada
-                              zIndex: 5, // Abaixo dos cards reais, acima do fundo
-                              pointerEvents: "none",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <span className="badge bg-primary bg-opacity-75 text-white">
-                              {dropPreview.timeStr}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* --- CARDS REAIS (GRID HORIZONTAL) --- */}
-                        <div
-                          className="custom-scroll w-100 h-100 d-grid gap-1 position-relative"
-                          style={{
-                            gridAutoFlow: "column",
-                            gridAutoColumns: "minmax(140px, 1fr)",
-                            overflowX: "auto",
-                            overflowY: "hidden",
-                            alignItems: "start",
-                            zIndex: 10, // Cards sempre na frente da sombra
-                          }}
-                        >
-                          {cellApps.map((ag) => (
-                            <AppointmentCard
-                              key={ag.id_agendamento}
-                              data={ag}
-                              onDragStart={(e) =>
-                                handleDragStart(e, ag.id_agendamento)
-                              }
-                              onClick={() =>
-                                onSelectAgendamento(ag.id_agendamento)
-                              }
-                            />
-                          ))}
-                        </div>
+                        {hourStr}
                       </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+
+                      {weekDates.map((date) => {
+                        const dateStr = formatDateISO(date);
+                        const key = `${dateStr}|${hour}`;
+                        const cellApps = appointmentsMap.get(key) || [];
+                        const isHovering =
+                          dropPreview && dropPreview.key === key;
+
+                        return (
+                          <div
+                            key={key}
+                            className={`border-end p-1 position-relative hour-grid-bg ${isToday(date) ? "bg-light bg-opacity-25" : ""}`}
+                            style={{
+                              minHeight: `${HOUR_HEIGHT}px`,
+                              zIndex: 1,
+                            }}
+                            onDragOver={(e) => handleDragOver(e, dateStr, hour)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, dateStr, hour)}
+                            onDragEnd={handleDragEnd}
+                          >
+                            {isHovering && (
+                              <div
+                                className="position-absolute rounded-3 fade-in"
+                                style={{
+                                  top: `${(dropPreview.minutes / 60) * 100}%`,
+                                  left: "4px",
+                                  right: "4px",
+                                  height: "94px",
+                                  backgroundColor: "rgba(13, 110, 253, 0.1)",
+                                  border: "2px dashed rgba(13, 110, 253, 0.4)",
+                                  zIndex: 5,
+                                  pointerEvents: "none",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <span className="badge bg-primary bg-opacity-75 text-white">
+                                  {dropPreview.timeStr}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* LISTA DE CARDS (Vertical com Scroll Interno) */}
+                            <div
+                              className="visible-scrollbar w-100 d-flex flex-column gap-1 position-relative p-1"
+                              style={{
+                                maxHeight: `${HOUR_HEIGHT}px`, // Limita altura
+                                overflowY: "auto", // Scroll vertical se passar de 3 cards
+                                overflowX: "hidden", // Sem scroll horizontal
+                                zIndex: 10,
+                              }}
+                            >
+                              {cellApps.map((ag) => (
+                                <AppointmentCard
+                                  key={ag.id_agendamento}
+                                  data={ag}
+                                  onDragStart={(e) =>
+                                    handleDragStart(e, ag.id_agendamento)
+                                  }
+                                  onClick={() =>
+                                    onSelectAgendamento(ag.id_agendamento)
+                                  }
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* MOBILE (Simplificado, sem Drag) */}
+      {/* MOBILE */}
       <div className="d-lg-none d-flex flex-column gap-3">
         {!loading &&
           weekDates.map((date) => {
             const dateStr = formatDateISO(date);
             const isExpanded = mobileExpandedDay === dateStr;
             const isDateToday = isToday(date);
-
             const dayAppointments = agendamentos
               .filter((ag) => ag.start.startsWith(dateStr))
               .sort(

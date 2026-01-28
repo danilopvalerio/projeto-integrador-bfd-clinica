@@ -19,7 +19,7 @@ const AgendamentosPage = () => {
 
   // Estados de Filtro
   const [dataInicio, setDataInicio] = useState<string>(
-    new Date().toISOString().split("T")[0], // Hoje
+    new Date().toISOString().split("T")[0],
   );
   const [selectedProfissional, setSelectedProfissional] = useState<string>("");
 
@@ -37,7 +37,7 @@ const AgendamentosPage = () => {
     string | null
   >(null);
 
-  // 1. Carregar Profissionais
+  // 1. Carregar Profissionais (Para o Filtro)
   useEffect(() => {
     const fetchProfissionais = async () => {
       try {
@@ -57,7 +57,7 @@ const AgendamentosPage = () => {
     try {
       const startObj = new Date(dataInicio);
       const endObj = new Date(startObj);
-      endObj.setDate(endObj.getDate() + 7);
+      endObj.setDate(endObj.getDate() + 7); // Visualização semanal
 
       const endStr = endObj.toISOString().split("T")[0];
 
@@ -123,7 +123,8 @@ const AgendamentosPage = () => {
                 <option value="">Visão Geral (Todos)</option>
                 {profissionais.map((p) => (
                   <option key={p.id_profissional} value={p.id_profissional}>
-                    {p.nome}
+                    {/* CORREÇÃO AQUI: Nome vem de usuario */}
+                    {p.usuario?.nome || "Sem Nome"}
                   </option>
                 ))}
               </select>
@@ -157,8 +158,7 @@ const AgendamentosPage = () => {
             agendamentos={agendamentos}
             startDate={dataInicio}
             onMoveSuccess={fetchAgendamentos}
-            // CORREÇÃO AQUI: Tipagem explícita do ID
-            onSelectAgendamento={(id: string) => setSelectedAgendamentoId(id)}
+            onSelectAgendamento={(id) => setSelectedAgendamentoId(id)}
             loading={loading}
           />
         )}

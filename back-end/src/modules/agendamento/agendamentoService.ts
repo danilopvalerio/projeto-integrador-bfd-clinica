@@ -7,34 +7,37 @@ import {
   AgendamentoEntity,
   AgendamentoCalendarDTO,
 } from "./agendamentoDTO";
-import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 
 export class AgendamentoService {
   constructor(private repository: IAgendamentoRepository) {}
 
+  // --- MÉTODO ATUALIZADO ---
   // Helper: Transforma a Entity do Banco no DTO amigável para o Front
   private mapToCalendarDTO(entity: AgendamentoEntity): AgendamentoCalendarDTO {
     const servicosPivot = entity.servicos;
 
-    // 1. Valor Total: Soma do 'preco_cobrado' (histórico) salvo na tabela pivô
     const valorTotal = servicosPivot.reduce(
       (acc, curr) => acc + curr.preco_cobrado,
       0,
     );
 
-    // 2. Duração Total: Soma das durações dos serviços (cadastro atual)
     const duracaoTotal = servicosPivot.reduce(
       (acc, curr) => acc + curr.servico.duracao_estimada,
       0,
     );
 
-    // 3. Concatenação de nomes
     const nomesServicos =
       servicosPivot.length > 0
         ? servicosPivot.map((s) => s.servico.nome).join(" + ")
         : "Sem Serviço";
 
-    // 4. Lógica de Cor (UI)
+    // NOVO: Mapeia os itens detalhados para o modal de edição
+    const itensServico = servicosPivot.map((s) => ({
+      id_servico: s.servico.id_servico,
+      nome: s.servico.nome,
+      preco: s.preco_cobrado,
+    }));
+
     const firstServiceName = servicosPivot[0]?.servico.nome || "Default";
     const colors = [
       "#4CAF50",
@@ -46,7 +49,12 @@ export class AgendamentoService {
     ];
     const colorIndex = firstServiceName.charCodeAt(0) % colors.length;
 
-    const title = `${nomesServicos} • ${entity.paciente.nome.split(" ")[0]}`;
+    // Acessa o nome através de usuario (conforme seu repositório atualizado)
+    const nomePaciente = entity.paciente.usuario?.nome || "Paciente";
+    const nomeProfissional =
+      entity.profissional.usuario?.nome || "Profissional";
+
+    const title = `${nomesServicos} • ${nomePaciente.split(" ")[0]}`;
 
     return {
       id_agendamento: entity.id_agendamento,
@@ -55,13 +63,13 @@ export class AgendamentoService {
       status: entity.status,
       paciente: {
         id_paciente: entity.paciente.id_paciente,
-        nome: entity.paciente.nome,
+        nome: nomePaciente,
         cpf: entity.paciente.cpf,
         sexo: entity.paciente.sexo as string,
       },
       profissional: {
         id_profissional: entity.profissional.id_profissional,
-        nome: entity.profissional.nome,
+        nome: nomeProfissional,
         registro_conselho: entity.profissional.registro_conselho,
         especialidades: entity.profissional.especialidades.map(
           (e) => e.especialidade.nome,
@@ -71,6 +79,7 @@ export class AgendamentoService {
         nomes: nomesServicos,
         duracao_total: duracaoTotal,
         valor_total: valorTotal,
+        itens: itensServico, // <--- CAMPO ADICIONADO AQUI
       },
       ui: {
         color: colors[colorIndex],
@@ -79,8 +88,10 @@ export class AgendamentoService {
     };
   }
 
+  // --- MÉTODOS PÚBLICOS (Mantidos iguais, usando o mapToCalendarDTO atualizado) ---
+
   async create(data: CreateAgendamentoDTO): Promise<AgendamentoCalendarDTO> {
-    // 1. Validar existências
+    // Validar existências
     const profissional = await prisma.profissional.findUnique({
       where: { id_profissional: data.id_profissional },
     });
@@ -95,7 +106,7 @@ export class AgendamentoService {
       throw new AppError("Selecione ao menos um serviço", 400);
     }
 
-    // 2. Buscar Serviços para pegar PREÇO VIGENTE e DURAÇÃO
+    // Buscar Serviços
     const servicos = await prisma.servico.findMany({
       where: { id_servico: { in: data.ids_servicos } },
     });
@@ -104,13 +115,12 @@ export class AgendamentoService {
       throw new AppError("Serviços inválidos detectados", 400);
     }
 
-    // 3. Preparar array de snapshot preservando a ordem
     const servicosData = data.ids_servicos.map((id) => {
       const s = servicos.find((item) => item.id_servico === id);
       return { id_servico: id, preco: s!.preco };
     });
 
-    // 4. Calcular Data Fim (se não enviada)
+    // Calcular Data Fim
     let dataFim = data.data_hora_fim;
     if (!dataFim) {
       const duracaoTotalMinutos = servicos.reduce(
@@ -126,7 +136,7 @@ export class AgendamentoService {
 
     if (dataFimDate <= dataInicio) throw new AppError("Data fim inválida", 400);
 
-    // 5. Verificar Conflito
+    // Verificar Conflito
     const isAvailable = await this.repository.checkAvailability(
       data.id_profissional,
       dataInicio,
@@ -134,7 +144,7 @@ export class AgendamentoService {
     );
     if (!isAvailable) throw new AppError("Horário indisponível", 409);
 
-    // 6. Criar Agendamento (Usando método customizado do repo)
+    // Criar Agendamento
     const agendamento = await this.repository.createWithServices(
       { ...data, data_hora_inicio: dataInicio, data_hora_fim: dataFimDate },
       servicosData,
@@ -150,7 +160,6 @@ export class AgendamentoService {
     const current = await this.repository.findById(id);
     if (!current) throw new AppError("Agendamento não encontrado", 404);
 
-    // Valida Disponibilidade se mudar horário ou profissional
     if (data.data_hora_inicio || data.data_hora_fim || data.id_profissional) {
       const novoProf = data.id_profissional || current.id_profissional;
       const novoIni = data.data_hora_inicio
@@ -171,7 +180,6 @@ export class AgendamentoService {
 
     let novosServicosData = undefined;
 
-    // Se estiver atualizando os serviços, busca preços atuais novamente
     if (data.ids_servicos) {
       const servicos = await prisma.servico.findMany({
         where: { id_servico: { in: data.ids_servicos } },
@@ -209,11 +217,10 @@ export class AgendamentoService {
     return result.map((ag) => this.mapToCalendarDTO(ag));
   }
 
-  // Utiliza o RepositoryPaginatedResult indiretamente
   async listPaginated(page: number, limit: number) {
     const { data, total } = await this.repository.findPaginated(page, limit);
     return {
-      data: data.map(this.mapToCalendarDTO),
+      data: data.map((ag) => this.mapToCalendarDTO(ag)),
       total,
       page,
       lastPage: Math.ceil(total / limit),
@@ -238,9 +245,9 @@ export class AgendamentoService {
       where: { id_usuario },
       select: {
         id_paciente: true,
-        nome: true,
         cpf: true,
         sexo: true,
+        usuario: { select: { nome: true } },
       },
     });
 
@@ -251,21 +258,19 @@ export class AgendamentoService {
       );
     }
 
-    // 2. Busca os agendamentos paginados
     const { data, total } = await this.repository.findByPersonPaginated(
       { id_paciente: paciente.id_paciente },
       page,
       limit,
     );
 
-    // 3. Retorna estrutura composta: Perfil + Lista
     return {
       paciente: {
-        nome: paciente.nome,
+        nome: paciente.usuario.nome,
         cpf: paciente.cpf,
         sexo: paciente.sexo,
       },
-      data: data.map((ag) => this.mapToCalendarDTO(ag)), // Formata cada agendamento
+      data: data.map((ag) => this.mapToCalendarDTO(ag)),
       total,
       page,
       lastPage: Math.ceil(total / limit),

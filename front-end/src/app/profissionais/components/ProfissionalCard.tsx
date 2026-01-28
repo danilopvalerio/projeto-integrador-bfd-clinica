@@ -5,7 +5,7 @@ import {
   faCalendarDays,
   faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import type { ProfissionalSummary } from "./types";
+import type { ProfissionalSummary } from "../types";
 
 interface Props {
   profissional: ProfissionalSummary;
@@ -18,14 +18,16 @@ const ProfissionalCard = ({
   onOpenDetails,
   onOpenHorarios,
 }: Props) => {
-  const initial = profissional.nome?.trim()?.charAt(0)?.toUpperCase() ?? "P";
+  // CORREÇÃO: Lê o nome de profissional.usuario.nome
+  const nomeDisplay = profissional.usuario?.nome || "Nome Indisponível";
+  const initial = nomeDisplay.trim().charAt(0).toUpperCase();
 
   return (
     <div
       className="card-item-bottom-line-rounded h-100 bg-white p-3"
       style={{
         transition: "transform 0.2s, box-shadow 0.2s",
-        cursor: "default", // Cursor default pois os botões internos que são clicáveis
+        cursor: "default",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
@@ -47,11 +49,8 @@ const ProfissionalCard = ({
           </div>
 
           <div className="flex-grow-1 overflow-hidden">
-            <h6
-              className="fw-bold mb-0 text-truncate"
-              title={profissional.nome}
-            >
-              {profissional.nome}
+            <h6 className="fw-bold mb-0 text-truncate" title={nomeDisplay}>
+              {nomeDisplay}
             </h6>
             <small className="text-muted d-block text-truncate">
               Conselho: {profissional.registro_conselho}

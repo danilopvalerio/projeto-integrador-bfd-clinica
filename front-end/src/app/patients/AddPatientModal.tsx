@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AxiosError } from "axios"; // Importação do tipo
+import { AxiosError } from "axios";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import PacienteGeneralForm, { PacienteFormData } from "./PacienteGeneralForm";
@@ -61,14 +61,12 @@ const AddPacienteModal = ({ onClose, onSuccess }: Props) => {
 
     try {
       const telefonesPayload = [];
-
       if (formData.telefonePrincipal) {
         telefonesPayload.push({
           telefone: formData.telefonePrincipal,
           principal: true,
         });
       }
-
       if (formData.telefoneSecundario) {
         telefonesPayload.push({
           telefone: formData.telefoneSecundario,
@@ -76,13 +74,14 @@ const AddPacienteModal = ({ onClose, onSuccess }: Props) => {
         });
       }
 
+      // Payload ajustado para a nova estrutura: Nome vai dentro de usuário
       const payload: CreatePacientePayload = {
-        nome: formData.nome,
         cpf: formData.cpf,
         sexo: formData.sexo,
         data_nascimento: formData.data_nascimento,
 
         usuario: {
+          nome: formData.nome, // <--- Nome aqui
           email: formData.email,
           senha: formData.senha!,
           tipo_usuario: "PACIENTE",
@@ -100,19 +99,13 @@ const AddPacienteModal = ({ onClose, onSuccess }: Props) => {
         };
       }
 
-      // Confirme se a rota no back-end é /patients ou /pacientes
       await api.post("/patients", payload);
-
       onSuccess();
     } catch (error) {
       console.error(error);
-
-      // Tipagem correta do erro
       const err = error as AxiosError;
-
-      // Verifica se existe response e status
       if (err.response?.status === 409) {
-        setError("Erro: CPF ou E-mail já cadastrados no sistema.");
+        setError("Erro: CPF ou E-mail já cadastrados.");
       } else {
         setError(getErrorMessage(error));
       }
@@ -154,6 +147,7 @@ const AddPacienteModal = ({ onClose, onSuccess }: Props) => {
                 data={formData}
                 onChange={handleChange}
                 disabled={loading}
+                isEditing={false} // Permite cadastrar email/senha
               />
               <div className="d-flex justify-content-end align-items-center mt-4 pt-3 border-top gap-3">
                 <button

@@ -15,10 +15,10 @@ import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import type { ProfissionalSummary } from "./types";
 
-import ProfissionalCard from "./ProfissionalCard";
-import AddProfissionalModal from "./AddProfissionalModal";
-import ProfissionalDetailModal from "./ProfissionalDetailModal";
-import ProfissionalHorariosModal from "./ProfissionalHorariosModal";
+import ProfissionalCard from "./components/ProfissionalCard";
+import AddProfissionalModal from "./components/AddProfissionalModal";
+import ProfissionalDetailModal from "./components/ProfissionalDetailModal";
+import ProfissionalHorariosModal from "./components/Agenda/Agenda";
 
 const LIMIT = 6;
 
@@ -75,11 +75,18 @@ export default function ProfissionaisPage() {
     fetchProfissionais(1);
   };
 
-  const handleRefresh = () => {
+  // --- CORREÇÃO AQUI ---
+  // Este handler fecha tudo (usado quando cria um NOVO profissional ou quer resetar a tela)
+  const handleRefreshAndClose = () => {
     fetchProfissionais(currentPage, searchTerm);
     setIsAddModalOpen(false);
     setSelectedProfissionalId(null);
     setSelectedHorariosProfissionalId(null);
+  };
+
+  // Este handler APENAS atualiza a lista de fundo, mas NÃO fecha os modais
+  const handleSilentUpdate = () => {
+    fetchProfissionais(currentPage, searchTerm);
   };
 
   return (
@@ -248,7 +255,7 @@ export default function ProfissionaisPage() {
       {isAddModalOpen && (
         <AddProfissionalModal
           onClose={() => setIsAddModalOpen(false)}
-          onSuccess={handleRefresh}
+          onSuccess={handleRefreshAndClose} // Criar novo profissional fecha o modal
         />
       )}
 
@@ -256,7 +263,7 @@ export default function ProfissionaisPage() {
         <ProfissionalDetailModal
           profissionalId={selectedProfissionalId}
           onClose={() => setSelectedProfissionalId(null)}
-          onSuccess={handleRefresh}
+          onSuccess={handleSilentUpdate} // Editar detalhes não fecha
         />
       )}
 
@@ -264,7 +271,7 @@ export default function ProfissionaisPage() {
         <ProfissionalHorariosModal
           profissionalId={selectedHorariosProfissionalId}
           onClose={() => setSelectedHorariosProfissionalId(null)}
-          onSuccess={handleRefresh}
+          onSuccess={handleSilentUpdate} // <--- AQUI A MUDANÇA: Não fecha mais
         />
       )}
     </div>

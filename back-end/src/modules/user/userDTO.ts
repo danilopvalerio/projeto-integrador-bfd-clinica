@@ -12,6 +12,7 @@ export enum UserType {
 // Espelho da tabela do banco (Prisma)
 export interface UserEntity {
   id_usuario: string;
+  nome: string;
   email: string;
   senha_hash: string;
   tipo_usuario: UserType;
@@ -21,12 +22,14 @@ export interface UserEntity {
 }
 
 export interface CreateUserDTO {
+  nome: string;
   email: string;
   senha_hash: string;
   tipo_usuario: UserType;
 }
 
 export interface UpdateUserDTO {
+  nome?: string;
   email?: string;
   senha_hash?: string;
   tipo_usuario?: UserType;
@@ -40,8 +43,11 @@ export type UserResponseDTO = Omit<UserEntity, "senha_hash">;
  * Interface do Repositório de Usuário.
  * Estende a base genérica e adiciona métodos exclusivos.
  */
-export interface IUserRepository
-  extends IBaseRepository<UserEntity, CreateUserDTO, UpdateUserDTO> {
+export interface IUserRepository extends IBaseRepository<
+  UserEntity,
+  CreateUserDTO,
+  UpdateUserDTO
+> {
   findByEmail(email: string): Promise<UserEntity | null>;
   findMany(): Promise<UserEntity[]>;
 }

@@ -1,22 +1,26 @@
 export interface ProfissionalSummary {
   id_profissional: string;
-  nome: string;
   cpf: string;
   registro_conselho: string;
   id_usuario: string;
+
+  usuario?: {
+    id_usuario: string;
+    nome: string;
+    email: string;
+    ativo: boolean;
+  };
 }
 
 export type ProfissionalDetail = ProfissionalSummary;
 
 export interface CreateProfissionalPayload {
-  nome: string;
   cpf: string;
   registro_conselho: string;
 
-  // legado (opcional agora)
-  id_usuario?: string;
-
-  usuario?: {
+  // Nome movido para dentro de usuario
+  usuario: {
+    nome: string; // <--- CAMPO MOVIDO PARA CÁ
     email: string;
     senha: string;
     tipo_usuario?: string; // default: "PROFISSIONAL"
@@ -27,8 +31,12 @@ export interface CreateProfissionalPayload {
 }
 
 export interface UpdateProfissionalPayload {
-  nome?: string;
   registro_conselho?: string;
+
+  // Atualização de dados do usuário (nome)
+  usuario?: {
+    nome?: string;
+  };
 }
 
 export interface UpdateTelefonePayload {
@@ -42,21 +50,7 @@ export enum UserType {
   PROFISSIONAL = "PROFISSIONAL",
   CLIENTE = "CLIENTE",
 }
-export interface UserEntity {
-  id_usuario: string;
-  email: string;
-  senha_hash: string;
-  tipo_usuario: UserType;
-  ativo: boolean;
-  created_at?: Date;
-  updated_at?: Date;
-}
 
-export interface CreateUserDTO {
-  email: string;
-  senha_hash: string;
-  tipo_usuario: UserType;
-}
 export interface UpdateHorarioPayload {
   dia_semana?: number;
   hora_inicio?: Date;
@@ -100,10 +94,10 @@ export interface AddEspecialidadeToProfissionalPayload {
   id_especialidade: string;
 }
 
-// ======= Form do modal =======
+// ======= Form do modal (UI Helper) =======
 
 export interface ProfissionalFormData {
-  nome?: string;
+  nome?: string; // Mantemos plano aqui para facilitar o formulário
   cpf?: string;
   registro_conselho?: string;
   email?: string;

@@ -1,12 +1,9 @@
 export interface LogUsuario {
   id_usuario: string;
   email: string;
-  cargo?: string;
-  nome?: string; // Fallback direto se o back retornar flat
-  // Relações opcionais vindas do Prisma include
-  paciente?: { nome: string } | null;
-  profissional?: { nome: string } | null;
-  funcionario?: { nome: string } | null;
+  nome: string; // Agora é obrigatório e direto
+  tipo_usuario: string; // Antigo cargo
+  ativo: boolean;
 }
 
 export interface Log {
@@ -20,7 +17,7 @@ export interface Log {
   data: string; // ISO Date string
   id_usuario?: string;
   usuario?: LogUsuario | null;
-  dados: JSON;
+  dados: JSON; // JSON
 }
 
 export interface LogResponse {

@@ -1,4 +1,4 @@
-//src/modules/profissional/profissionalService.ts
+// src/modules/profissional/profissionalService.ts
 import { hashPassword } from "../../shared/utils/hash";
 import {
   IProfissionalRepository,
@@ -27,7 +27,7 @@ export class ProfissionalService {
     if (!hasIdUsuario && !hasUsuarioPayload) {
       throw new AppError(
         "Envie id_usuario (legado) ou usuario { email, senha } para criar automaticamente.",
-        400
+        400,
       );
     }
 
@@ -45,8 +45,9 @@ export class ProfissionalService {
 
         const usuarioCriado = await tx.usuario.create({
           data: {
+            nome: data.usuario.nome,
             email,
-            senha_hash: senhaCriptografada, // Salva criptografado
+            senha_hash: senhaCriptografada,
             tipo_usuario: data.usuario.tipo_usuario ?? "PROFISSIONAL",
             ativo: true,
           },
@@ -61,10 +62,9 @@ export class ProfissionalService {
         if (!user) throw new AppError("Usuário não encontrado", 404);
       }
 
-      // Cria Profissional (com nested create opcional)
+      // Cria Profissional
       const created = await tx.profissional.create({
         data: {
-          nome: data.nome,
           cpf: data.cpf,
           registro_conselho: data.registro_conselho,
           id_usuario: id_usuario!,
@@ -94,17 +94,31 @@ export class ProfissionalService {
     });
 
     return profissional;
-  }
+  } // CRUD / Consultas básicas
+  // =======================
 
   // =======================
   // CRUD / Consultas básicas
   // =======================
+  // =======================
   async update(
     id: string,
-    data: UpdateProfissionalDTO
+    data: UpdateProfissionalDTO,
   ): Promise<ProfissionalEntity> {
+    // 1. Verifica se o profissional existe
     const profissional = await this.profissionalRepository.findById(id);
-    if (!profissional) throw new AppError("Profissional não encontrado", 404);
+    if (!profissional) throw new AppError("Profissional não encontrado", 404); // 2. Validação de conflito de CPF
+
+    if (data.cpf) {
+      // Só valida se o CPF enviado for diferente do atual
+      if (data.cpf !== profissional.cpf) {
+        const cpfExists = await this.profissionalRepository.findByCpf(data.cpf); // Se encontrar alguém com esse CPF e o ID for diferente do atual, é conflito
+
+        if (cpfExists && cpfExists.id_profissional !== id) {
+          throw new AppError("CPF já cadastrado em outro registro", 409);
+        }
+      }
+    }
 
     return await this.profissionalRepository.update(id, data);
   }
@@ -125,7 +139,7 @@ export class ProfissionalService {
   async listPaginated({ page, limit }: { page: number; limit: number }) {
     const { data, total } = await this.profissionalRepository.findPaginated(
       page,
-      limit
+      limit,
     );
     return {
       data,
@@ -147,7 +161,7 @@ export class ProfissionalService {
     const { data, total } = await this.profissionalRepository.searchPaginated(
       query,
       page,
-      limit
+      limit,
     );
     return {
       data,
@@ -162,7 +176,7 @@ export class ProfissionalService {
   // ==========
   async addTelefone(
     id_profissional: string,
-    data: { telefone: string; principal: boolean }
+    data: { telefone: string; principal: boolean },
   ) {
     await this.getById(id_profissional);
     return await this.profissionalRepository.addTelefone(id_profissional, data);
@@ -181,18 +195,114 @@ export class ProfissionalService {
     return await this.profissionalRepository.listTelefones(id_profissional);
   }
 
+  // =====================================================
+  // HELPERS PRIVADOS DE HORÁRIO
+  // =====================================================
+
+  private getMinutesFromDate(date: Date): number {
+    const d = new Date(date);
+    return d.getUTCHours() * 60 + d.getUTCMinutes();
+  }
+
+  private getDiaSemanaLabel(dia: number): string {
+    const dias = [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ];
+    return dias[dia] || "Dia inválido";
+  }
+
+  private async validateHorarioConflict(
+    id_profissional: string,
+    dia_semana: number,
+    hora_inicio: Date,
+    hora_fim: Date,
+    excludeIdHorario?: string,
+  ) {
+    const startMinutes = this.getMinutesFromDate(hora_inicio);
+    const endMinutes = this.getMinutesFromDate(hora_fim);
+
+    if (startMinutes >= endMinutes) {
+      throw new AppError(
+        "A hora de início deve ser anterior à hora de fim.",
+        400,
+      );
+    }
+
+    const horariosExistentes =
+      await this.profissionalRepository.listHorarios(id_profissional);
+
+    const horariosDoDia = horariosExistentes.filter(
+      (h) => h.dia_semana === dia_semana,
+    );
+
+    for (const h of horariosDoDia) {
+      if (excludeIdHorario && h.id_horario === excludeIdHorario) continue;
+
+      const existingStart = this.getMinutesFromDate(new Date(h.hora_inicio));
+      const existingEnd = this.getMinutesFromDate(new Date(h.hora_fim));
+
+      if (startMinutes < existingEnd && existingStart < endMinutes) {
+        throw new AppError(
+          `Conflito: Já existe um horário neste intervalo na ${this.getDiaSemanaLabel(
+            dia_semana,
+          )}.`,
+          409,
+        );
+      }
+    }
+  }
+
   // ==========
   // Horários
   // ==========
   async addHorario(
     id_profissional: string,
-    data: { dia_semana: number; hora_inicio: Date; hora_fim: Date }
+    data: { dia_semana: number; hora_inicio: Date; hora_fim: Date },
   ) {
     await this.getById(id_profissional);
+
+    await this.validateHorarioConflict(
+      id_profissional,
+      data.dia_semana,
+      data.hora_inicio,
+      data.hora_fim,
+    );
+
     return await this.profissionalRepository.addHorario(id_profissional, data);
   }
 
   async updateHorario(id_horario: string, data: UpdateHorarioDTO) {
+    // CORREÇÃO AQUI: horarioProfissional -> horario_Trabalho
+    const horarioAtual = await prisma.horario_Trabalho.findUnique({
+      where: { id_horario },
+    });
+
+    if (!horarioAtual) {
+      throw new AppError("Horário não encontrado", 404);
+    }
+
+    const diaSemanaFinal = data.dia_semana ?? horarioAtual.dia_semana;
+    const horaInicioFinal = data.hora_inicio
+      ? new Date(data.hora_inicio)
+      : new Date(horarioAtual.hora_inicio);
+    const horaFimFinal = data.hora_fim
+      ? new Date(data.hora_fim)
+      : new Date(horarioAtual.hora_fim);
+
+    await this.validateHorarioConflict(
+      horarioAtual.id_profissional,
+      diaSemanaFinal,
+      horaInicioFinal,
+      horaFimFinal,
+      id_horario,
+    );
+
     return await this.profissionalRepository.updateHorario(id_horario, data);
   }
 
@@ -218,7 +328,7 @@ export class ProfissionalService {
 
     return await this.profissionalRepository.addEspecialidade(
       id_profissional,
-      id_especialidade
+      id_especialidade,
     );
   }
 
@@ -226,28 +336,28 @@ export class ProfissionalService {
     await this.getById(id_profissional);
     return await this.profissionalRepository.removeEspecialidade(
       id_profissional,
-      id_especialidade
+      id_especialidade,
     );
   }
 
   async listEspecialidades(id_profissional: string) {
     await this.getById(id_profissional);
     return await this.profissionalRepository.listEspecialidades(
-      id_profissional
+      id_profissional,
     );
   }
 
   async listEspecialidadesPaginated(
     id_profissional: string,
     page: number,
-    limit: number
+    limit: number,
   ) {
     await this.getById(id_profissional);
     const { data, total } =
       await this.profissionalRepository.findEspecialidadesPaginated(
         id_profissional,
         page,
-        limit
+        limit,
       );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
@@ -257,7 +367,7 @@ export class ProfissionalService {
     id_profissional: string,
     query: string,
     page: number,
-    limit: number
+    limit: number,
   ) {
     await this.getById(id_profissional);
     const { data, total } =
@@ -265,7 +375,7 @@ export class ProfissionalService {
         id_profissional,
         query,
         page,
-        limit
+        limit,
       );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
@@ -273,12 +383,12 @@ export class ProfissionalService {
 
   async syncEspecialidades(
     id_profissional: string,
-    especialidadesIds: string[]
+    especialidadesIds: string[],
   ) {
     await this.getById(id_profissional);
     return await this.profissionalRepository.syncEspecialidades(
       id_profissional,
-      especialidadesIds || []
+      especialidadesIds || [],
     );
   }
 
@@ -293,7 +403,7 @@ export class ProfissionalService {
 
     return await this.profissionalRepository.addServico(
       id_profissional,
-      id_servico
+      id_servico,
     );
   }
 
@@ -301,7 +411,7 @@ export class ProfissionalService {
     await this.getById(id_profissional);
     return await this.profissionalRepository.removeServico(
       id_profissional,
-      id_servico
+      id_servico,
     );
   }
 
@@ -313,14 +423,14 @@ export class ProfissionalService {
   async listServicosPaginated(
     id_profissional: string,
     page: number,
-    limit: number
+    limit: number,
   ) {
     await this.getById(id_profissional);
     const { data, total } =
       await this.profissionalRepository.findServicosPaginated(
         id_profissional,
         page,
-        limit
+        limit,
       );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
@@ -330,7 +440,7 @@ export class ProfissionalService {
     id_profissional: string,
     query: string,
     page: number,
-    limit: number
+    limit: number,
   ) {
     await this.getById(id_profissional);
     const { data, total } =
@@ -338,7 +448,7 @@ export class ProfissionalService {
         id_profissional,
         query,
         page,
-        limit
+        limit,
       );
 
     return { data, total, page, lastPage: Math.ceil(total / limit) };
@@ -348,7 +458,7 @@ export class ProfissionalService {
     await this.getById(id_profissional);
     return await this.profissionalRepository.syncServicos(
       id_profissional,
-      servicoIds || []
+      servicoIds || [],
     );
   }
 }

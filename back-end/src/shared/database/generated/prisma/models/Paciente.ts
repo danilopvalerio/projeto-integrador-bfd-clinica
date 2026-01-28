@@ -26,7 +26,6 @@ export type AggregatePaciente = {
 
 export type PacienteMinAggregateOutputType = {
   id_paciente: string | null
-  nome: string | null
   sexo: $Enums.Sexo | null
   cpf: string | null
   data_nascimento: Date | null
@@ -36,7 +35,6 @@ export type PacienteMinAggregateOutputType = {
 
 export type PacienteMaxAggregateOutputType = {
   id_paciente: string | null
-  nome: string | null
   sexo: $Enums.Sexo | null
   cpf: string | null
   data_nascimento: Date | null
@@ -46,7 +44,6 @@ export type PacienteMaxAggregateOutputType = {
 
 export type PacienteCountAggregateOutputType = {
   id_paciente: number
-  nome: number
   sexo: number
   cpf: number
   data_nascimento: number
@@ -58,7 +55,6 @@ export type PacienteCountAggregateOutputType = {
 
 export type PacienteMinAggregateInputType = {
   id_paciente?: true
-  nome?: true
   sexo?: true
   cpf?: true
   data_nascimento?: true
@@ -68,7 +64,6 @@ export type PacienteMinAggregateInputType = {
 
 export type PacienteMaxAggregateInputType = {
   id_paciente?: true
-  nome?: true
   sexo?: true
   cpf?: true
   data_nascimento?: true
@@ -78,7 +73,6 @@ export type PacienteMaxAggregateInputType = {
 
 export type PacienteCountAggregateInputType = {
   id_paciente?: true
-  nome?: true
   sexo?: true
   cpf?: true
   data_nascimento?: true
@@ -161,7 +155,6 @@ export type PacienteGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type PacienteGroupByOutputType = {
   id_paciente: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date
@@ -192,7 +185,6 @@ export type PacienteWhereInput = {
   OR?: Prisma.PacienteWhereInput[]
   NOT?: Prisma.PacienteWhereInput | Prisma.PacienteWhereInput[]
   id_paciente?: Prisma.StringFilter<"Paciente"> | string
-  nome?: Prisma.StringFilter<"Paciente"> | string
   sexo?: Prisma.EnumSexoFilter<"Paciente"> | $Enums.Sexo
   cpf?: Prisma.StringFilter<"Paciente"> | string
   data_nascimento?: Prisma.DateTimeFilter<"Paciente"> | Date | string
@@ -209,7 +201,6 @@ export type PacienteWhereInput = {
 
 export type PacienteOrderByWithRelationInput = {
   id_paciente?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   sexo?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   data_nascimento?: Prisma.SortOrder
@@ -231,7 +222,6 @@ export type PacienteWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PacienteWhereInput | Prisma.PacienteWhereInput[]
   OR?: Prisma.PacienteWhereInput[]
   NOT?: Prisma.PacienteWhereInput | Prisma.PacienteWhereInput[]
-  nome?: Prisma.StringFilter<"Paciente"> | string
   sexo?: Prisma.EnumSexoFilter<"Paciente"> | $Enums.Sexo
   data_nascimento?: Prisma.DateTimeFilter<"Paciente"> | Date | string
   id_endereco?: Prisma.StringNullableFilter<"Paciente"> | string | null
@@ -246,7 +236,6 @@ export type PacienteWhereUniqueInput = Prisma.AtLeast<{
 
 export type PacienteOrderByWithAggregationInput = {
   id_paciente?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   sexo?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   data_nascimento?: Prisma.SortOrder
@@ -262,7 +251,6 @@ export type PacienteScalarWhereWithAggregatesInput = {
   OR?: Prisma.PacienteScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PacienteScalarWhereWithAggregatesInput | Prisma.PacienteScalarWhereWithAggregatesInput[]
   id_paciente?: Prisma.StringWithAggregatesFilter<"Paciente"> | string
-  nome?: Prisma.StringWithAggregatesFilter<"Paciente"> | string
   sexo?: Prisma.EnumSexoWithAggregatesFilter<"Paciente"> | $Enums.Sexo
   cpf?: Prisma.StringWithAggregatesFilter<"Paciente"> | string
   data_nascimento?: Prisma.DateTimeWithAggregatesFilter<"Paciente"> | Date | string
@@ -272,7 +260,6 @@ export type PacienteScalarWhereWithAggregatesInput = {
 
 export type PacienteCreateInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -287,7 +274,6 @@ export type PacienteCreateInput = {
 
 export type PacienteUncheckedCreateInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -302,7 +288,6 @@ export type PacienteUncheckedCreateInput = {
 
 export type PacienteUpdateInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -317,7 +302,6 @@ export type PacienteUpdateInput = {
 
 export type PacienteUncheckedUpdateInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -332,7 +316,6 @@ export type PacienteUncheckedUpdateInput = {
 
 export type PacienteCreateManyInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -342,7 +325,6 @@ export type PacienteCreateManyInput = {
 
 export type PacienteUpdateManyMutationInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -350,7 +332,6 @@ export type PacienteUpdateManyMutationInput = {
 
 export type PacienteUncheckedUpdateManyInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -365,7 +346,6 @@ export type PacienteNullableScalarRelationFilter = {
 
 export type PacienteCountOrderByAggregateInput = {
   id_paciente?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   sexo?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   data_nascimento?: Prisma.SortOrder
@@ -375,7 +355,6 @@ export type PacienteCountOrderByAggregateInput = {
 
 export type PacienteMaxOrderByAggregateInput = {
   id_paciente?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   sexo?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   data_nascimento?: Prisma.SortOrder
@@ -385,7 +364,6 @@ export type PacienteMaxOrderByAggregateInput = {
 
 export type PacienteMinOrderByAggregateInput = {
   id_paciente?: Prisma.SortOrder
-  nome?: Prisma.SortOrder
   sexo?: Prisma.SortOrder
   cpf?: Prisma.SortOrder
   data_nascimento?: Prisma.SortOrder
@@ -446,10 +424,6 @@ export type EnumSexoFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type PacienteCreateNestedOneWithoutTelefonesInput = {
@@ -566,7 +540,6 @@ export type PacienteUpdateOneRequiredWithoutAgendamentosNestedInput = {
 
 export type PacienteCreateWithoutUsuarioInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -580,7 +553,6 @@ export type PacienteCreateWithoutUsuarioInput = {
 
 export type PacienteUncheckedCreateWithoutUsuarioInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -610,7 +582,6 @@ export type PacienteUpdateToOneWithWhereWithoutUsuarioInput = {
 
 export type PacienteUpdateWithoutUsuarioInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -624,7 +595,6 @@ export type PacienteUpdateWithoutUsuarioInput = {
 
 export type PacienteUncheckedUpdateWithoutUsuarioInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -638,7 +608,6 @@ export type PacienteUncheckedUpdateWithoutUsuarioInput = {
 
 export type PacienteCreateWithoutTelefonesInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -652,7 +621,6 @@ export type PacienteCreateWithoutTelefonesInput = {
 
 export type PacienteUncheckedCreateWithoutTelefonesInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -682,7 +650,6 @@ export type PacienteUpdateToOneWithWhereWithoutTelefonesInput = {
 
 export type PacienteUpdateWithoutTelefonesInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -696,7 +663,6 @@ export type PacienteUpdateWithoutTelefonesInput = {
 
 export type PacienteUncheckedUpdateWithoutTelefonesInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -710,7 +676,6 @@ export type PacienteUncheckedUpdateWithoutTelefonesInput = {
 
 export type PacienteCreateWithoutTagsInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -724,7 +689,6 @@ export type PacienteCreateWithoutTagsInput = {
 
 export type PacienteUncheckedCreateWithoutTagsInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -754,7 +718,6 @@ export type PacienteUpdateToOneWithWhereWithoutTagsInput = {
 
 export type PacienteUpdateWithoutTagsInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -768,7 +731,6 @@ export type PacienteUpdateWithoutTagsInput = {
 
 export type PacienteUncheckedUpdateWithoutTagsInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -782,7 +744,6 @@ export type PacienteUncheckedUpdateWithoutTagsInput = {
 
 export type PacienteCreateWithoutDebitosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -796,7 +757,6 @@ export type PacienteCreateWithoutDebitosInput = {
 
 export type PacienteUncheckedCreateWithoutDebitosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -826,7 +786,6 @@ export type PacienteUpdateToOneWithWhereWithoutDebitosInput = {
 
 export type PacienteUpdateWithoutDebitosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -840,7 +799,6 @@ export type PacienteUpdateWithoutDebitosInput = {
 
 export type PacienteUncheckedUpdateWithoutDebitosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -854,7 +812,6 @@ export type PacienteUncheckedUpdateWithoutDebitosInput = {
 
 export type PacienteCreateWithoutEnderecoInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -868,7 +825,6 @@ export type PacienteCreateWithoutEnderecoInput = {
 
 export type PacienteUncheckedCreateWithoutEnderecoInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -911,7 +867,6 @@ export type PacienteScalarWhereInput = {
   OR?: Prisma.PacienteScalarWhereInput[]
   NOT?: Prisma.PacienteScalarWhereInput | Prisma.PacienteScalarWhereInput[]
   id_paciente?: Prisma.StringFilter<"Paciente"> | string
-  nome?: Prisma.StringFilter<"Paciente"> | string
   sexo?: Prisma.EnumSexoFilter<"Paciente"> | $Enums.Sexo
   cpf?: Prisma.StringFilter<"Paciente"> | string
   data_nascimento?: Prisma.DateTimeFilter<"Paciente"> | Date | string
@@ -921,7 +876,6 @@ export type PacienteScalarWhereInput = {
 
 export type PacienteCreateWithoutProntuariosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -935,7 +889,6 @@ export type PacienteCreateWithoutProntuariosInput = {
 
 export type PacienteUncheckedCreateWithoutProntuariosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -965,7 +918,6 @@ export type PacienteUpdateToOneWithWhereWithoutProntuariosInput = {
 
 export type PacienteUpdateWithoutProntuariosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -979,7 +931,6 @@ export type PacienteUpdateWithoutProntuariosInput = {
 
 export type PacienteUncheckedUpdateWithoutProntuariosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -993,7 +944,6 @@ export type PacienteUncheckedUpdateWithoutProntuariosInput = {
 
 export type PacienteCreateWithoutAgendamentosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -1007,7 +957,6 @@ export type PacienteCreateWithoutAgendamentosInput = {
 
 export type PacienteUncheckedCreateWithoutAgendamentosInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -1037,7 +986,6 @@ export type PacienteUpdateToOneWithWhereWithoutAgendamentosInput = {
 
 export type PacienteUpdateWithoutAgendamentosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1051,7 +999,6 @@ export type PacienteUpdateWithoutAgendamentosInput = {
 
 export type PacienteUncheckedUpdateWithoutAgendamentosInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1065,7 +1012,6 @@ export type PacienteUncheckedUpdateWithoutAgendamentosInput = {
 
 export type PacienteCreateManyEnderecoInput = {
   id_paciente?: string
-  nome: string
   sexo: $Enums.Sexo
   cpf: string
   data_nascimento: Date | string
@@ -1074,7 +1020,6 @@ export type PacienteCreateManyEnderecoInput = {
 
 export type PacienteUpdateWithoutEnderecoInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1088,7 +1033,6 @@ export type PacienteUpdateWithoutEnderecoInput = {
 
 export type PacienteUncheckedUpdateWithoutEnderecoInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1102,7 +1046,6 @@ export type PacienteUncheckedUpdateWithoutEnderecoInput = {
 
 export type PacienteUncheckedUpdateManyWithoutEnderecoInput = {
   id_paciente?: Prisma.StringFieldUpdateOperationsInput | string
-  nome?: Prisma.StringFieldUpdateOperationsInput | string
   sexo?: Prisma.EnumSexoFieldUpdateOperationsInput | $Enums.Sexo
   cpf?: Prisma.StringFieldUpdateOperationsInput | string
   data_nascimento?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1178,7 +1121,6 @@ export type PacienteCountOutputTypeCountAgendamentosArgs<ExtArgs extends runtime
 
 export type PacienteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_paciente?: boolean
-  nome?: boolean
   sexo?: boolean
   cpf?: boolean
   data_nascimento?: boolean
@@ -1196,7 +1138,6 @@ export type PacienteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type PacienteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_paciente?: boolean
-  nome?: boolean
   sexo?: boolean
   cpf?: boolean
   data_nascimento?: boolean
@@ -1208,7 +1149,6 @@ export type PacienteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type PacienteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_paciente?: boolean
-  nome?: boolean
   sexo?: boolean
   cpf?: boolean
   data_nascimento?: boolean
@@ -1220,7 +1160,6 @@ export type PacienteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 
 export type PacienteSelectScalar = {
   id_paciente?: boolean
-  nome?: boolean
   sexo?: boolean
   cpf?: boolean
   data_nascimento?: boolean
@@ -1228,7 +1167,7 @@ export type PacienteSelectScalar = {
   id_endereco?: boolean
 }
 
-export type PacienteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_paciente" | "nome" | "sexo" | "cpf" | "data_nascimento" | "id_usuario" | "id_endereco", ExtArgs["result"]["paciente"]>
+export type PacienteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_paciente" | "sexo" | "cpf" | "data_nascimento" | "id_usuario" | "id_endereco", ExtArgs["result"]["paciente"]>
 export type PacienteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   endereco?: boolean | Prisma.Paciente$enderecoArgs<ExtArgs>
@@ -1261,7 +1200,6 @@ export type $PacientePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_paciente: string
-    nome: string
     sexo: $Enums.Sexo
     cpf: string
     data_nascimento: Date
@@ -1698,7 +1636,6 @@ export interface Prisma__PacienteClient<T, Null = never, ExtArgs extends runtime
  */
 export interface PacienteFieldRefs {
   readonly id_paciente: Prisma.FieldRef<"Paciente", 'String'>
-  readonly nome: Prisma.FieldRef<"Paciente", 'String'>
   readonly sexo: Prisma.FieldRef<"Paciente", 'Sexo'>
   readonly cpf: Prisma.FieldRef<"Paciente", 'String'>
   readonly data_nascimento: Prisma.FieldRef<"Paciente", 'DateTime'>

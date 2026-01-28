@@ -14,12 +14,12 @@ import {
   faUsers,
   faChevronRight,
   faShieldHalved,
-  faCog,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface User {
   nome: string;
   role: string;
+  email: string;
 }
 
 interface MenuCardProps {
@@ -41,6 +41,7 @@ const MenuCard = ({
     <div
       className="col-12 col-md-6 col-lg-4 mb-4"
       onClick={active ? onClick : undefined}
+      style={{ cursor: active ? "pointer" : "default" }}
     >
       <div
         className={`card h-100 shadow-sm p-4 menu-card ${
@@ -73,7 +74,7 @@ const MenuCard = ({
 
 export default function MenuPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User>({ nome: "", role: "" });
+  const [user, setUser] = useState<User>({ nome: "", role: "", email: "" });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -87,9 +88,24 @@ export default function MenuPage() {
 
     try {
       const parsedUser = JSON.parse(storedUser);
+
+      // Lógica de fallback para o nome
+      // 1. Tenta user.nome
+      // 2. Se for null, pega a parte do email antes do @
+      // 3. Se não tiver email, usa "Usuário"
+      let displayName = parsedUser.nome;
+
+      if (!displayName && parsedUser.email) {
+        displayName = parsedUser.email.split("@")[0];
+        // Capitaliza a primeira letra (ex: proclinic -> Proclinic)
+        displayName =
+          displayName.charAt(0).toUpperCase() + displayName.slice(1);
+      }
+
       setUser({
-        nome: parsedUser.nome || "Usuário",
-        role: parsedUser.role || "Visitante",
+        nome: displayName || "Usuário",
+        role: parsedUser.role || parsedUser.tipo_usuario || "Visitante",
+        email: parsedUser.email || "",
       });
     } catch (e) {
       console.error("Erro ao ler usuário", e);
@@ -123,6 +139,7 @@ export default function MenuPage() {
 
           <div className="d-flex flex-column">
             <span className="fw-bold quartenary fs-6">
+              {/* Pega apenas o primeiro nome para não ficar muito grande */}
               Olá, {user.nome.split(" ")[0]}
             </span>
             <span
@@ -132,15 +149,6 @@ export default function MenuPage() {
               {user.role}
             </span>
           </div>
-
-          <button
-            className="btn btn-link p-0 ms-2 text-decoration-none"
-            style={{ color: "var(--color-gray-medium)" }}
-            title="Configurações da Conta"
-            onClick={() => alert("Configurações em breve!")}
-          >
-            <FontAwesomeIcon icon={faCog} className="fs-5 hover-rotate" />
-          </button>
         </div>
 
         <button
@@ -164,7 +172,7 @@ export default function MenuPage() {
           <div className="row g-4">
             <MenuCard
               title="Profissionais"
-              description="Gerencie médicos e equipe."
+              description="Gerencie a equipe e horários."
               icon={faUserMd}
               onClick={() => navigateTo("/profissionais")}
             />
@@ -179,6 +187,14 @@ export default function MenuPage() {
               description="Procedimentos e preços."
               icon={faNotesMedical}
               onClick={() => navigateTo("/services")}
+            />
+
+            <MenuCard
+              title="Pacientes"
+              description="Base de pacientes."
+              icon={faUsers}
+              active={true}
+              onClick={() => navigateTo("/patients")}
             />
           </div>
         </div>
@@ -199,16 +215,17 @@ export default function MenuPage() {
               active={true}
               onClick={() => navigateTo("/agendamentos")}
             />
+
             <MenuCard
-              title="Pacientes"
-              description="Base de clientes."
+              title="Gerenciar Acessos"
+              description="Controlar logins e gerenciar usuários"
               icon={faUsers}
               active={true}
-              onClick={() => navigateTo("/patients")}
+              onClick={() => navigateTo("/users")}
             />
 
             <MenuCard
-              title="Histórico de Acessos"
+              title="Auditoria"
               description="Registros de login e tentativas de acesso ao sistema."
               icon={faShieldHalved}
               active={true}

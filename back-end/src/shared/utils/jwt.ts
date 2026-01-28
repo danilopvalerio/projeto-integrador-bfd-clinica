@@ -15,7 +15,7 @@ export interface TokenPayload {
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "access_secret_123";
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "refresh_secret_123";
 
-const ACCESS_EXPIRES = "1m"; // Padrão
+const ACCESS_EXPIRES = "15m"; // Padrão
 const REFRESH_EXPIRES = "7d"; // Padrão
 
 // CORREÇÃO: Adicionado 'expiresIn' opcional

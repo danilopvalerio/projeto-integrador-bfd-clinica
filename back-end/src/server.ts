@@ -44,7 +44,7 @@ async function resetDatabaseHard() {
 }
 
 async function criaAdmin() {
-  const emailAdmin = "emailsimples@exemplo.com";
+  const emailAdmin = "proclinic@bfd.com";
 
   // 🔍 Verifica se já existe algum admin/gerente
   const adminExistente = await prisma.usuario.findFirst({
@@ -63,8 +63,9 @@ async function criaAdmin() {
   // 🔐 CRIA O HASH DA SENHA (Importante para o login funcionar)
   const senhaComHash = await hashPassword("Senha123!");
 
-  const novoUsuario = await prisma.usuario.create({
+  await prisma.usuario.create({
     data: {
+      nome: "ProClinic",
       email: emailAdmin,
       senha_hash: senhaComHash,
       tipo_usuario: "GERENTE",
@@ -75,19 +76,6 @@ async function criaAdmin() {
   console.log("✅ Usuário GERENTE criado com sucesso!");
 }
 
-async function limparLinksArquivos() {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("🚫 Operação bloqueada em produção");
-  }
-
-  console.log("🧹 Apagando todos os registros de arquivos (links) do banco...");
-
-  const resultado = await prisma.prontuarioArquivo.deleteMany();
-
-  console.log(
-    `✅ ${resultado.count} registros de arquivos removidos com sucesso!`,
-  );
-}
 async function clearLogs() {
   if (process.env.NODE_ENV === "production") return;
 
@@ -105,8 +93,8 @@ async function startServer() {
     console.log("✅ Banco de dados e Prisma conectados com sucesso!");
 
     // 1. Garante que o admin existe
-    await criaAdmin();
 
+    await criaAdmin();
     /*
     // 2. 📋 LISTA TODOS OS USUÁRIOS (Conforme solicitado)
     console.log("\n🔎 Buscando todos os usuários cadastrados...");

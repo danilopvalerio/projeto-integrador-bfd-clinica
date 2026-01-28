@@ -17,6 +17,7 @@ export default function LoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
+    // Limpa sessão ao entrar na tela de login
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
   }, []);
@@ -25,22 +26,6 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    // --- LOGIN FORÇADO FICTÍCIO ---
-    if (email.toLowerCase() === "paciente@teste.com" && password === "123456") {
-      const mockUser = {
-        id: "mock-id-123",
-        nome: "Ana Beatriz Oliveira",
-        email: "paciente@teste.com",
-        role: "PACIENTE", // Isso garante que o router.push vá para /meu-perfil
-      };
-
-      localStorage.setItem("accessToken", "token-ficticio-valido");
-      localStorage.setItem("user", JSON.stringify(mockUser));
-
-      router.push("/meu-perfil");
-      setLoading(false);
-      return; // Interrompe aqui para não tentar chamar a API real
-    }
 
     try {
       const response = await api.post("/sessions/login", {
@@ -50,10 +35,19 @@ export default function LoginForm() {
 
       if (response.status === 200) {
         const { accessToken, user } = response.data;
+
+        // Salva token e objeto do usuário
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
+
+        // Configura o header padrão para as próximas requisições
         api.defaults.headers.Authorization = `Bearer ${accessToken}`;
-        if (user.role === "PACIENTE") {
+
+        // Redirecionamento baseado no perfil (role ou tipo_usuario)
+        // O backend pode retornar 'role' ou 'tipo_usuario', verificamos ambos
+        const userRole = user.role || user.tipo_usuario;
+
+        if (userRole === "PACIENTE") {
           router.push("/meu-perfil");
         } else {
           router.push("/menu");
@@ -78,10 +72,6 @@ export default function LoginForm() {
         </div>
       )}
 
-      {/* <div class="form-group"> 
-         <label>Email</label>
-         <input class="form-control-underline">
-      */}
       <div className="mb-4">
         <label
           htmlFor="email"
@@ -101,10 +91,6 @@ export default function LoginForm() {
         />
       </div>
 
-      {/* <div class="form-group"> 
-         <label>Senha</label>
-         <input class="form-control-underline">
-      */}
       <div className="mb-2">
         <label
           htmlFor="senha"
@@ -134,7 +120,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* <div class="forgot-password"> */}
       <div className="d-flex justify-content-end mb-4">
         <Link
           href="/forgot-password"
@@ -144,7 +129,6 @@ export default function LoginForm() {
         </Link>
       </div>
 
-      {/* <button type="submit" class="submit-btn"> -> Usando .button-dark-grey */}
       <button
         type="submit"
         className="button-dark-grey w-100 d-flex justify-content-center align-items-center fw-bold shadow-sm"
@@ -162,7 +146,6 @@ export default function LoginForm() {
         )}
       </button>
 
-      {/* Link de Registro para Mobile (já que o painel lateral some em telas pequenas) */}
       <div className="d-md-none mt-4 text-center border-top pt-3">
         <p className="small text-secondary mb-1">Não tem uma conta?</p>
         <Link href="/register" className="grey-link-text fw-bold">

@@ -1,26 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
   faSave,
   faTrash,
   faExclamationTriangle,
+  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
-import api from "../../utils/api";
-import { getErrorMessage } from "../../utils/errorUtils";
+import api from "../../../utils/api";
+import { getErrorMessage } from "../../../utils/errorUtils";
 
-// Importando seus tipos atualizados
-import type { ProfissionalDetail, ProfissionalFormData } from "./types";
+import type {
+  ProfissionalDetail,
+  ProfissionalFormData,
+  UpdateProfissionalPayload,
+} from "../types";
 
 import ProfissionalGeneralForm from "./ProfissionalGeneralForm";
 import ProfissionalEspecialidadesList from "./ProfissionalEspecialidadesList";
 import ProfissionalServicosList from "./ProfissionalServicosList";
-
-// IMPORT DO NOVO COMPONENTE
-import UserCredentialsForm from "../../components/UserCredentialsForm"; // Ajuste o caminho conforme onde vc salvou
+import UserCredentialsForm from "../../../components/UserCredentialsForm";
 
 interface Props {
   profissionalId: string;
@@ -36,10 +38,15 @@ const ProfissionalDetailModal = ({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // Estados de Feedback
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
-  // Tipagem correta baseada no seu types.ts
+  const modalBodyRef = useRef<HTMLDivElement>(null);
+
   const [profissional, setProfissional] = useState<ProfissionalDetail | null>(
     null,
   );
@@ -50,7 +57,6 @@ const ProfissionalDetailModal = ({
     registro_conselho: "",
   });
 
-  // Fecha no ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -59,7 +65,6 @@ const ProfissionalDetailModal = ({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  // Fetch Profissional
   useEffect(() => {
     const fetchProfissional = async () => {
       setLoading(true);
@@ -71,9 +76,8 @@ const ProfissionalDetailModal = ({
 
         setProfissional(data);
 
-        // Preenche o formulário de dados gerais
         setFormData({
-          nome: data.nome,
+          nome: data.usuario?.nome || "",
           cpf: data.cpf,
           registro_conselho: data.registro_conselho,
         });
@@ -87,36 +91,62 @@ const ProfissionalDetailModal = ({
     fetchProfissional();
   }, [profissionalId]);
 
-  // Update Dados Gerais (Nome, CPF, Conselho)
+  const scrollToTop = () => {
+    if (modalBodyRef.current) {
+      modalBodyRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Update Dados Gerais
   const handleUpdateGeneral = async () => {
     setSaving(true);
     setError("");
+    setSuccessMsg("");
 
     try {
-      await api.patch(`/professionals/${profissionalId}`, {
-        nome: formData.nome ?? "",
+      const payload: UpdateProfissionalPayload = {
         registro_conselho: formData.registro_conselho ?? "",
-      });
+        usuario: {
+          nome: formData.nome ?? "",
+        },
+      };
 
-      onSuccess(); // Recarrega a lista pai se necessário
+      await api.patch(`/professionals/${profissionalId}`, payload);
+
+      setSuccessMsg("Dados atualizados com sucesso!");
+      scrollToTop();
+      onSuccess(); // Apenas atualiza a lista no fundo
+
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       setError(getErrorMessage(err));
+      scrollToTop();
     } finally {
       setSaving(false);
     }
   };
 
+  // --- CORREÇÃO AQUI NO DELETE ---
   const handleDelete = async () => {
     setDeleting(true);
     setError("");
 
     try {
       await api.delete(`/professionals/${profissionalId}`);
+
+      // 1. Atualiza a lista no pai
       onSuccess();
+
+      // 2. FORÇA O FECHAMENTO DO MODAL (Resolve o loading infinito)
+      onClose();
     } catch (err) {
       setError(getErrorMessage(err));
       setDeleting(false);
       setShowConfirmDelete(false);
+      scrollToTop();
     }
   };
 
@@ -151,7 +181,8 @@ const ProfissionalDetailModal = ({
                 </h5>
                 {profissional && (
                   <small className="opacity-75">
-                    {profissional.nome} • {profissional.registro_conselho}
+                    {profissional.usuario?.nome} •{" "}
+                    {profissional.registro_conselho}
                   </small>
                 )}
               </div>
@@ -167,11 +198,19 @@ const ProfissionalDetailModal = ({
 
             {/* Body Scrollable */}
             <div
+              ref={modalBodyRef}
               className="modal-body p-4 overflow-auto flex-grow-1"
               style={{ backgroundColor: "#f8f9fa" }}
             >
+              {successMsg && (
+                <div className="alert alert-success border-0 bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center mb-3 animate-fade-in">
+                  <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                  <div>{successMsg}</div>
+                </div>
+              )}
+
               {error && (
-                <div className="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-3">
+                <div className="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-3 mb-3">
                   {error}
                 </div>
               )}
@@ -224,8 +263,7 @@ const ProfissionalDetailModal = ({
                     </div>
                   </div>
 
-                  {/* --- BLOCO 2: DADOS DE ACESSO (REUTILIZÁVEL) --- */}
-                  {/* Passamos o id_usuario que vem no ProfissionalDetail */}
+                  {/* --- BLOCO 2: DADOS DE ACESSO --- */}
                   <div className="mb-4">
                     <UserCredentialsForm
                       userId={profissional.id_usuario}

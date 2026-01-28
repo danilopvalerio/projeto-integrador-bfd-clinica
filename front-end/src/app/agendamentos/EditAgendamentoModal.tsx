@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import {
@@ -19,6 +19,10 @@ import {
   faUser,
   faUserMd,
   faExclamationTriangle,
+  faCheckCircle,
+  faCalendarAlt,
+  faClock,
+  faTag,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
@@ -29,19 +33,25 @@ interface Props {
 
 const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
   const [loading, setLoading] = useState(true);
+
+  // Estados de Loading das ações
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false); // <--- ESTADO USADO AQUI
+
+  // Feedback
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const modalBodyRef = useRef<HTMLDivElement>(null);
 
   const [originalData, setOriginalData] = useState<AgendamentoDetailDTO | null>(
     null,
   );
-
-  // Lista para o Select
   const [profissionaisList, setProfissionaisList] = useState<
     ProfissionalSummary[]
   >([]);
 
-  // Estados de edição
+  // Form States
   const [status, setStatus] = useState<StatusAgendamento>(
     StatusAgendamento.PENDENTE,
   );
@@ -51,13 +61,9 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
   const [selectedServices, setSelectedServices] = useState<ServicoSummary[]>(
     [],
   );
-
-  // Estado do Profissional (Editável via Select)
   const [idProfissional, setIdProfissional] = useState("");
 
-  // Modal de confirmação
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   const toInputFormat = (isoString: string) => {
     if (!isoString) return "";
@@ -69,25 +75,25 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Carrega detalhes do agendamento E lista de profissionais para o select
         const [resAgendamento, resProfissionais] = await Promise.all([
           api.get(`/agendamentos/${agendamentoId}`),
-          api.get("/professionals/paginated?limit=100"), // Traz os 100 primeiros para o select
+          api.get("/professionals/paginated?limit=100"),
         ]);
 
-        const ag: AgendamentoDetailDTO = resAgendamento.data;
-
+        const ag = resAgendamento.data;
         setOriginalData(ag);
         setStatus(ag.status);
         setObs(ag.observacoes || "");
         setStart(toInputFormat(ag.start));
         setEnd(toInputFormat(ag.end));
-        setSelectedServices(ag.servicos || []);
-
-        // Inicializa o select com o profissional atual
         setIdProfissional(ag.profissional.id_profissional);
 
-        // Popula lista
+        if (ag.servico && Array.isArray(ag.servico.itens)) {
+          setSelectedServices(ag.servico.itens);
+        } else {
+          setSelectedServices([]);
+        }
+
         setProfissionaisList(resProfissionais.data.data);
       } catch (err) {
         setError(getErrorMessage(err));
@@ -97,6 +103,12 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
     };
     if (agendamentoId) fetchData();
   }, [agendamentoId]);
+
+  const scrollToTop = () => {
+    if (modalBodyRef.current) {
+      modalBodyRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const handleToggleService = (id: string, serviceObj: ServicoSummary) => {
     setSelectedServices((prev) => {
@@ -108,6 +120,9 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
 
   const handleUpdate = async () => {
     setSaving(true);
+    setError("");
+    setSuccessMsg("");
+
     try {
       const payload: UpdateAgendamentoPayload = {
         status,
@@ -115,51 +130,45 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
         ids_servicos: selectedServices.map((s) => s.id_servico),
         data_hora_inicio: new Date(start).toISOString(),
         data_hora_fim: end ? new Date(end).toISOString() : undefined,
-        id_profissional: idProfissional, // Envia o novo ID se mudou
+        id_profissional: idProfissional,
       };
 
       await api.patch(`/agendamentos/${agendamentoId}`, payload);
-      onSuccess();
+      setSuccessMsg("Agendamento atualizado com sucesso!");
+      scrollToTop();
+      setTimeout(() => onSuccess(), 1500);
     } catch (err) {
       setError(getErrorMessage(err));
+      scrollToTop();
       setSaving(false);
     }
   };
 
+  // --- USO DO DELETING AQUI ---
   const handleDelete = async () => {
-    setDeleting(true);
+    setDeleting(true); // 1. Ativa o loading
+    setError("");
+
     try {
       await api.delete(`/agendamentos/${agendamentoId}`);
-      onSuccess();
+      onSuccess(); // Sucesso fecha o modal
     } catch (err) {
+      // Se der erro:
       setError(getErrorMessage(err));
-      setDeleting(false);
-      setShowConfirmDelete(false);
+      setDeleting(false); // 2. Desativa o loading
+      setShowConfirmDelete(false); // Fecha o modal de confirmação para mostrar o erro no modal principal
+      scrollToTop();
     }
   };
 
-  // --- SKELETON LOADING ---
   if (loading) {
     return (
       <div
         className="modal-backdrop d-flex justify-content-center align-items-center"
-        style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        style={{ backgroundColor: "rgba(0,0,0,0.05)", zIndex: 1060 }}
+        onMouseDown={onClose}
       >
-        <div
-          className="modal-dialog modal-dialog-centered"
-          style={{ maxWidth: "500px", width: "100%", margin: "0.5rem" }}
-        >
-          <div className="modal-content border-0 shadow rounded-4 overflow-hidden p-4">
-            <div className="d-flex align-items-center mb-3">
-              <div className="spinner-border spinner-border-sm text-secondary me-2"></div>
-              <span className="text-muted small">Carregando detalhes...</span>
-            </div>
-            <div
-              className="bg-light rounded-3"
-              style={{ height: 100, width: "100%" }}
-            ></div>
-          </div>
-        </div>
+        <div className="bg-white rounded-4 shadow p-3">Carregando...</div>
       </div>
     );
   }
@@ -179,10 +188,9 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
           onMouseDown={(e) => e.stopPropagation()}
         >
           <div className="modal-content border-0 shadow rounded-4 bg-white overflow-hidden">
-            {/* Header */}
             <div
               className="modal-header border-bottom-0 p-3 px-4 text-white d-flex justify-content-between align-items-center"
-              style={{ background: originalData.ui.color }}
+              style={{ background: originalData.ui?.color || "#333" }}
             >
               <h5
                 className="modal-title fw-bold mb-0"
@@ -193,7 +201,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
               <button
                 type="button"
                 className="btn btn-link text-white p-0 shadow-none"
-                style={{ boxShadow: "none" }}
                 onClick={onClose}
               >
                 <FontAwesomeIcon icon={faTimes} size="lg" />
@@ -201,37 +208,38 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
             </div>
 
             <div
+              ref={modalBodyRef}
               className="modal-body p-4 custom-scroll"
               style={{ maxHeight: "80vh", overflowY: "auto" }}
             >
+              {successMsg && (
+                <div className="alert alert-success rounded-3 py-2 px-3 small mb-3">
+                  <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                  {successMsg}
+                </div>
+              )}
               {error && (
                 <div className="alert alert-danger rounded-3 py-2 px-3 small mb-3">
                   {error}
                 </div>
               )}
 
-              {/* Linha 1: Paciente e Profissional */}
+              {/* Paciente / Profissional */}
               <div className="row g-3 mb-3">
-                {/* Paciente (ReadOnly) */}
                 <div className="col-md-6">
                   <label className="form-label small fw-bold text-secondary">
                     Paciente
                   </label>
-                  <div
-                    className="bg-light p-2 rounded border d-flex align-items-center gap-2 overflow-hidden"
-                    style={{ height: "38px" }}
-                  >
+                  <div className="bg-light p-2 rounded border d-flex align-items-center gap-2">
                     <FontAwesomeIcon
                       icon={faUser}
-                      className="text-secondary ms-1 flex-shrink-0"
+                      className="text-secondary ms-1"
                     />
                     <span className="fw-bold text-dark small text-truncate">
                       {originalData.paciente.nome}
                     </span>
                   </div>
                 </div>
-
-                {/* Profissional (Editável via Select) */}
                 <div className="col-md-6">
                   <label className="form-label small fw-bold text-secondary">
                     Profissional
@@ -242,7 +250,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
                     </span>
                     <select
                       className="form-select border-start-0 shadow-none"
-                      style={{ boxShadow: "none", cursor: "pointer" }}
                       value={idProfissional}
                       onChange={(e) => setIdProfissional(e.target.value)}
                     >
@@ -251,7 +258,7 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
                           key={p.id_profissional}
                           value={p.id_profissional}
                         >
-                          {p.nome}
+                          {p.usuario?.nome || "Sem Nome"}
                         </option>
                       ))}
                     </select>
@@ -263,67 +270,87 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
               <div className="row g-3 mb-3">
                 <div className="col-6">
                   <label className="form-label fw-bold small text-secondary">
+                    <FontAwesomeIcon icon={faCalendarAlt} className="me-1" />{" "}
                     Início
                   </label>
                   <input
                     type="datetime-local"
                     className="form-control form-control-sm shadow-none rounded-3"
-                    style={{ boxShadow: "none" }}
                     value={start}
                     onChange={(e) => setStart(e.target.value)}
                   />
                 </div>
                 <div className="col-6">
                   <label className="form-label fw-bold small text-secondary">
-                    Fim (Opcional)
+                    <FontAwesomeIcon icon={faClock} className="me-1" /> Fim
                   </label>
                   <input
                     type="datetime-local"
                     className="form-control form-control-sm shadow-none rounded-3"
-                    style={{ boxShadow: "none" }}
                     value={end}
                     onChange={(e) => setEnd(e.target.value)}
                   />
                 </div>
               </div>
 
-              {/* Serviços Selecionados */}
-              <div className="mb-3">
-                <label className="form-label fw-bold small text-secondary">
-                  Serviços
-                </label>
-                <div className="d-flex flex-wrap gap-2 mb-2">
-                  {selectedServices.map((s) => (
-                    <span
-                      key={s.id_servico}
-                      className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill pe-2 d-flex align-items-center"
-                    >
-                      {s.nome}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleService(s.id_servico, s)}
-                        className="btn btn-link p-0 ms-2 text-primary shadow-none"
-                        style={{ boxShadow: "none" }}
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </button>
-                    </span>
-                  ))}
-                  {selectedServices.length === 0 && (
-                    <span className="text-muted small fst-italic">
-                      Nenhum serviço.
-                    </span>
+              {/* Serviços */}
+              <div className="mb-4">
+                <div className="d-flex justify-content-between align-items-end mb-2">
+                  <label className="form-label fw-bold small text-secondary mb-0">
+                    Serviços Selecionados
+                  </label>
+                  <span className="badge bg-light text-dark border">
+                    Total: R${" "}
+                    {selectedServices
+                      .reduce((acc, s) => acc + (s.preco || 0), 0)
+                      .toFixed(2)}
+                  </span>
+                </div>
+                <div className="border rounded p-2 bg-light mb-2">
+                  {selectedServices.length > 0 ? (
+                    <ul className="list-group list-group-flush bg-transparent">
+                      {selectedServices.map((s) => (
+                        <li
+                          key={s.id_servico}
+                          className="list-group-item bg-transparent d-flex justify-content-between align-items-center px-2 py-1 border-bottom-0"
+                        >
+                          <div className="d-flex align-items-center gap-2">
+                            <FontAwesomeIcon
+                              icon={faTag}
+                              className="text-secondary small"
+                            />
+                            <span className="small fw-bold">{s.nome}</span>
+                            <span
+                              className="badge bg-secondary bg-opacity-10 text-secondary"
+                              style={{ fontSize: "0.7rem" }}
+                            >
+                              R$ {s.preco}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleService(s.id_servico, s)}
+                            className="btn btn-sm text-danger shadow-none p-1"
+                            title="Remover"
+                          >
+                            <FontAwesomeIcon icon={faTimes} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-center text-muted small py-3">
+                      Nenhum serviço adicionado.
+                    </div>
                   )}
                 </div>
-
-                {/* Selector */}
                 <ServiceSelector
                   selectedIds={selectedServices.map((s) => s.id_servico)}
                   onToggle={handleToggleService}
                 />
               </div>
 
-              {/* Status e Obs */}
+              {/* Status / Obs */}
               <div className="row g-3 mb-3">
                 <div className="col-md-4">
                   <label className="form-label fw-bold small text-secondary">
@@ -331,7 +358,6 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
                   </label>
                   <select
                     className="form-select form-select-sm rounded-pill shadow-none fw-bold"
-                    style={{ boxShadow: "none", fontSize: "0.8rem" }}
                     value={status}
                     onChange={(e) =>
                       setStatus(e.target.value as StatusAgendamento)
@@ -350,45 +376,34 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
                   </label>
                   <textarea
                     className="form-control form-control-sm shadow-none rounded-3"
-                    style={{
-                      boxShadow: "none",
-                      resize: "none",
-                      fontSize: "0.8rem",
-                    }}
+                    style={{ resize: "none" }}
                     rows={1}
                     value={obs}
                     onChange={(e) => setObs(e.target.value)}
+                    placeholder="..."
                   />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="d-flex justify-content-between align-items-center pt-2 border-top mt-3">
+              <div className="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
                 <button
-                  className="btn btn-link text-danger text-decoration-none p-0 d-flex align-items-center gap-1 shadow-none"
-                  style={{ boxShadow: "none", fontSize: "0.85rem" }}
+                  className="btn btn-link text-danger text-decoration-none p-0 d-flex align-items-center gap-1 shadow-none small"
                   onClick={() => setShowConfirmDelete(true)}
                   disabled={saving}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                   <span className="fw-bold">Excluir</span>
                 </button>
-
                 <div className="d-flex gap-2">
                   <button
                     className="btn btn-light rounded-pill px-3 fw-bold text-secondary shadow-none border"
-                    style={{ boxShadow: "none", fontSize: "0.85rem" }}
                     onClick={onClose}
                   >
                     Cancelar
                   </button>
                   <button
-                    className="button-dark-grey px-4 rounded-pill fw-bold shadow-none border-0 text-white d-flex align-items-center gap-2"
-                    style={{
-                      boxShadow: "none",
-                      fontSize: "0.85rem",
-                      padding: "6px 16px",
-                    }}
+                    className="button-dark-grey px-4 rounded-pill fw-bold shadow-none text-white d-flex align-items-center gap-2"
                     onClick={handleUpdate}
                     disabled={saving}
                   >
@@ -406,46 +421,48 @@ const EditAgendamentoModal = ({ agendamentoId, onClose, onSuccess }: Props) => {
         </div>
       </div>
 
-      {/* Modal Confirmação */}
+      {/* --- MODAL DE CONFIRMAÇÃO COM DELETING --- */}
       {showConfirmDelete && (
         <div
-          className="modal-backdrop d-flex justify-content-center align-items-center animate-fade-in"
+          className="modal-backdrop d-flex justify-content-center align-items-center"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1070 }}
-          onClick={() => setShowConfirmDelete(false)}
         >
           <div
             className="bg-white rounded-4 shadow p-4 text-center"
-            style={{ maxWidth: "350px", width: "90%" }}
-            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "350px" }}
           >
-            <div className="text-center mb-3">
-              <div className="mb-2 text-warning">
-                <FontAwesomeIcon icon={faExclamationTriangle} size="2x" />
-              </div>
-              <h6 className="fw-bold text-secondary mb-1">
-                Cancelar Agendamento?
-              </h6>
-              <p className="text-muted small mb-0 lh-sm">
-                Essa ação é irreversível.
-              </p>
-            </div>
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              size="2x"
+              className="text-warning mb-2"
+            />
+            <h6 className="fw-bold mb-3">Excluir Agendamento?</h6>
             <div className="d-flex gap-2 justify-content-center">
+              {/* 3. Bloqueia o botão voltar */}
               <button
-                className="btn btn-light btn-sm text-secondary fw-bold px-3 rounded-pill shadow-none"
+                className="btn btn-light btn-sm rounded-pill px-3"
                 onClick={() => setShowConfirmDelete(false)}
                 disabled={deleting}
               >
                 Voltar
               </button>
+
+              {/* 4. Bloqueia o botão confirmar e mostra Spinner */}
               <button
-                className="btn btn-danger btn-sm fw-bold px-3 rounded-pill d-flex align-items-center gap-2 shadow-none"
+                className="btn btn-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-2"
                 onClick={handleDelete}
                 disabled={deleting}
               >
                 {deleting ? (
-                  <span className="spinner-border spinner-border-sm" />
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      aria-hidden="true"
+                    ></span>
+                    <span>Excluindo...</span>
+                  </>
                 ) : (
-                  <span>Confirmar</span>
+                  "Confirmar"
                 )}
               </button>
             </div>

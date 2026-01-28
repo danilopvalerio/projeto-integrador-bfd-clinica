@@ -18,6 +18,7 @@ enum StatusPagamento {
 
 model Usuario {
   id_usuario     String         @id @default(uuid())
+  nome           String?         @db.VarChar(200)
   email          String         @unique @db.VarChar(200)
   senha_hash     String         @db.VarChar(200)
   tipo_usuario   String         @db.VarChar(50)
@@ -33,7 +34,6 @@ model Usuario {
 
 model Paciente {
   id_paciente     String   @id @default(uuid())
-  nome            String   @db.VarChar(200)
   sexo            Sexo     // Novo campo solicitado
   cpf             String   @unique @db.VarChar(14)
   data_nascimento DateTime @db.Date
@@ -92,7 +92,6 @@ model PacienteDebito {
 
 model Profissional {
   id_profissional   String @id @default(uuid())
-  nome              String @db.VarChar(200)
   cpf               String @unique @db.VarChar(11)
   registro_conselho String @db.VarChar(50)
   id_usuario        String @unique

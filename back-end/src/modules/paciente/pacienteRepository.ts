@@ -18,27 +18,19 @@ import { RepositoryPaginatedResult } from "../../shared/dtos/index.dto";
 
 import {
   Prisma,
-  Sexo, // Enum do Prisma
-  TipoArquivoProntuario, // Enum do Prisma
+  Sexo,
+  TipoArquivoProntuario,
 } from "../../shared/database/generated/prisma/client";
 
 export class PacienteRepository implements IPacienteRepository {
   // ================= CRUD BASE =================
 
   async create(data: CreatePacienteDTO): Promise<PacienteEntity> {
-    const {
-      nome,
-      sexo,
-      cpf,
-      data_nascimento,
-      id_usuario,
-      endereco,
-      telefones,
-    } = data;
+    const { sexo, cpf, data_nascimento, id_usuario, endereco, telefones } =
+      data;
 
     const paciente = await prisma.paciente.create({
       data: {
-        nome,
         sexo: sexo as any,
         cpf,
         data_nascimento,
@@ -64,15 +56,15 @@ export class PacienteRepository implements IPacienteRepository {
             }
           : undefined,
 
-        // --- NOVA REGRA: Criação Automática do Prontuário ---
+        // Criação Automática do Prontuário
         prontuarios: {
-          create: {}, // Cria um registro vazio na tabela de prontuários vinculado a este paciente
+          create: {},
         },
       },
       include: {
         endereco: true,
         telefones: true,
-        // Não precisamos retornar o prontuário aqui, apenas garantir que foi criado
+        usuario: true,
       },
     });
 
@@ -82,7 +74,11 @@ export class PacienteRepository implements IPacienteRepository {
   async findById(id: string): Promise<PacienteEntity | null> {
     const paciente = await prisma.paciente.findUnique({
       where: { id_paciente: id },
-      include: { endereco: true, telefones: true },
+      include: {
+        endereco: true,
+        telefones: true,
+        usuario: true,
+      },
     });
     return paciente as unknown as PacienteEntity | null;
   }
@@ -90,28 +86,28 @@ export class PacienteRepository implements IPacienteRepository {
   async findByCpf(cpf: string): Promise<PacienteEntity | null> {
     const paciente = await prisma.paciente.findUnique({
       where: { cpf },
+      include: { usuario: true },
     });
     return paciente as unknown as PacienteEntity | null;
   }
 
   async update(id: string, data: UpdatePacienteDTO): Promise<PacienteEntity> {
     return await prisma.$transaction(async (tx) => {
-      // 1. Tipagem Forte: Usamos o tipo gerado pelo Prisma
+      // 1. Tipagem Forte
       const updateData: Prisma.PacienteUpdateInput = {
-        nome: data.nome,
         data_nascimento: data.data_nascimento,
         cpf: data.cpf,
       };
 
-      // Cast seguro para o Enum do Prisma se o valor existir
       if (data.sexo) {
         updateData.sexo = data.sexo as Sexo;
       }
 
-      // 2. Lógica do Usuário (Nested Update tipado)
+      // 2. Lógica do Usuário (CORRIGIDA)
       if (data.usuario) {
         updateData.usuario = {
           update: {
+            nome: data.usuario.nome, // <--- ADICIONADO: Atualiza o nome na tabela Usuario
             email: data.usuario.email,
             senha_hash: data.usuario.senha,
           },
@@ -122,8 +118,6 @@ export class PacienteRepository implements IPacienteRepository {
       if (data.endereco) {
         updateData.endereco = {
           upsert: {
-            // No CREATE, não podemos aceitar undefined.
-            // Usamos '?? ""' para garantir que seja uma string caso venha nulo.
             create: {
               rua: data.endereco.rua ?? "",
               cidade: data.endereco.cidade ?? "",
@@ -135,7 +129,7 @@ export class PacienteRepository implements IPacienteRepository {
         };
       }
 
-      // 4. Lógica Telefones (Manual pois o Prisma não tem 'Replace' nativo para One-to-Many puro)
+      // 4. Lógica Telefones
       if (data.telefones) {
         await tx.pacienteTelefone.deleteMany({ where: { id_paciente: id } });
 
@@ -157,6 +151,7 @@ export class PacienteRepository implements IPacienteRepository {
         include: {
           telefones: true,
           endereco: true,
+          usuario: true, // Retorna o usuário atualizado
         },
       });
 
@@ -170,8 +165,15 @@ export class PacienteRepository implements IPacienteRepository {
 
   async findAll(): Promise<PacienteEntity[]> {
     const result = await prisma.paciente.findMany({
-      orderBy: { nome: "asc" },
-      include: { endereco: true },
+      include: {
+        endereco: true,
+        usuario: true,
+      },
+      orderBy: {
+        usuario: {
+          nome: "asc",
+        },
+      },
     });
     return result as unknown as PacienteEntity[];
   }
@@ -186,8 +188,15 @@ export class PacienteRepository implements IPacienteRepository {
       prisma.paciente.findMany({
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
-        include: { endereco: true },
+        include: {
+          endereco: true,
+          usuario: true,
+        },
+        orderBy: {
+          usuario: {
+            nome: "asc",
+          },
+        },
       }),
       prisma.paciente.count(),
     ]);
@@ -201,10 +210,18 @@ export class PacienteRepository implements IPacienteRepository {
     limit: number,
   ): Promise<RepositoryPaginatedResult<PacienteEntity>> {
     const skip = (page - 1) * limit;
+
     const whereCondition = {
       OR: [
-        { nome: { contains: query, mode: "insensitive" as const } },
         { cpf: { contains: query, mode: "insensitive" as const } },
+        {
+          usuario: {
+            OR: [
+              { nome: { contains: query, mode: "insensitive" as const } },
+              { email: { contains: query, mode: "insensitive" as const } },
+            ],
+          },
+        },
       ],
     };
 
@@ -213,8 +230,15 @@ export class PacienteRepository implements IPacienteRepository {
         where: whereCondition,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
-        include: { endereco: true },
+        include: {
+          endereco: true,
+          usuario: true,
+        },
+        orderBy: {
+          usuario: {
+            nome: "asc",
+          },
+        },
       }),
       prisma.paciente.count({ where: whereCondition }),
     ]);
@@ -222,9 +246,8 @@ export class PacienteRepository implements IPacienteRepository {
     return { data: data as unknown as PacienteEntity[], total };
   }
 
-  // ================= SUB-RECURSOS =================
+  // ================= SUB-RECURSOS (MANTIDOS) =================
 
-  // --- Telefones ---
   async addTelefone(
     id_paciente: string,
     data: { telefone: string; principal: boolean },
@@ -246,7 +269,6 @@ export class PacienteRepository implements IPacienteRepository {
     return result as unknown as PacienteTelefoneEntity[];
   }
 
-  // --- Tags ---
   async addTag(id_paciente: string, nome: string): Promise<PacienteTagEntity> {
     const result = await prisma.pacienteTag.create({
       data: { nome, id_paciente },
@@ -265,7 +287,6 @@ export class PacienteRepository implements IPacienteRepository {
     return result as unknown as PacienteTagEntity[];
   }
 
-  // --- Débitos ---
   async addDebito(
     id_paciente: string,
     data: {
@@ -297,18 +318,14 @@ export class PacienteRepository implements IPacienteRepository {
     return result as unknown as PacienteDebitoEntity[];
   }
 
-  // Adicionar na Interface e na Classe
-
   async payDebito(id_debito: string): Promise<PacienteDebitoEntity> {
     const result = await prisma.pacienteDebito.update({
       where: { id_debito },
       data: {
         status_pagamento: "PAGO",
-        valor_pago: { increment: 0 }, // Logica simples, idealmente seria o valor total
-        // Aqui vc pode definir se valor_pago vira o valor_total automaticamente
+        valor_pago: { increment: 0 },
       },
     });
-    // Hackzinho: Se pagou, iguala o valor pago ao total se estiver 0
     if (result.status_pagamento === "PAGO" && result.valor_pago === 0) {
       return (await prisma.pacienteDebito.update({
         where: { id_debito },
@@ -325,7 +342,6 @@ export class PacienteRepository implements IPacienteRepository {
   async getProntuarioByPaciente(
     id_paciente: string,
   ): Promise<ProntuarioEntity | null> {
-    // Retorna o primeiro prontuário (regra de negócio diz que só tem 1)
     const prontuario = await prisma.prontuario.findFirst({
       where: { id_paciente },
     });
@@ -344,24 +360,20 @@ export class PacienteRepository implements IPacienteRepository {
 
   async createProntuarioEntrada(
     id_prontuario: string,
-    id_profissional: string | null, // <--- ACEITA NULL
+    id_profissional: string | null,
     data: CreateProntuarioEntradaDTO,
   ): Promise<ProntuarioEntradaEntity> {
     const entrada = await prisma.prontuarioEntrada.create({
       data: {
         id_prontuario,
-
-        // Se tiver ID, usa. Se for null, passa null (o Prisma aceita se o campo for String?)
         id_profissional: id_profissional,
-
         tipo: data.tipo,
         descricao: data.descricao,
         id_agendamento: data.id_agendamento,
       },
       include: {
-        // Como profissional agora é opcional, o include pode retornar null nele
         profissional: {
-          select: { nome: true, registro_conselho: true },
+          select: { registro_conselho: true },
         },
         arquivos: true,
       },
@@ -384,7 +396,7 @@ export class PacienteRepository implements IPacienteRepository {
       orderBy: { criado_em: "desc" },
       include: {
         profissional: {
-          select: { nome: true, registro_conselho: true },
+          select: { registro_conselho: true },
         },
         arquivos: true,
       },
@@ -400,7 +412,7 @@ export class PacienteRepository implements IPacienteRepository {
       where: { id_entrada },
       include: {
         profissional: {
-          select: { nome: true, registro_conselho: true },
+          select: { registro_conselho: true },
         },
         arquivos: true,
       },
@@ -416,7 +428,7 @@ export class PacienteRepository implements IPacienteRepository {
       where: { id_entrada },
       data: { descricao },
       include: {
-        profissional: { select: { nome: true, registro_conselho: true } },
+        profissional: { select: { registro_conselho: true } },
         arquivos: true,
       },
     });
@@ -424,13 +436,10 @@ export class PacienteRepository implements IPacienteRepository {
   }
 
   async deleteProntuarioEntrada(id_entrada: string): Promise<void> {
-    // O Prisma fará Cascade Delete nos arquivos devido à configuração do schema
     await prisma.prontuarioEntrada.delete({
       where: { id_entrada },
     });
   }
-
-  // --- Arquivos da Entrada ---
 
   async addArquivoEntrada(
     id_entrada: string,
@@ -442,7 +451,7 @@ export class PacienteRepository implements IPacienteRepository {
         nome_arquivo: data.nome_arquivo,
         url_arquivo: data.url_arquivo,
         tipo_arquivo: data.tipo_arquivo,
-        tipo_documento: data.tipo_documento as any, // Cast necessário devido ao enum do Prisma vs DTO
+        tipo_documento: data.tipo_documento as any,
         descricao: data.descricao,
       },
     });

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProfissionalFormData } from "./types";
+import type { ProfissionalFormData } from "../types";
 
 interface Props {
   value: ProfissionalFormData;

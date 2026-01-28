@@ -15,12 +15,10 @@ export class ProfissionalRepository implements IProfissionalRepository {
   // --- CRUD BASE ---
 
   async create(data: CreateProfissionalDTO): Promise<ProfissionalEntity> {
-    const { telefones, horarios, nome, cpf, registro_conselho, id_usuario } =
-      data;
+    const { telefones, horarios, cpf, registro_conselho, id_usuario } = data;
 
     const profissional = await prisma.profissional.create({
       data: {
-        nome,
         cpf,
         registro_conselho,
         id_usuario: id_usuario!,
@@ -42,6 +40,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
             }
           : undefined,
       },
+      include: {
+        usuario: true,
+      },
     });
 
     return profissional as unknown as ProfissionalEntity;
@@ -50,12 +51,18 @@ export class ProfissionalRepository implements IProfissionalRepository {
   async findById(id: string): Promise<ProfissionalEntity | null> {
     return (await prisma.profissional.findUnique({
       where: { id_profissional: id },
+      include: {
+        usuario: true,
+      },
     })) as unknown as ProfissionalEntity | null;
   }
 
   async findByCpf(cpf: string): Promise<ProfissionalEntity | null> {
     return (await prisma.profissional.findUnique({
       where: { cpf },
+      include: {
+        usuario: true,
+      },
     })) as unknown as ProfissionalEntity | null;
   }
 
@@ -63,21 +70,51 @@ export class ProfissionalRepository implements IProfissionalRepository {
     id: string,
     data: UpdateProfissionalDTO,
   ): Promise<ProfissionalEntity> {
+    // --- CORREÇÃO AQUI ---
+    // Prepara o objeto de dados no formato que o Prisma espera
+    const prismaData: any = {};
+
+    // 1. Campos diretos do Profissional
+    if (data.registro_conselho !== undefined) {
+      prismaData.registro_conselho = data.registro_conselho;
+    }
+    // Adicione CPF aqui se for permitido editar:
+    // if (data.cpf) prismaData.cpf = data.cpf;
+
+    // 2. Campos aninhados do Usuário (Nome)
+    // Transforma { usuario: { nome: 'X' } } em { usuario: { update: { nome: 'X' } } }
+    if (data.usuario && data.usuario.nome) {
+      prismaData.usuario = {
+        update: {
+          nome: data.usuario.nome,
+        },
+      };
+    }
+
     const res = await prisma.profissional.update({
       where: { id_profissional: id },
-      data,
+      data: prismaData, // Usa o objeto formatado
+      include: {
+        usuario: true,
+      },
     });
     return res as unknown as ProfissionalEntity;
   }
 
   async delete(id: string): Promise<void> {
-    // Delete cascade já deve estar configurado no Schema, mas o delete normal aqui está ok pois é por ID único
     await prisma.profissional.delete({ where: { id_profissional: id } });
   }
 
   async list(): Promise<ProfissionalEntity[]> {
     return (await prisma.profissional.findMany({
-      orderBy: { nome: "asc" },
+      include: {
+        usuario: true,
+      },
+      orderBy: {
+        usuario: {
+          nome: "asc",
+        },
+      },
     })) as unknown as ProfissionalEntity[];
   }
 
@@ -91,7 +128,14 @@ export class ProfissionalRepository implements IProfissionalRepository {
       prisma.profissional.findMany({
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: {
+          usuario: true,
+        },
+        orderBy: {
+          usuario: {
+            nome: "asc",
+          },
+        },
       }),
       prisma.profissional.count(),
     ]);
@@ -108,8 +152,20 @@ export class ProfissionalRepository implements IProfissionalRepository {
 
     const whereCondition = {
       OR: [
-        { nome: { contains: query, mode: "insensitive" as const } },
+        // Busca na tabela Profissional
         { cpf: { contains: query, mode: "insensitive" as const } },
+        {
+          registro_conselho: { contains: query, mode: "insensitive" as const },
+        },
+        // Busca na tabela Usuario (Nome e Email)
+        {
+          usuario: {
+            OR: [
+              { nome: { contains: query, mode: "insensitive" as const } },
+              { email: { contains: query, mode: "insensitive" as const } },
+            ],
+          },
+        },
       ],
     };
 
@@ -118,7 +174,14 @@ export class ProfissionalRepository implements IProfissionalRepository {
         where: whereCondition,
         skip,
         take: limit,
-        orderBy: { nome: "asc" },
+        include: {
+          usuario: true,
+        },
+        orderBy: {
+          usuario: {
+            nome: "asc",
+          },
+        },
       }),
       prisma.profissional.count({ where: whereCondition }),
     ]);
@@ -126,7 +189,7 @@ export class ProfissionalRepository implements IProfissionalRepository {
     return { data: data as unknown as ProfissionalEntity[], total };
   }
 
-  // --- TELEFONES ---
+  // --- SUB-RECURSOS (TELEFONES) ---
   async addTelefone(
     id_profissional: string,
     data: { telefone: string; principal: boolean },
@@ -147,7 +210,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
   }
 
   async deleteTelefone(id_telefone: string): Promise<void> {
-    // Aqui usamos delete porque id_telefone é chave primária única
     await prisma.profissional_telefone.delete({ where: { id_telefone } });
   }
 
@@ -179,7 +241,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
   }
 
   async deleteHorario(id_horario: string): Promise<void> {
-    // Aqui usamos delete porque id_horario é chave primária única
     await prisma.horario_Trabalho.delete({ where: { id_horario } });
   }
 
@@ -195,9 +256,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
     id_profissional: string,
     id_especialidade: string,
   ): Promise<void> {
-    // createMany ignora erro se já existir (skipDuplicates)
-    // ou create normal se garantir que não existe antes.
-    // Vamos de create simples, o service ou controller trata erro de unique constraint se houver.
     await prisma.profissional_Especialidade.create({
       data: { id_profissional, id_especialidade },
     });
@@ -207,7 +265,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
     id_profissional: string,
     id_especialidade: string,
   ): Promise<void> {
-    // CORREÇÃO CRÍTICA: Usar deleteMany para evitar erro se não existir
     await prisma.profissional_Especialidade.deleteMany({
       where: {
         id_profissional,
@@ -302,7 +359,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
     especialidadesIds: string[],
   ): Promise<EspecialidadeEntity[]> {
     await prisma.$transaction(async (tx) => {
-      // deleteMany sempre ok
       await tx.profissional_Especialidade.deleteMany({
         where: { id_profissional },
       });
@@ -313,7 +369,7 @@ export class ProfissionalRepository implements IProfissionalRepository {
             id_profissional,
             id_especialidade,
           })),
-          skipDuplicates: true, // Boa prática em sync
+          skipDuplicates: true,
         });
       }
     });
@@ -332,7 +388,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
     id_profissional: string,
     id_servico: string,
   ): Promise<void> {
-    // CORREÇÃO CRÍTICA: Usar deleteMany
     await prisma.profissionalServico.deleteMany({
       where: {
         id_profissional,
@@ -392,7 +447,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
           servico: {
             OR: [
               { nome: { contains: query, mode: "insensitive" as const } },
-              { descricao: { contains: query, mode: "insensitive" as const } },
+              {
+                descricao: { contains: query, mode: "insensitive" as const },
+              },
             ],
           },
         },
@@ -407,7 +464,9 @@ export class ProfissionalRepository implements IProfissionalRepository {
           servico: {
             OR: [
               { nome: { contains: query, mode: "insensitive" as const } },
-              { descricao: { contains: query, mode: "insensitive" as const } },
+              {
+                descricao: { contains: query, mode: "insensitive" as const },
+              },
             ],
           },
         },
@@ -425,7 +484,6 @@ export class ProfissionalRepository implements IProfissionalRepository {
     servicoIds: string[],
   ): Promise<ServicoEntity[]> {
     await prisma.$transaction(async (tx) => {
-      // deleteMany sempre ok
       await tx.profissionalServico.deleteMany({ where: { id_profissional } });
 
       if (servicoIds && servicoIds.length > 0) {
@@ -434,7 +492,7 @@ export class ProfissionalRepository implements IProfissionalRepository {
             id_profissional,
             id_servico,
           })),
-          skipDuplicates: true, // Boa prática
+          skipDuplicates: true,
         });
       }
     });

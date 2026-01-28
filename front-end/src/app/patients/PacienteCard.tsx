@@ -13,19 +13,20 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   paciente: PacienteSummary;
-  onClick: () => void; // Abre modal de exibição/edição
+  onClick: () => void;
 }
 
 const PacienteCard = ({ paciente, onClick }: Props) => {
   const router = useRouter();
 
-  // Pega o primeiro telefone se houver
+  // Pega o nome do Usuário vinculado
+  const nomeDisplay = paciente.usuario?.nome || "Nome Indisponível";
+
   const telefone =
     paciente.telefones && paciente.telefones.length > 0
       ? paciente.telefones[0].telefone
       : "Sem telefone";
 
-  // Função para abrir prontuário
   const handleOpenProntuario = () => {
     router.push(`/patients/${paciente.id_paciente}`);
   };
@@ -48,15 +49,15 @@ const PacienteCard = ({ paciente, onClick }: Props) => {
             }`}
             style={{ width: "48px", height: "48px", minWidth: "48px" }}
           >
-            {paciente.nome.charAt(0).toUpperCase()}
+            {nomeDisplay.charAt(0).toUpperCase()}
           </div>
 
           <div className="overflow-hidden w-100">
             <h6
               className="card-title fw-bold mb-0 text-truncate"
-              title={paciente.nome}
+              title={nomeDisplay}
             >
-              {paciente.nome}
+              {nomeDisplay}
             </h6>
             <div className="small text-muted d-flex align-items-center gap-1 mt-1">
               <FontAwesomeIcon icon={faIdCard} className="small" />

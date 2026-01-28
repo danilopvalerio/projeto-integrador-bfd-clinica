@@ -1,5 +1,3 @@
-// src/app/patient/[id]/PacienteGeneralForm.tsx
-
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,13 +10,15 @@ import {
   faPhone,
   faCity,
   faMobileAlt,
+  faEnvelope,
+  faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import { Sexo } from "./types";
 
 export interface PacienteFormData {
   nome: string;
   cpf: string;
-  sexo: Sexo; // ou string, dependendo de como está lá
+  sexo: Sexo;
   data_nascimento: string;
   rua: string;
   numero: string;
@@ -27,7 +27,7 @@ export interface PacienteFormData {
   telefonePrincipal: string;
   telefoneSecundario: string;
 
-  // MARQUE COMO OPCIONAL
+  // Opcionais (usados apenas no Create)
   email?: string;
   senha?: string;
 }
@@ -36,13 +36,18 @@ interface Props {
   data: PacienteFormData;
   onChange: (field: keyof PacienteFormData, value: string) => void;
   disabled?: boolean;
-  isEditing?: boolean;
+  isEditing?: boolean; // Controla se exibe campos de senha/email
 }
 
-const PacienteGeneralForm = ({ data, onChange, disabled = false }: Props) => {
+const PacienteGeneralForm = ({
+  data,
+  onChange,
+  disabled = false,
+  isEditing = false,
+}: Props) => {
   return (
     <div className="row g-3">
-      {/* --- DADOS PESSOAIS (Mantenha igual) --- */}
+      {/* --- DADOS PESSOAIS --- */}
       <div className="col-12">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Dados Pessoais
@@ -51,7 +56,7 @@ const PacienteGeneralForm = ({ data, onChange, disabled = false }: Props) => {
 
       <div className="col-12">
         <label className="form-label small text-muted fw-bold">
-          Nome Completo
+          Nome Completo (Usuário)
         </label>
         <div className="position-relative">
           <FontAwesomeIcon
@@ -130,16 +135,61 @@ const PacienteGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* --- DADOS DE ACESSO (Login) --- 
-          ALTERAÇÃO: Removemos a condição !isEditing para permitir edição.
+      {/* DADOS DE ACESSO (EMAIL/SENHA)
+          Só aparecem se NÃO estiver editando (apenas criando).
+          Na edição, removemos conforme solicitado.
       */}
-      <div className="col-12 mt-4">
-        <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
-          Dados de Acesso (Login)
-        </h6>
-      </div>
+      {!isEditing && (
+        <>
+          <div className="col-12 mt-4">
+            <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
+              Dados de Acesso Inicial
+            </h6>
+          </div>
+          <div className="col-md-6">
+            <label className="form-label small text-muted fw-bold">
+              E-mail
+            </label>
+            <div className="position-relative">
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
+              />
+              <input
+                type="email"
+                className="p-2 ps-5 w-100 form-control-underline"
+                placeholder="email@exemplo.com"
+                value={data.email || ""}
+                onChange={(e) => onChange("email", e.target.value)}
+                disabled={disabled}
+                required
+              />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <label className="form-label small text-muted fw-bold">
+              Senha Inicial
+            </label>
+            <div className="position-relative">
+              <FontAwesomeIcon
+                icon={faLock}
+                className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
+              />
+              <input
+                type="password"
+                className="p-2 ps-5 w-100 form-control-underline"
+                placeholder="******"
+                value={data.senha || ""}
+                onChange={(e) => onChange("senha", e.target.value)}
+                disabled={disabled}
+                required
+              />
+            </div>
+          </div>
+        </>
+      )}
 
-      {/* --- CONTATOS (Mantenha igual) --- */}
+      {/* --- CONTATOS --- */}
       <div className="col-12 mt-4">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Contatos
@@ -186,7 +236,7 @@ const PacienteGeneralForm = ({ data, onChange, disabled = false }: Props) => {
         </div>
       </div>
 
-      {/* --- ENDEREÇO (Mantenha igual) --- */}
+      {/* --- ENDEREÇO --- */}
       <div className="col-12 mt-4">
         <h6 className="fw-bold text-secondary border-bottom pb-2 mb-3">
           Endereço{" "}

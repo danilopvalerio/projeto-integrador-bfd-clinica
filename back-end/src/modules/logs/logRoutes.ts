@@ -2,7 +2,6 @@ import { Router } from "express";
 import { LogRepository } from "./logRepository";
 import { LogService } from "./logService";
 import { LogController } from "./logController";
-// Importe seus middlewares existentes
 import {
   authMiddleware,
   requireRole,
@@ -11,15 +10,47 @@ import {
 const logRoutes = Router();
 const controller = new LogController(new LogService(new LogRepository()));
 
-// 1. Verifica se está logado
-logRoutes.use(authMiddleware);
+/**
+ * @swagger
+ * tags:
+ *   name: Logs
+ *   description: Visualização de logs do sistema
+ */
 
-// 2. Verifica se tem permissão (Usando sua função existente)
+logRoutes.use(authMiddleware);
 logRoutes.use(requireRole(["GERENTE", "RECEPCIONISTA"]));
 
-// Rotas
+/**
+ * @swagger
+ * /logs/all:
+ *   get:
+ *     summary: Lista todos os logs
+ *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
+ */
 logRoutes.get("/all", controller.findAll);
+
+/**
+ * @swagger
+ * /logs/paginated:
+ *   get:
+ *     summary: Lista logs paginados
+ *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
+ */
 logRoutes.get("/paginated", controller.listPaginated);
+
+/**
+ * @swagger
+ * /logs/search:
+ *   get:
+ *     summary: Busca logs com filtros
+ *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
+ */
 logRoutes.get("/search", controller.searchPaginated);
 
 export { logRoutes };

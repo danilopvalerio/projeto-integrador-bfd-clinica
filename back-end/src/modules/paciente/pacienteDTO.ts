@@ -36,7 +36,6 @@ export interface EnderecoEntity {
 
 export interface PacienteEntity {
   id_paciente: string;
-  nome: string;
   sexo: Sexo;
   cpf: string;
   data_nascimento: Date;
@@ -46,6 +45,11 @@ export interface PacienteEntity {
   // Relations
   endereco?: EnderecoEntity;
   telefones?: PacienteTelefoneEntity[];
+
+  usuario?: {
+    nome: string;
+    email: string;
+  };
 }
 
 export interface PacienteTelefoneEntity {
@@ -80,9 +84,6 @@ export interface ProntuarioEntity {
   data_registro: Date;
   descricao: string;
   observacao_geral?: string | null;
-
-  // Relation Opcional
-  profissional?: { nome: string };
 }
 
 export interface ProntuarioArquivoEntity {
@@ -99,13 +100,13 @@ export interface ProntuarioArquivoEntity {
 // --- INPUTS (Entradas) ---
 
 export interface CreatePacienteDTO {
-  nome: string;
   sexo: Sexo;
   cpf: string;
   data_nascimento: Date;
 
   id_usuario?: string;
   usuario?: {
+    nome: string;
     email: string;
     senha: string;
     tipo_usuario?: string;
@@ -122,7 +123,6 @@ export interface CreatePacienteDTO {
 }
 
 export interface UpdatePacienteDTO {
-  nome?: string;
   sexo?: Sexo;
   data_nascimento?: Date;
   cpf?: string; // Caso queira permitir editar CPF
@@ -137,6 +137,7 @@ export interface UpdatePacienteDTO {
     cep?: string;
   };
   usuario?: {
+    nome: string;
     email?: string;
     senha?: string; // A nova senha (se quiser trocar)
   };
@@ -171,7 +172,6 @@ export interface ProntuarioEntradaEntity {
 
   // Relations
   profissional?: {
-    nome: string;
     registro_conselho: string;
   };
   arquivos?: ProntuarioArquivoEntity[];

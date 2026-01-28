@@ -9,12 +9,9 @@ import {
   faSearch,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-
 import api from "../../utils/api";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { PacienteSummary } from "./types";
-
-// Importação dos Componentes
 import PacienteCard from "./PacienteCard";
 import AddPacienteModal from "./AddPatientModal";
 import PacienteDetailModal from "./PacienteDetailModal";
@@ -23,21 +20,15 @@ const LIMIT = 6;
 
 const PacientesPage = () => {
   const router = useRouter();
-
-  // Estados de Dados
   const [pacientes, setPacientes] = useState<PacienteSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Paginação e Busca
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedPacienteId, setSelectedPacienteId] = useState<string | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -52,14 +43,9 @@ const PacientesPage = () => {
     try {
       let url = `/patients/paginated?page=${page}&limit=${LIMIT}`;
       if (term) {
-        url = `/patients/search?q=${encodeURIComponent(
-          term
-        )}&page=${page}&limit=${LIMIT}`;
+        url = `/patients/search?q=${encodeURIComponent(term)}&page=${page}&limit=${LIMIT}`;
       }
-
       const response = await api.get(url);
-
-      // Adaptando para estrutura RepositoryPaginatedResult
       setPacientes(response.data.data);
       setCurrentPage(response.data.page);
       setTotalPages(response.data.lastPage);
@@ -71,12 +57,10 @@ const PacientesPage = () => {
   };
 
   const handleSearch = () => fetchPacientes(1, searchTerm);
-
   const handleClearSearch = () => {
     setSearchTerm("");
     fetchPacientes(1);
   };
-
   const handleRefresh = () => {
     fetchPacientes(currentPage, searchTerm);
     setIsAddModalOpen(false);
@@ -88,7 +72,6 @@ const PacientesPage = () => {
       className="d-flex flex-column min-vh-100"
       style={{ background: "#e9e9e9" }}
     >
-      {/* Header */}
       <header className="header-panel bg-gradient-vl d-flex align-items-center px-4 shadow-sm">
         <button
           className="btn btn-link text-white p-0 me-3"
@@ -101,7 +84,6 @@ const PacientesPage = () => {
 
       <div className="container my-5 flex-grow-1">
         <div className="bg-white border rounded-4 shadow-sm overflow-hidden">
-          {/* Banner Interno */}
           <div className="bg-gradient-vl p-4 text-center text-white">
             <h3 className="fw-bold m-0">Cadastro de Pacientes</h3>
             <p className="opacity-75 small m-0 mt-1">
@@ -110,7 +92,6 @@ const PacientesPage = () => {
           </div>
 
           <div className="p-4">
-            {/* Toolbar */}
             <div className="row g-3 mb-4 align-items-end">
               <div className="col-md-6">
                 <div className="position-relative">
@@ -135,7 +116,6 @@ const PacientesPage = () => {
                   )}
                 </div>
               </div>
-
               <div className="col-md-2">
                 <button
                   className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold"
@@ -144,26 +124,23 @@ const PacientesPage = () => {
                   Pesquisar
                 </button>
               </div>
-
               <div className="col-md-4 text-end">
                 <button
                   className="button-dark-grey w-100 w-md-auto rounded-pill px-4 py-2 shadow-sm fw-bold"
                   onClick={() => setIsAddModalOpen(true)}
                 >
-                  <FontAwesomeIcon icon={faPlus} className="me-2" />
-                  Novo Paciente
+                  <FontAwesomeIcon icon={faPlus} className="me-2" /> Novo
+                  Paciente
                 </button>
               </div>
             </div>
 
-            {/* Error Feedback */}
             {error && (
               <div className="alert alert-danger text-center border-0 bg-danger bg-opacity-10 text-danger rounded-3">
                 {error}
               </div>
             )}
 
-            {/* Grid de Cards */}
             {loading ? (
               <div className="text-center py-5">
                 <div className="spinner-border text-secondary" />
@@ -186,8 +163,6 @@ const PacientesPage = () => {
                     </div>
                   ))}
                 </div>
-
-                {/* Paginação */}
                 <div className="d-flex justify-content-center align-items-center gap-3 mt-5">
                   <button
                     className="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold"
@@ -213,23 +188,17 @@ const PacientesPage = () => {
                 <p className="text-muted fw-bold mb-0">
                   Nenhum paciente encontrado.
                 </p>
-                <small className="text-secondary">
-                  Tente mudar os termos da busca ou cadastre um novo.
-                </small>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Modais */}
       {isAddModalOpen && (
         <AddPacienteModal
           onClose={() => setIsAddModalOpen(false)}
           onSuccess={handleRefresh}
         />
       )}
-
       {selectedPacienteId && (
         <PacienteDetailModal
           pacienteId={selectedPacienteId}

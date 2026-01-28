@@ -18,11 +18,12 @@ export class PacienteService {
   constructor(private repository: IPacienteRepository) {}
 
   async create(data: CreatePacienteDTO): Promise<PacienteEntity> {
+    // 1. Valida CPF
     const cpfExists = await this.repository.findByCpf(data.cpf);
     if (cpfExists) throw new AppError("CPF já cadastrado", 409);
 
     if (!data.id_usuario && !data.usuario) {
-      throw new AppError("Envie id_usuario ou objeto usuario.", 400);
+      throw new AppError("Envie id_usuario ou objeto usuario completo.", 400);
     }
 
     if (data.telefones && data.telefones.length > 2) {
@@ -32,16 +33,26 @@ export class PacienteService {
     return await prisma.$transaction(async (tx) => {
       let id_usuario = data.id_usuario;
 
-      // 1. Cria ou busca Usuário
+      // 2. Cria ou busca Usuário
       if (!id_usuario && data.usuario) {
         const email = data.usuario.email.trim().toLowerCase();
+
+        // Verifica duplicidade de email
         const emailExists = await tx.usuario.findUnique({ where: { email } });
         if (emailExists) throw new AppError("E-mail já cadastrado", 409);
 
+        // Verifica se NOME foi enviado (obrigatório agora)
+        if (!data.usuario.nome) {
+          throw new AppError("Nome do usuário é obrigatório.", 400);
+        }
+
+        const hashedPassword = await hash(data.usuario.senha, 8);
+
         const usuarioCriado = await tx.usuario.create({
           data: {
+            nome: data.usuario.nome, // <--- NOME AGORA VAI AQUI
             email,
-            senha_hash: data.usuario.senha,
+            senha_hash: hashedPassword, // Hash feito aqui ou recebido? Se o DTO já mandar hash, cuidado. Assumindo plain text.
             tipo_usuario: data.usuario.tipo_usuario ?? "PACIENTE",
             ativo: true,
           },
@@ -49,15 +60,16 @@ export class PacienteService {
         id_usuario = usuarioCriado.id_usuario;
       }
 
+      // Valida existência do usuário se passou ID
       if (id_usuario) {
         const user = await tx.usuario.findUnique({ where: { id_usuario } });
         if (!user) throw new AppError("Usuário não encontrado", 404);
       }
 
-      // 2. Cria o Paciente
+      // 3. Cria o Paciente (SEM NOME AQUI)
       const created = await tx.paciente.create({
         data: {
-          nome: data.nome,
+          // nome: data.nome, <--- REMOVIDO (Está no usuário)
           sexo: data.sexo as any,
           cpf: data.cpf,
           data_nascimento: data.data_nascimento,
@@ -67,16 +79,17 @@ export class PacienteService {
           endereco: data.endereco ? { create: data.endereco } : undefined,
           telefones: data.telefones ? { create: data.telefones } : undefined,
         },
-        include: { endereco: true, telefones: true },
+        include: {
+          endereco: true,
+          telefones: true,
+          usuario: true, // Importante para retornar o nome no final
+        },
       });
 
-      // ---------------------------------------------------------
-      // 3. CORREÇÃO: Cria o Prontuário vazio vinculado ao Paciente
-      // ---------------------------------------------------------
+      // 4. Cria Prontuário Vazio
       await tx.prontuario.create({
         data: {
           id_paciente: created.id_paciente,
-          // Se tiver outros campos obrigatórios no model Prontuario, adicione aqui
         },
       });
 
@@ -91,18 +104,16 @@ export class PacienteService {
   }
 
   async update(id: string, data: UpdatePacienteDTO): Promise<PacienteEntity> {
-    // 1. Busca o paciente atual para garantir que existe e pegar o ID do usuário
+    // 1. Busca o paciente atual
     const pacienteAtual = await this.repository.findById(id);
     if (!pacienteAtual) throw new AppError("Paciente não encontrado", 404);
 
     // 2. Validações de E-mail (Se foi enviado um novo e-mail)
     if (data.usuario?.email) {
-      // Verifica se o email já está em uso por OUTRO usuário (não o atual)
-      // Você precisará de um método no user repository ou fazer uma query direta
       const emailEmUso = await prisma.usuario.findFirst({
         where: {
           email: data.usuario.email,
-          NOT: { id_usuario: pacienteAtual.id_usuario }, // Ignora o próprio usuário
+          NOT: { id_usuario: pacienteAtual.id_usuario },
         },
       });
 
@@ -111,11 +122,14 @@ export class PacienteService {
       }
     }
 
-    // 3. Criptografia da Senha (Se foi enviada uma nova senha)
+    // 3. Criptografia da Senha
     if (data.usuario?.senha) {
       const hashedPassword = await hash(data.usuario.senha, 8);
-      data.usuario.senha = hashedPassword; // Substitui a senha plana pelo hash
+      data.usuario.senha = hashedPassword;
     }
+
+    // Opcional: Se nome vier no DTO de paciente, ele deve ser repassado para o DTO de usuário
+    // O Controller deve garantir essa estrutura correta (UpdatePacienteDTO -> usuario -> nome)
 
     // 4. Chama o repositório
     return await this.repository.update(id, data);
@@ -131,7 +145,6 @@ export class PacienteService {
   }
 
   async searchPaginated(query: string, page: number, limit: number) {
-    // Não precisa de getById aqui, pois é uma busca
     const { data, total } = await this.repository.searchPaginated(
       query,
       page,
@@ -141,11 +154,11 @@ export class PacienteService {
   }
 
   async delete(id: string) {
-    await this.getById(id); // Valida se o paciente existe antes de deletar
+    await this.getById(id);
     await this.repository.delete(id);
   }
 
-  // --- Sub Recursos ---
+  // --- Sub Recursos (Mantidos Iguais) ---
 
   async addTelefone(
     id_paciente: string,
@@ -191,17 +204,14 @@ export class PacienteService {
     }
 
     return await prisma.$transaction(async (tx) => {
-      // Remove todos os telefones atuais
       await tx.pacienteTelefone.deleteMany({
         where: { id_paciente },
       });
 
-      // Se não vier nenhum telefone, só apaga e retorna
       if (telefones.length === 0) {
         return [];
       }
 
-      // Cria os novos telefones
       await tx.pacienteTelefone.createMany({
         data: telefones.map((t) => ({
           ...t,
@@ -209,7 +219,6 @@ export class PacienteService {
         })),
       });
 
-      // Retorna os telefones atualizados
       return await tx.pacienteTelefone.findMany({
         where: { id_paciente },
       });
@@ -248,18 +257,15 @@ export class PacienteService {
     return await this.repository.listDebitos(id_paciente);
   }
 
-  // Adicionar na Interface e na Classe
-
   async payDebito(id_debito: string): Promise<PacienteDebitoEntity> {
     const result = await prisma.pacienteDebito.update({
       where: { id_debito },
       data: {
         status_pagamento: "PAGO",
-        valor_pago: { increment: 0 }, // Logica simples, idealmente seria o valor total
-        // Aqui vc pode definir se valor_pago vira o valor_total automaticamente
+        valor_pago: { increment: 0 },
       },
     });
-    // Hackzinho: Se pagou, iguala o valor pago ao total se estiver 0
+
     if (result.status_pagamento === "PAGO" && result.valor_pago === 0) {
       return (await prisma.pacienteDebito.update({
         where: { id_debito },
@@ -273,17 +279,14 @@ export class PacienteService {
     await prisma.pacienteDebito.delete({ where: { id_debito } });
   }
 
-  // 1. Obter Prontuário (Container)
+  // --- Prontuário ---
+
   async getProntuario(id_paciente: string) {
-    // Verifica se paciente existe
     await this.getById(id_paciente);
 
     const prontuario =
       await this.repository.getProntuarioByPaciente(id_paciente);
 
-    // Auto-fix: Se por algum motivo bizarro o paciente não tiver prontuário (banco legado),
-    // a regra diz "Todo paciente nasce com prontuário". Poderíamos criar aqui,
-    // mas vamos lançar erro 404 por enquanto.
     if (!prontuario) {
       throw new AppError("Prontuário não encontrado para este paciente.", 404);
     }
@@ -291,41 +294,23 @@ export class PacienteService {
     return prontuario;
   }
 
-  // 2. Criar Entrada (Núcleo)
-  // pacienteRepository.ts
-
   async createProntuarioEntrada(
     id_prontuario: string,
-    id_profissional: string | null,
+    id_profissional: string | null, // <--- Aqui é string | null
     data: CreateProntuarioEntradaDTO,
   ): Promise<ProntuarioEntradaEntity> {
-    const entrada = await prisma.prontuarioEntrada.create({
-      data: {
-        id_prontuario,
+    // 1. Cria a entrada passando id_profissional (que pode ser null)
+    // O Repository sabe lidar com o connect/disconnect ou passar undefined
+    const entrada = await this.repository.createProntuarioEntrada(
+      id_prontuario,
+      id_profissional,
+      data,
+    );
 
-        // CORREÇÃO AQUI:
-        // Se id_profissional for null, passamos undefined (ou null, dependendo da atualização do prisma).
-        // A forma mais segura que o TS aceita se a tipagem não atualizou 100% é:
-        id_profissional: id_profissional ?? undefined,
-
-        tipo: data.tipo,
-        descricao: data.descricao,
-        id_agendamento: data.id_agendamento,
-      },
-      include: {
-        profissional: {
-          select: { nome: true, registro_conselho: true },
-        },
-        arquivos: true,
-      },
-    });
-
-    return entrada as unknown as ProntuarioEntradaEntity;
+    return entrada;
   }
 
-  // 3. Listar Entradas
   async listEntradas(id_prontuario: string, tipo?: string) {
-    // Validação básica do Enum se tipo for passado
     let tipoEnum: TipoEntradaProntuario | undefined;
     if (tipo) {
       if (
@@ -343,30 +328,21 @@ export class PacienteService {
     });
   }
 
-  // 4. Detalhar Entrada
   async getEntrada(id_entrada: string) {
     const entrada = await this.repository.getProntuarioEntradaById(id_entrada);
     if (!entrada) throw new AppError("Entrada não encontrada", 404);
     return entrada;
   }
 
-  // 5. Editar Entrada (Apenas Texto)
   async updateEntrada(
     id_entrada: string,
     id_usuario_logado: string,
     data: UpdateProntuarioEntradaDTO,
   ) {
-    // Valida se entrada existe
-    const entrada = await this.getEntrada(id_entrada);
-
-    // Valida se quem está editando é um profissional (Regra de negócio não exige ser o MESMO autor,
-    // mas exige ser profissional. Se exigir ser o mesmo, descomentar abaixo)
+    await this.getEntrada(id_entrada);
     const profissional =
       await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
-
-    // Opcional: Bloquear se não for o autor
-    // if (entrada.id_profissional !== profissional.id_profissional) throw new AppError("Apenas o autor pode editar.", 403);
 
     return await this.repository.updateProntuarioEntrada(
       id_entrada,
@@ -374,29 +350,24 @@ export class PacienteService {
     );
   }
 
-  // 6. Remover Entrada
   async deleteEntrada(id_entrada: string, id_usuario_logado: string) {
-    // Valida permissão
     const profissional =
       await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
-    await this.getEntrada(id_entrada); // garante que existe
+    await this.getEntrada(id_entrada);
     await this.repository.deleteProntuarioEntrada(id_entrada);
   }
 
-  // 7. Arquivos
   async addArquivo(
     id_entrada: string,
     id_usuario_logado: string,
     data: AddArquivoEntradaDTO,
   ) {
-    // Valida Profissional
     const profissional =
       await this.repository.findProfissionalByUserId(id_usuario_logado);
     if (!profissional) throw new AppError("Acesso negado.", 403);
 
-    // Valida Entrada
     await this.getEntrada(id_entrada);
 
     return await this.repository.addArquivoEntrada(id_entrada, data);

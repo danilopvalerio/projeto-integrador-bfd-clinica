@@ -2,16 +2,20 @@ import { prisma } from "../../shared/database/prisma";
 import { Log } from "../../shared/database/generated/prisma/client";
 
 export class LogRepository {
-  // Configuração padrão de include para trazer nomes
+  // Configuração padrão de include
   private includeConfig = {
     usuario: {
       select: {
         id_usuario: true,
         email: true,
-        tipo_usuario: true, // ou 'tipo'
-        // Traz as relações para sabermos o nome real da pessoa
-        paciente: { select: { nome: true } },
-        profissional: { select: { nome: true } },
+        nome: true, // <--- O NOME AGORA VEM DAQUI
+        tipo_usuario: true,
+        // Mantemos a relação apenas para saber o tipo específico se necessário (pelo ID)
+        // mas não buscamos mais o nome lá dentro.
+        paciente: { select: { id_paciente: true } },
+        profissional: {
+          select: { id_profissional: true, registro_conselho: true },
+        },
       },
     },
   };
@@ -25,6 +29,7 @@ export class LogRepository {
 
   async listPaginated(page: number, limit: number) {
     const skip = (page - 1) * limit;
+
     const [total, data] = await Promise.all([
       prisma.log.count(),
       prisma.log.findMany({
@@ -47,35 +52,28 @@ export class LogRepository {
   async searchPaginated(term: string, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
-    // Busca em múltiplos campos e tabelas relacionadas
+    // Busca em múltiplos campos
     const whereClause = {
       OR: [
-        { acao: { contains: term, mode: "insensitive" } },
-        { tipo: { contains: term, mode: "insensitive" } },
-        { descricao: { contains: term, mode: "insensitive" } },
-        // Busca no email do usuário associado
-        { usuario: { email: { contains: term, mode: "insensitive" } } },
-        // Busca no nome do Paciente associado ao usuário
+        { acao: { contains: term, mode: "insensitive" as const } },
+        { tipo: { contains: term, mode: "insensitive" as const } },
+        { descricao: { contains: term, mode: "insensitive" as const } },
+
+        // Busca no USUÁRIO (Nome e Email centralizados)
         {
           usuario: {
-            paciente: { nome: { contains: term, mode: "insensitive" } },
-          },
-        },
-        // Busca no nome do Profissional associado ao usuário
-        {
-          usuario: {
-            profissional: { nome: { contains: term, mode: "insensitive" } },
+            OR: [
+              { email: { contains: term, mode: "insensitive" as const } },
+              { nome: { contains: term, mode: "insensitive" as const } }, // <--- Busca pelo nome aqui
+            ],
           },
         },
       ],
     };
 
-    // @ts-ignore
     const [total, data] = await Promise.all([
-      // @ts-ignore
       prisma.log.count({ where: whereClause }),
       prisma.log.findMany({
-        // @ts-ignore
         where: whereClause,
         skip,
         take: limit,

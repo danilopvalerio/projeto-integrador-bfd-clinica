@@ -1,4 +1,3 @@
-// src/app/patient/[id]/TabSobre.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -11,7 +10,7 @@ import {
   faPhone,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { PacienteSummary } from "./../types"; // Importe a interface de Tag se tiver, ou defina aqui
+import { PacienteSummary } from "../types";
 import api from "../../../utils/api";
 import { getErrorMessage } from "../../../utils/errorUtils";
 import AlertModal from "../../../components/AlertModal";
@@ -57,7 +56,8 @@ export default function TabSobre({ paciente }: Props) {
   useEffect(() => {
     if (paciente) {
       setFormData({
-        nome: paciente.nome,
+        // ALTERAÇÃO: Lê o nome de paciente.usuario.nome
+        nome: paciente.usuario?.nome || "",
         cpf: paciente.cpf,
         data_nascimento: paciente.data_nascimento
           ? new Date(paciente.data_nascimento).toISOString().split("T")[0]
@@ -71,7 +71,7 @@ export default function TabSobre({ paciente }: Props) {
   const fetchTags = async () => {
     try {
       const res = await api.get<PacienteTag[]>(
-        `/patients/${paciente.id_paciente}/tags`
+        `/patients/${paciente.id_paciente}/tags`,
       );
       setTags(res.data);
     } catch (err) {
@@ -84,10 +84,14 @@ export default function TabSobre({ paciente }: Props) {
     e.preventDefault();
     try {
       setLoadingSave(true);
+
+      // ALTERAÇÃO: Envia o nome dentro do objeto usuario
       await api.patch(`/patients/${paciente.id_paciente}`, {
-        nome: formData.nome,
         cpf: formData.cpf,
         data_nascimento: new Date(formData.data_nascimento).toISOString(),
+        usuario: {
+          nome: formData.nome,
+        },
       });
 
       setAlert({
@@ -112,12 +116,10 @@ export default function TabSobre({ paciente }: Props) {
 
     try {
       setLoadingTag(true);
-      // Rota POST /patients/:id/tags
       const res = await api.post(`/patients/${paciente.id_paciente}/tags`, {
         nome: newTag.trim(),
       });
 
-      // Atualiza lista visualmente
       setTags([...tags, res.data]);
       setNewTag("");
     } catch (err) {
@@ -133,7 +135,6 @@ export default function TabSobre({ paciente }: Props) {
 
   const handleDeleteTag = async (id_tag: string) => {
     try {
-      // Rota DELETE /patients/tags/:id
       await api.delete(`/patients/tags/${id_tag}`);
       setTags(tags.filter((t) => t.id_tag !== id_tag));
     } catch (err) {
@@ -265,7 +266,7 @@ export default function TabSobre({ paciente }: Props) {
           </div>
         </div>
 
-        {/* Card Contato (Read Only - Edição via modal específico se necessário) */}
+        {/* Card Contato (Read Only - Exatamente como estava) */}
         <div className="card border-0 shadow-sm">
           <div className="card-body">
             <h6 className="fw-bold text-secondary mb-3">Contato e Endereço</h6>
